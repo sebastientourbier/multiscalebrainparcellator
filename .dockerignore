@@ -1,0 +1,6 @@
+.git
+.dockerignore
+.circleci
+.circleci/*
+build
+build/*

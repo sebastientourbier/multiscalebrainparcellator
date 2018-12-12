@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
+
+# Copyright (C) 2017-2019, Brain Communication Pathways Sinergia Consortium, Switzerland
+# All rights reserved.
+#
+#  This software is distributed under the open-source license Modified BSD.
+
+import sys
+import os
+
+import subprocess
+
+
+#BIDS import
+from bids.grabbids import BIDSLayout
+
+#CMP imports
+import cmp.multiscalebrainparcellator.project
+from cmp.multiscalebrainparcellator.info import __version__
+
+def info():
+    print('###################################################################')
+    print("\nMulti-scale Brain Parcellator " + __version__)
+    print("""Copyright (C) 2017-2019, Brain Communication Pathways Sinergia Consortium, Switzerland
+             All rights reserved.\n""")
+    print('###################################################################')
+    print('ENV : {}'.format(os.environ))
+    print('###################################################################')
+
+def usage():
+    print "Usage: multiscalebrainparcellator bids_folder sub-<label> (ses-<label>) anatomical_ini_file"
+    print ""
+    print "bids_directory <Str> : full path of root directory of bids dataset"
+    print "sub-<label> <Str>: subject name"
+    print "ses-<label> <Str>: subject session name (has to be set if sub-XX/ses-YY structure adopted in the dataset)"
+    print "anatomical_config_ini <Str>: full path of .ini configuration file for anatomical pipeline"
+
+# Checks the needed dependencies. We call directly the functions instead
+# of just checking existence in $PATH in order to handl missing libraries.
+# Note that not all the commands give the awaited 1 exit code...
+def dep_check():
+
+    nul = open(os.devnull, 'w')
+
+    error = ""
+
+    # Check for Freesurfer
+    if subprocess.call("mri_info",stdout=nul,stderr=nul,shell=True) != 1:
+        error = """FREESURFER not installed or not working correctly. Check that the
+FREESURFER_HOME variable is exported and the SetUpFreeSurfer.sh setup
+script is sourced."""
+
+    if error != "":
+        print error
+        sys.exit(2)
+
+
+if __name__ == "__main__":
+    # check dependencies
+    dep_check()
+
+    # add current directory to the path, useful if DTB_ bins not installed
+    os.environ["PATH"] += os.pathsep + os.path.dirname(sys.argv[0])
+
+    # version and copyright message
+    info()
+
+    argc = len(sys.argv)
+
+    if (argc==5) or (argc==6): # connectomemapper bids_dir output_dir sub-<label> (ses-<label>) anatomical_ini_file
+
+        project = cmp.multiscalebrainparcellator.project.CMP_Project_Info()
+        project.base_directory = os.path.abspath(sys.argv[1])
+        project.output_directory = os.path.abspath(sys.argv[2])
+        project.subjects = ['%s' % sys.argv[3]]
+        project.subject = '%s' % sys.argv[3]
+
+        try:
+            bids_layout = BIDSLayout(project.base_directory)
+        except:
+            print("ERROR: the dataset is not BIDS compliant. You should run the bids validator and fix the errors until you have a valid BIDS structured dataset")
+            sys.exit(1)
+
+        if "ses-" in sys.argv[4]:
+            offset = 1
+            project.subject_sessions = ['%s' % sys.argv[4]]
+            project.subject_session = '%s' % sys.argv[4]
+            print("session")
+        else:
+            print("No session")
+            offset = 0
+            project.subject_sessions = ['']
+            project.subject_session = ''
+
+        project.anat_config_file = os.path.abspath(sys.argv[offset+4])
+
+        anat_pipeline = cmp.multiscalebrainparcellator.project.init_anat_project(project, False)
+        if anat_pipeline != None:
+            anat_valid_inputs = anat_pipeline.check_input(bids_layout)
+            if anat_valid_inputs:
+                anat_pipeline.process()
+            else:
+                sys.exit(1)
+    else:
+        usage()
+        sys.exit(1)

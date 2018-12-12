@@ -1,0 +1,233 @@
+#!/usr/bin/env python
+# -*-coding:Latin-1 -*
+
+# Copyright (C) 2017-2019, Brain Communication Pathways Sinergia Consortium, Switzerland
+# All rights reserved.
+#
+#  This software is distributed under the open-source license Modified BSD.
+"""
+Syntax :
+%
+Description
+%
+Input Parameters:
+%
+Output Parameters:
+%
+%
+Related references:
+
+See also:
+__________________________________________________
+Authors: Sébastien Tourbier
+Radiology Department
+CHUV, Lausanne
+Created on 2018-11-19
+Version $0.1
+
+======================= Importing Libraries ==============================
+"""
+import sys
+import os
+from os import path as op
+import argparse
+import subprocess
+from glob import glob
+
+import multiprocessing
+
+from cmp.multiscalebrainparcellator.info import __version__
+import cmp.multiscalebrainparcellator.project
+
+# Remove warnings visible whenever you import scipy (or another package) that was compiled against an older numpy than is installed.
+import warnings
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
+
+# try:
+#     import nibabel as ni
+# except ImportError:
+#     print("Module nibabel not found. Please install it")
+#     sys.exit(1)
+#
+# try:
+#     import numpy as np
+# except ImportError:
+#     print("Numpy module not found. Please install it")
+#     sys.exit(1)
+#
+# try:
+#     from nipype.interfaces.base import traits, BaseInterfaceInputSpec, TraitedSpec, BaseInterface, Directory, File, OutputMultiPath
+#     from nipype.utils.logger import logging
+#     iflogger = logging.getLogger('interface')
+# except ImportError:
+#     print("Nipype module not found. Please install it")
+#     sys.exit(1)
+#
+# try:
+#     from cmtklib.parcellation import create_annot_label, create_roi, create_wm_mask,  crop_and_move_datasets, generate_WM_and_GM_mask, crop_and_move_WM_and_GM, get_parcellation
+# except ImportError:
+#     print("CMTKlib module not found. Please install it")
+#     sys.exit(1)
+
+"""
+====================End of Importing Libraries ===========================
+
+"""
+
+def run(command, env={}):
+    merged_env = os.environ
+    merged_env.update(env)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, shell=True,
+                               env=merged_env)
+    while True:
+        line = process.stdout.readline()
+        line = str(line)[:-1]
+        print(line)
+        if line == '' and process.poll() != None:
+            break
+    if process.returncode != 0:
+        raise Exception("Non zero return code: %d"%process.returncode)
+
+parser = argparse.ArgumentParser(description='Multi-scale Brain Parcellator BIDS App.')
+parser.add_argument('bids_dir', help='The directory with the input dataset '
+                    'formatted according to the BIDS standard.')
+parser.add_argument('output_dir', help='The directory where the output files '
+                    'should be stored. If you are running group level analysis '
+                    'this folder should be prepopulated with the results of the'
+                    'participant level analysis.')
+parser.add_argument('analysis_level', help='Level of the analysis that will be performed. '
+                    'Multiple participant level analyses can be run independently '
+                    '(in parallel) using the same output_dir.',
+                    choices=['participant', 'group'])
+parser.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
+                   'corresponds to sub-<participant_label> from the BIDS spec '
+                   '(so it does not include "sub-"). If this parameter is not '
+                   'provided all subjects should be analyzed. Multiple '
+                   'participants can be specified with a space separated list.',
+                   nargs="+")
+
+parser.add_argument('--number_of_cores', help='The number of cores to be used for processing (Maximum number of available processing cores used by default)')
+
+parser.add_argument('--thalamic_nuclei', help='Whether or not to parcellate the thalamic nuclei',
+                    action='store_true')
+
+parser.add_argument('--hippocampal_subfields', help='Whether or not to parcellate the hippocampal subfields',
+                    action='store_true')
+
+parser.add_argument('--brainstem_structures', help='Whether or not to parcellate the brainstem structures',
+                    action='store_true')
+
+parser.add_argument('--skip_bids_validator', help='Whether or not to perform BIDS dataset validation',
+                    action='store_true')
+
+parser.add_argument('-v', '--version', action='version',
+                    version='Multi-scale Brain Parcellator BIDS-App {}'.format(__version__))
+
+
+args = parser.parse_args()
+
+print('BIDS dataset: {}'.format(args.bids_dir))
+
+#Setup number of cores to use
+maxprocs = args.number_of_cores
+max_number_of_cores = multiprocessing.cpu_count()
+if maxprocs > max_number_of_cores:
+    print('WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.number_of_cores,max_number_of_cores))
+    print('INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+    maxprocs = max_number_of_cores
+elif maxprocs <= 0:
+    print('WARNING: the specified number of cores ({}) should be greater to 0'.format(args.number_of_cores))
+    print('INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+    maxprocs = max_number_of_cores
+else:
+    print('INFO: Maximal number of processing cores set to {}'.format(maxprocs))
+
+# Run or not the bids validator
+if not args.skip_bids_validator:
+    run('bids-validator %s'%args.bids_dir)
+
+subjects_to_analyze = []
+# only for a subset of subjects
+if args.participant_label:
+    subjects_to_analyze = args.participant_label
+# for all subjects
+else:
+    subject_dirs = glob(os.path.join(args.bids_dir, "sub-*"))
+    subjects_to_analyze = [subject_dir.split("-")[-1] for subject_dir in subject_dirs]
+
+subjects = ['sub-{}'.format(label) for label in subjects_to_analyze]
+
+#Derivatives directory creation if it does not exist
+toolbox_derivatives_dir = os.path.join(args.output_dir , "cmp")
+if not os.path.isdir(toolbox_derivatives_dir):
+    os.mkdir(toolbox_derivatives_dir)
+
+# Check subject/session structure og the BIDS dataset
+# Create a new list of (subject,session) pairs if sessions are used
+
+use_session_structure = False
+subjects_sessions = []
+
+for subject in subjects:
+    # Check if multiple session (sub-XX/ses-YY/anat/... structure or sub-XX/anat.. structure?)
+    subject_session_dirs = glob(os.path.join(args.bids_dir, subject, "ses-*"))
+    subject_sessions = ['ses-{}'.format(subject_session_dir.split("-")[-1]) for subject_session_dir in subject_session_dirs]
+    if len(subject_sessions) > 0: #Session structure
+        use_session_structure = True
+        for subject_session in subject_sessions:
+            subjects_sessions.append([subject,subject_session])
+print('Session structured dataset: {}'.format(use_session_structure))
+
+if not use_session_structure:
+    print("Subjects to be analyzed: {}".format(subjects))
+else:
+    print("Subjects/Sessions to be analyzed: {}".format(subjects_sessions))
+
+# running participant level
+if args.analysis_level == "participant":
+
+    processes = []
+
+    if not use_session_structure:
+        for subject in subjects:
+            while len(processes) == maxprocs:
+                cmp.multiscalebrainparcellator.project.manage_procs(processes)
+
+            project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
+            proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
+            processes.append(proc)
+
+            while len(processes) > 0:
+                cmp.multiscalebrainparcellator.project.manage_procs(processes)
+
+            print("Processing with the Multi-scale Brain Parcellator BIDS App finished!")
+
+
+    else:
+        for subject,subject_session in subjects_sessions:
+            while len(processes) == maxprocs:
+                cmp.multiscalebrainparcellator.project.manage_procs(processes)
+
+            project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
+            proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
+            processes.append(proc)
+
+            while len(processes) > 0:
+                cmp.multiscalebrainparcellator.project.manage_procs(processes)
+
+            print("Processing with the Multi-scale Brain Parcellator BIDS App finished!")
+
+
+# running group level; ultimately it will compute average connectivity matrices
+# elif args.analysis_level == "group":
+#     brain_sizes = []
+#     for subject_label in subjects_to_analyze:
+#         for brain_file in glob(os.path.join(args.output_dir, "sub-%s*.nii*"%subject_label)):
+#             data = nibabel.load(brain_file).get_data()
+#             # calcualte average mask size in voxels
+#             brain_sizes.append((data != 0).sum())
+#
+#     with open(os.path.join(args.output_dir, "avg_brain_size.txt"), 'w') as fp:
+# fp.write("Average brain size is %g voxels"%numpy.array(brain_sizes).mean())
