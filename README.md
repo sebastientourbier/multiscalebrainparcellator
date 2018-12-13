@@ -3,9 +3,6 @@ The Multi-Scale Brain Parcellator is a BIDS App that implements a full anatomica
 
 ![Image not found](images/multiscalebrainparcellator.png)
 
-
-[//]: # (### Documentation More information and documentation can be found at [https://connectome-mapper-3.readthedocs.io](https://connectome-mapper-3.readthedocs.io))
-
 ### License
 This software is distributed under the open-source license Modified BSD. See [license](LICENSE) for more details.
 
