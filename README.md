@@ -1,14 +1,7 @@
-## Multi-Scale Brain Parcellator BIDS App
-
-This BIDS App implements a full anatomical MRI processing pipeline using FreeSurfer and the Connectome Mapper 3, from raw T1 data to structural brain parcellation at five different scales.
+## Multi-Scale Brain Parcellator
+The Multi-Scale Brain Parcellator is a BIDS App that implements a full anatomical MRI processing pipeline using FreeSurfer 6.0.1 and the Connectome Mapping Toolkit, from raw T1w data to structural brain parcellation at five different scales.
 
 ![Image not found](images/multiscalebrainparcellator.png)
-
-The Multi-Scale Brain Parcellator and the Connectome Mapper 3 are part of the Connectome Mapping Toolkit.
-
-### Documentation
-
-More information and documentation can be found at [https://connectome-mapper-3.readthedocs.io](https://connectome-mapper-3.readthedocs.io)
 
 ### License
 This software is distributed under the open-source license Modified BSD. See [license](LICENSE) for more details.
@@ -69,9 +62,11 @@ To run it in participant level mode (for one participant):
 #### Group level
 To run it in group level mode (for one participant):
 <!--TODO  -->
+
 ### Credits
 * Patric Hagmann (pahagman)
 * Sebastien Tourbier (sebastientourbier)
+* Yasser Aleman (yasseraleman)
 
 ### Funding
 
