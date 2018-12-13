@@ -44,9 +44,8 @@ jobs:
           name: Build and push Docker image
           command: |
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker build -t sebastientourbier/multiscalebrainparcellator:latest -t sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG .
-            docker push sebastientourbier/multiscalebrainparcellator:latest
-            docker push sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
+            docker build -t sebastientourbier/multiscalebrainparcellator:circleci .
+            docker push sebastientourbier/multiscalebrainparcellator:circleci
 workflows:
   version: 2
   build_and_deploy:
