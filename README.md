@@ -4,7 +4,6 @@ This BIDS App implements a full anatomical MRI processing pipeline using FreeSur
 
 ![Image not found](images/multiscalebrainparcellator.png)
 
-The Multi-Scale Brain Parcellator is part of the Connectome Mapping Toolkit.
 
 ### Documentation
 
