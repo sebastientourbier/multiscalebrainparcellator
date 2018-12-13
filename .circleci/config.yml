@@ -6,12 +6,12 @@ jobs:
       - image: circleci/python:2.7
     steps:
       - checkout
-      - run:
-          name: verify git tag vs. version
-          command: |
-            python -m venv venv
-            . venv/bin/activate
-            python setup.py verify
+      # - run:
+      #     name: verify git tag vs. version
+      #     command: |
+      #       python -m venv venv
+      #       . venv/bin/activate
+      #       python setup.py verify
       # - run:
       #     name: init .pypirc
       #     command: |
