@@ -59,14 +59,11 @@ To run it in participant level mode (for one participant):
         --hippocampal_subfields \
         --brainstem_structures
 
-#### Group level
-To run it in group level mode (for one participant):
-<!--TODO  -->
-
 ### Credits
 * Patric Hagmann (pahagman)
 * Sebastien Tourbier (sebastientourbier)
 * Yasser Aleman (yasseraleman)
+* Alessandra Griffa (agriffa)
 
 ### Funding
 
