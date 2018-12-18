@@ -1,14 +1,14 @@
 ## Multi-Scale Brain Parcellator
 This pipeline is developed by the Hagmann’s group at the University Hospital of Lausanne (CHUV) for use within the SNF Sinergia Project 170873 (![project website](https://sinergiaconsortium.bitbucket.io/)), as well as for open-source software distribution.
 
-[![DockerAutomatedBuild](https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator:latest.svg)](https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator)
+[![DockerAutomatedBuild](https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg)](https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator)
 [![CircleCI](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master.svg?style=shield)](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master)
 
 ### About
 The Multi-Scale Brain Parcellator is a BIDS App that implements a full anatomical MRI processing pipeline interfacing with FreeSurfer 6.0.1, FSLMATHS (FSL 5.0.9), ANTs 2.2.0 and the Connectome Mapping Toolkit (CMTK), from raw T1w data to structural brain parcellation at five different scales.
 
 
-![Image not found](https://github.com/sebastientourbier/multiscalebrainparcellator/blob/master/images/multiscalebrainparcellator.png)
+![Image not found](images/multiscalebrainparcellator.png)
 
 ### License
 This software is distributed under the open-source license Modified BSD. See [license](LICENSE) for more details.
