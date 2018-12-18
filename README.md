@@ -77,4 +77,4 @@ To run it in participant level mode (for one participant):
 Work supported by the [Sinergia SNF-170873 Grant](http://p3.snf.ch/Project-170873).
 
 ### Copyright
-Copyright (C) 2009-2019, Brain Communication Pathways Sinergia Consortium, Switzerland.
+Copyright (C) 2009-2019, Brain Communication Pathways Sinergia Consortium and the Multi Scale Brain Parcellator developers, Switzerland.
