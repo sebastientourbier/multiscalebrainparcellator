@@ -17,7 +17,7 @@ This software is distributed under the open-source license Modified BSD. See [li
 
 If your are using the Multi-Scale Brain Parcellator in your work, please cite it such as the following:
 
-        Results included in this manuscript come from the Multi-Scale Brain Parcellator version latest [1], a Nipype [2, 3] based tool. It interfaces with FreeSurfer 6.0.1 to perform resampling to isotropic resolution, Desikan-Killiany brain parcellation [1], brainstem parcellation [1], and hippocampal subfields segmentation [1]. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [1], probabilistic atlas-based segmentation of the thalamic nuclei [1],and combination of all segmented structures, using CMTK v3.0.0 [1] and the antsRegistrationSyNQuick of ANTS v2.2.0 [1].
+> Results included in this manuscript come from the Multi-Scale Brain Parcellator version latest [1], a Nipype [2,3] based tool. It interfaces with FreeSurfer 6.0.1 to perform resampling to isotropic resolution, Desikan-Killiany brain parcellation [1], brainstem parcellation [1], and hippocampal subfields segmentation [1]. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [1], probabilistic atlas-based segmentation of the thalamic nuclei [1],and combination of all segmented structures, using CMTK v3.0.0 [1] and the antsRegistrationSyNQuick of ANTS v2.2.0 [1].
 
 ### Usage
 This App has the following command line arguments:
