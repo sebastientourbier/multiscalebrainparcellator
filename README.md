@@ -1,12 +1,12 @@
 ## Multi-Scale Brain Parcellator
 
-![](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg?style=flat)
+[![DockerAutomatedBuild](https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg)](https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator)
 [![CircleCI](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master.svg?style=shield)](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master)
 
 The Multi-Scale Brain Parcellator is a BIDS App that implements a full anatomical MRI processing pipeline interfacing with FreeSurfer 6.0.1, FSLMATHS (FSL 5.0.9), ANTs 2.2.0 and the Connectome Mapping Toolkit (CMTK), from raw T1w data to structural brain parcellation at five different scales.
 
 
-![Image not found](images/multiscalebrainparcellator.png)
+![Image not found](https://github.com/sebastientourbier/multiscalebrainparcellator/blob/master/images/multiscalebrainparcellator.png)
 
 ### License
 This software is distributed under the open-source license Modified BSD. See [license](LICENSE) for more details.
