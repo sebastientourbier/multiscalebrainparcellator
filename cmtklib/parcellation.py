@@ -413,7 +413,7 @@ class CombineParcellations(BaseInterface):
             ni.save(img, thirdV)
 
             thirdV_dil = op.abspath('{}_dil.nii.gz'.format("ventricle3"))
-            fslmaths_cmd = 'fslmaths %s -kernel sphere 5 -dilD %s' % (thirdV,thirdV_dil)
+            fslmaths_cmd = 'fslmaths.fsl %s -kernel sphere 5 -dilD %s' % (thirdV,thirdV_dil)
             print("RUN")
             print(fslmaths_cmd)
             process = subprocess.Popen(fslmaths_cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
@@ -2574,7 +2574,7 @@ def create_wm_mask(subject_id, subjects_dir):
     # Convert whole brain mask
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','brainmask.mgz'),'-o',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
-    mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
+    mri_cmd = ['fslmaths.fsl',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
 
 def create_wm_mask_v2(subject_id, subjects_dir):
@@ -2778,7 +2778,7 @@ def create_wm_mask_v2(subject_id, subjects_dir):
     # Convert whole brain mask
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','brainmask.mgz'),'-o',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
-    mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
+    mri_cmd = ['fslmaths.fsl',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
 
 def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir):
@@ -2957,7 +2957,7 @@ def generate_WM_and_GM_mask(subject_id, subjects_dir):
     # Convert whole brain mask
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','brainmask.mgz'),'-o',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
-    mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
+    mri_cmd = ['fslmaths.fsl',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
 
     print("[DONE]")
