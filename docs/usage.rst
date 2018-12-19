@@ -39,7 +39,7 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
                                 If you are running group level analysis this folder
                                 should be prepopulated with the results of
                                 theparticipant level analysis.
-          {participant}   			Level of the analysis that will be performed. Multiple
+          {participant} Level of the analysis that will be performed. Multiple
                                 participant level analyses can be run independently
                                 (in parallel) using the same output_dir. Only
 																participant level is available.
