@@ -20,9 +20,9 @@ Command-Line Arguments
 ======================
 
 .. argparse::
-	 :ref: cmp.multiscalebrainparcellator.project.get_parser
-	 :nodefault:
-   :nodefaultconst:
+	:ref: cmp.multiscalebrainparcellator.project.get_parser
+	:nodefault:
+  :nodefaultconst:
 
 Debugging
 =========
