@@ -26,9 +26,7 @@ from nipype.interfaces.base import CommandLineInputSpec, CommandLine, traits, Ba
 from nipype.utils.filemanip import split_filename
 
 # Nipype interfaces
-#from nipype.interfaces.dcm2nii import Dcm2niix
-#import nipype.interfaces.diffusion_toolkit as dtk
-#import nipype.interfaces.mrtrix as mrt
+
 import nipype.interfaces.fsl as fsl
 import nipype.interfaces.freesurfer as fs
 
@@ -83,15 +81,6 @@ class Pipeline(HasTraits):
                 self.stages[stage].stage_dir = os.path.join(self.output_directory,'cmp',self.subject,'tmp',self.pipeline_name,self.stages[stage].name)
 
     def check_config(self):
-        # if self.stages['Segmentation'].config.seg_tool ==  'Custom segmentation':
-        #     if not os.path.exists(self.stages['Segmentation'].config.white_matter_mask):
-        #         return('\nCustom segmentation selected but no WM mask provided.\nPlease provide an existing WM mask file in the Segmentation configuration window.\n')
-        #     if not os.path.exists(self.stages['Parcellation'].config.atlas_nifti_file):
-        #         return('\n\tCustom segmentation selected but no atlas provided.\nPlease specify an existing atlas file in the Parcellation configuration window.\t\n')
-        #     if not os.path.exists(self.stages['Parcellation'].config.graphml_file):
-        #         return('\n\tCustom segmentation selected but no graphml info provided.\nPlease specify an existing graphml file in the Parcellation configuration window.\t\n')
-        # if self.stages['Connectome'].config.output_types == []:
-        #     return('\n\tNo output type selected for the connectivity matrices.\t\n\tPlease select at least one output type in the connectome configuration window.\t\n')
         return ''
 
     def create_stage_flow(self, stage_name):

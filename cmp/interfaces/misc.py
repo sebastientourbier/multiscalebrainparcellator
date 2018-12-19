@@ -1,14 +1,11 @@
+# Copyright (C) 2017-2019, Brain Communication Pathways Sinergia Consortium, Switzerland
+# All rights reserved.
+#
+#  This software is distributed under the open-source license Modified BSD.
+
 import os
 import glob
 import numpy as np
-
-# try:
-#     from traitsui.api import *
-#     from traits.api import *
-#
-# except ImportError:
-#     from enthought.traits.api import *
-#     from enthought.traits.ui.api import *
 
 from nipype.interfaces.base import traits, isdefined, CommandLine, CommandLineInputSpec,\
     TraitedSpec, File, InputMultiPath, OutputMultiPath, BaseInterface, BaseInterfaceInputSpec

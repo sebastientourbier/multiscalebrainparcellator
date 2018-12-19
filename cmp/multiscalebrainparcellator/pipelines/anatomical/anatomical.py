@@ -38,14 +38,6 @@ import nipype.interfaces.freesurfer as fs
 
 # Traits
 from traits.api import *
-# from traitsui.api import *
-# from traitsui.qt4.extra.qt_view import QtView
-# from pyface.ui.qt4.image_resource import ImageResource
-
-#import apptools.io.api as io
-
-# from pyface.qt.QtCore import *
-# from pyface.qt.QtGui import *
 
 # Own import
 import cmp.interfaces.fsl as cmp_fsl
