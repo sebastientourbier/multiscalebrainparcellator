@@ -1,5 +1,5 @@
 ************************
-Installation Instruction for Users
+Installation Instruction
 ************************
 
 .. warning:: This software is for research purposes only and shall not be used for
@@ -10,19 +10,9 @@ Installation Instruction for Users
              provision of patient care.
 
 
-The Connectome Mapper 3 is composed of a Docker image, namely the Connectome Mapper 3 BIDS App, and a Python Graphical User Interface, namely the Connectome Mapper BIDS App Manager.
+The Multi-Scale Brain Parcellator is a BIDS App that relies on Docker. Make sure that you have Docker installed. Installation instructions are found in :ref:`manual-install-multiscalebrainparcellator`.
 
-* Installation instructions for the Connectome mapper 3 BIDS App are found in :ref:`manual-install-cmpbidsapp`.
-* Installation instructionsfor the Connectome mapper 3 BIDS App Manager are found in :ref:`manual-install-cmpbidsappmanager`.
-
-..
-	The steps to add the NeuroDebian repository are explained here::
-
-		$ firefox http://neuro.debian.net/
-
-Make sure that you have installed the following prerequisites.
-
-The Connectome Mapper 3 BIDSApp
+The Multi-Scale Brain Parcellator
 ===============================
 
 Prerequisites
@@ -42,10 +32,10 @@ Prerequisites
 
     $ firefox https://store.docker.com/editions/community/docker-ce-desktop-windows
 
-.. note:: Connectome Mapper 3 BIDSApp has been tested only on Ubuntu and MacOSX. For Windows users, it might be required to make few patches in the Dockerfile.
+.. note:: Multi-Scale Brain Parcellator BIDSApp has been tested only on Ubuntu and MacOSX. For Windows users, it might be required to make few patches in the Dockerfile.
 
 
-* Docker managed as a non-root user
+* For Ubuntu, Docker could be managed as a non-root user
 
   * Open a terminal
 
@@ -64,70 +54,27 @@ Prerequisites
       $ docker run hello-world
 
 
-.. _manual-install-cmpbidsapp:
+.. _manual-install-multiscalebrainparcellator:
 
 Manual installation
 ---------------------------------------
 
-Installation of the Connectome Mapper 3 has been facilicated through the distribution of a BIDSApp relying on the Docker software container technology.
+Installation and use of the Multi-Scale Brain Parcellator has been facilitated through the distribution of a Docker container image.
 
 * Open a terminal
 
 * Get the latest release of the BIDS App::
 
-  $ docker pull sebastientourbier/connectomemapper-bidsapp:latest
+  $ docker pull sebastientourbier/multiscalebrainparcellator:latest
 
 * To display all docker images available::
 
   $ docker images
 
-You should see the docker image "connectomemapper-bidsapp" with tag "latest" is now available.
+You should see the docker image "multiscalebrainparcellator" with tag "latest" is now available.
 
-
-The Connectome Mapper 3 BIDSApp Manager (GUI)
-===============================
-
-Prerequisites
--------------
-
-* Installed miniconda2 (Python 2.7) from the web page::
-
-  $ firefox https://conda.io/miniconda.html
-
-  Download the Python 2.7 installer corresponding to your 32/64bits MacOSX/Linux/Win system.
-
-
-.. _manual-install-cmpbidsappmanager:
-
-Manual installation
----------------------------------------
-The installation of the Connectome Mapper 3 BIDS App Manager (CMPBIDSAPPManager) consists of a clone of the source code repository, the creation of conda environment with all python dependencies installed, and eventually the installation of the CMPBIDSAPPManager itself, as follows:
-
-* Open a terminal
-
-* Go to the folder in which you would like to clone the source code repository::
-
-  $ cd <INSTALL DIRECTORY>
-
-* Clone the source code repository::
-
-  $ git clone https://github.com/sebastientourbier/cmpbidsappmanager.git cmpbidsappmanager
-
-* Add additional distribution channels and create a miniconda2 environment where all python dependencies will be installed, this by using the spec list "conda_packages_list.txt" provided by the repository::
-
-  $ conda config --add channels conda-forge --add channels aramislab --add channels anaconda
-	$ conda create --name py27cmp --file cmpbidsappmanager/conda_packages_list.txt
-
-* Activate the conda environment::
-
-  $ source activate py27cmp
-
-* Install the Connectome Mapper BIDS App Manager from the Bash Shell using following commands::
-
-	(py27cmp)$ cd cmpbidsappmanager/
-	(py27cmp)$ python setup.py install
 
 Help/Questions
 --------------
 
-If you run into any problems or have any questions, you can post to the `CMTK-users group <http://groups.google.com/group/cmtk-users>`_. Code bugs can be reported by creating a "New Issue" on the `source code repository <https://github.com/LTS5/cmp/issues>`_.
+If you run into any problems or have any questions, you can post to the `CMTK-users group <http://groups.google.com/group/cmtk-users>`_. Code bugs can be reported by creating a "New Issue" on the `source code repository <https://github.com/sebastientourbier/multiscalebrainparcellator/issues>`_.
