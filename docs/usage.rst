@@ -24,8 +24,8 @@ Command-Line Arguments
 
 .. argparse::
 	 :filename: ../scripts/multiscalebrainparcellator_bidsapp_entrypointscript.py
- 	 :func: get_parser
-   :prog: multiscalebrainparcellator_bidsapp_entrypointscript.py
+ 	 :func: get_parser()
+   :prog: ../scripts/multiscalebrainparcellator_bidsapp_entrypointscript.py
 	 :nodefault:
    :nodefaultconst:
 
