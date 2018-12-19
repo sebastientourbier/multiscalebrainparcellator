@@ -28,7 +28,7 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
                                         [--hippocampal_subfields]
                                         [--brainstem_structures]
                                         [-v]
-                                        bids_dir output_dir {participant,group}
+                                        bids_dir output_dir {participant}
 
         Multi-scale Brain Parcellator BIDS App entrypoint script.
 
@@ -39,9 +39,10 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
                                 If you are running group level analysis this folder
                                 should be prepopulated with the results of
                                 theparticipant level analysis.
-          {participant,group}   Level of the analysis that will be performed. Multiple
+          {participant}   			Level of the analysis that will be performed. Multiple
                                 participant level analyses can be run independently
-                                (in parallel) using the same output_dir.
+                                (in parallel) using the same output_dir. Only
+																participant level is available.
 
         optional arguments:
           -h, --help            show this help message and exit
@@ -63,7 +64,7 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
 
 Participant level
 ======================
-To run it in participant level mode (for one participant)::
+To run the docker image in participant level mode (for one participant)::
 
         docker run -it --rm \
         -v /home/localadmin/data/ds001:/bids_dataset \
@@ -75,6 +76,8 @@ To run it in participant level mode (for one participant)::
         --thalamic_nuclei \
         --hippocampal_subfields \
         --brainstem_structures
+
+.. note:: The local directory of the input BIDS dataset (here: /home/localadmin/data/ds001) and the output directory (here: /media/localadmin/data/ds001/derivatives) used to process have to be mapped to the folders /bids_dataset and /bids_dataset/derivatives respectively using the -v docker run option.
 
 
 Debugging
