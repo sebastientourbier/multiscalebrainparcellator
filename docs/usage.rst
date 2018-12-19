@@ -12,18 +12,18 @@ Structure)` format, and it must include at least one T1w or MPRAGE structural im
 We highly recommend that you validate your dataset with the free, online
 `BIDS Validator <http://bids-standard.github.io/bids-validator/>`_.
 
-The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
-<https://github.com/BIDS-Apps>`_ definition.
 
 Usage
 =============================
 
-This App has the following command line arguments::
+The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
+<https://github.com/BIDS-Apps>`_ definition with additional options specific to this pipeline::
 
         $ docker -ti --rm sebastientourbier/multiscalebrainparcellator --help
 
         usage: multiscalebrainparcellator_bidsapp_entrypointscript [-h]
                                         [--participant_label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]]
+																				[--isotropic_resolution RESOLUTION_IN_MM]
                                         [--thalamic_nuclei]
                                         [--hippocampal_subfields]
                                         [--brainstem_structures]
@@ -52,6 +52,10 @@ This App has the following command line arguments::
                                 not include "sub-"). If this parameter is not provided
                                 all subjects should be analyzed. Multiple participants
                                 can be specified with a space separated list.
+					--isotropic_resolution RESOLUTION_IN_MM
+																The isotropic resolution in mm used to resample the
+																original anatomical images and applied at the
+																beginning of the processing pipeline.
           --thalamic_nuclei     Segment thalamic thalamic_nuclei
           --hippocampal_subfields Segment hippocampal subfields (FreeSurfer)
           --brainstem_structures Segment brainstem structures (FreeSurfer)
@@ -67,6 +71,7 @@ To run it in participant level mode (for one participant)::
         -v /usr/local/freesurfer/license.txt:/opt/freesurfer/license.txt \
         sebastientourbier/multiscalebrainparcellator:latest \
         /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
+				--isotropic_resolution 1.0 \
         --thalamic_nuclei \
         --hippocampal_subfields \
         --brainstem_structures
