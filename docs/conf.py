@@ -183,7 +183,10 @@ html_use_index = True
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'multiscalebrainparcellatordoc'
 
-html_context = {'release_date': __release_date__}
+html_context = {'release_date': __release_date__,
+                'css_files': [
+                    '_static/theme_overrides.css',  # override wide tables in RTD theme
+                    ],}
 
 # -- Options for LaTeX output --------------------------------------------------
 
