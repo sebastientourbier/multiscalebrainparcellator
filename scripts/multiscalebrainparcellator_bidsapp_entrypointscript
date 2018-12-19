@@ -153,6 +153,7 @@ if (resolution <= 0) or (resolution is None):
     resolution=1.0
     print('Default isotropic resolution for resampling: {}'.format(resolution))
 else:
+    resolution = float(resolution)
     print('Custom isotropic resolution for resampling: {}'.format(resolution))
 
 # Run or not the bids validator
@@ -232,13 +233,6 @@ if args.analysis_level == "participant":
 
 
 # running group level; ultimately it will compute average connectivity matrices
-# elif args.analysis_level == "group":
-#     brain_sizes = []
-#     for subject_label in subjects_to_analyze:
-#         for brain_file in glob(os.path.join(args.output_dir, "sub-%s*.nii*"%subject_label)):
-#             data = nibabel.load(brain_file).get_data()
-#             # calcualte average mask size in voxels
-#             brain_sizes.append((data != 0).sum())
-#
-#     with open(os.path.join(args.output_dir, "avg_brain_size.txt"), 'w') as fp:
-# fp.write("Average brain size is %g voxels"%numpy.array(brain_sizes).mean())
+elif args.analysis_level == "group":
+    print('Error: Sorry but this BIDS App has only the subject level processing pipeline implemented that can be run with --participant' )
+    sys.exit(1)
