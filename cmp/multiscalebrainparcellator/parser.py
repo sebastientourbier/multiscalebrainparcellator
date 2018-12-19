@@ -19,7 +19,7 @@ def get():
                         'this folder should be prepopulated with the results of the'
                         'participant level analysis.')
     p.add_argument('analysis_level', help='Level of the analysis that will be performed. '
-                        'Only participant level analysis i.e. --particpant, is available.'
+                        'Note that only participant level analysis is available.'
                         'Multiple participant level analyses can be run independently '
                         '(in parallel) using the same output_dir.',
                         choices=['participant'])
