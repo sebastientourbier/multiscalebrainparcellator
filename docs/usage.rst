@@ -14,9 +14,6 @@ We highly recommend that you validate your dataset with the free, online
 
 The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
 <https://github.com/BIDS-Apps>`_ definition.
-Example: ::
-
-    fmriprep data/bids_root/ out/ participant -w work/
 
 
 Command-Line Arguments
@@ -32,8 +29,8 @@ Command-Line Arguments
 Debugging
 =========
 
-Logs are outputted into the
-``<output dir>/cmp/sub-<participant_label>/sub-<participant_label>_log-multiscalebrainparcellator.txt`.
+Logs are outputted into
+``<output dir>/cmp/sub-<participant_label>/sub-<participant_label>_log-multiscalebrainparcellator.txt``.
 
 Support and communication
 =========================
