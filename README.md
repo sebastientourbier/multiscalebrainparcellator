@@ -17,11 +17,11 @@ This software is distributed under the open-source license Modified BSD. See [li
 
 If your are using the Multi-Scale Brain Parcellator in your work, please acknowledge this software and its dependencies. To do so, we recommend you to use, modify to your needs, and include in your work the following acknowledgment text:
 
-> Results included in this manuscript come from the Multi-Scale Brain Parcellator version latest [1], a Nipype [2,3] based tool encapsulated in a BIDS app [4]. Resampling to isotropic resolution, Desikan-Killiany brain parcellation [5], brainstem parcellation [6], and hippocampal subfields segmentation [7] were performed using FreeSurfer 6.0.1. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [8], probabilistic atlas-based segmentation of the thalamic nuclei [9],and combination of all segmented structures, using CMTK v3.0.0 [10] and the antsRegistrationSyNQuick of ANTS v2.2.0 [11].
+> Results included in this manuscript come from the Multi-Scale Brain Parcellator version latest [1], a processing pipeline, written in Python which uses Nipype [2,3]. It is encapsulated in a BIDS app [4] based on Docker [5] and Singularity [6] container technologies. Resampling to isotropic resolution, Desikan-Killiany brain parcellation [7], brainstem parcellation [8], and hippocampal subfields segmentation [9] were performed using FreeSurfer 6.0.1. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [10], probabilistic atlas-based segmentation of the thalamic nuclei [11],and combination of all segmented structures, using CMTK v3.0.0 [12] and the antsRegistrationSyNQuick of ANTS v2.2.0 [13].
 
 #### References
 
-1.Multi-Scale Brain Parcellator Available from: xx.YYYY/zenodo.ZZZZZZ.
+1.Multi-Scale Brain Parcellator available from: doi:xx.YYYY/zenodo.ZZZZZZ.
 
 2.Gorgolewski K, Burns CD, Madison C, Clark D, Halchenko YO, Waskom ML, Ghosh SS. Nipype: a flexible, lightweight and extensible neuroimaging data processing framework in python. Front Neuroinform. 2011 Aug 22;5(August):13. doi:10.3389/fninf.2011.00013. 
 
