@@ -20,7 +20,7 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
 
 .. argparse::
 		:ref: cmp.multiscalebrainparcellator.parser.get
-		:proc: multiscalebrainparcellator
+		:prog: multiscalebrainparcellator
 
 
 Participant level
