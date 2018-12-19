@@ -1,2 +1,1 @@
-sphinx-argparse==0.2.1
-CommonMark==0.7.5
+sphinx-argparse==0.2.5
