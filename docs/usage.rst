@@ -12,7 +12,7 @@ Structure)` format, and it must include at least one T1w or MPRAGE structural im
 We highly recommend that you validate your dataset with the free, online
 `BIDS Validator <http://bids-standard.github.io/bids-validator/>`_.
 
-Commandline arguments
+Commandline Arguments
 =============================
 
 The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
@@ -23,7 +23,7 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
 		:prog: multiscalebrainparcellator
 
 
-Participant level
+Participant Level Analysis
 ======================
 To run the docker image in participant level mode (for one participant)::
 
