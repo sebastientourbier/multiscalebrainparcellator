@@ -21,7 +21,7 @@ This pipeline is developed by the Hagmann’s group at the University Hospital o
 About
 *********
 
-.. image:: images/multiscalebrainparcellator.jpg
+.. image:: images/multiscalebrainparcellator.png
 	:height: 300
 	:align: center
 
