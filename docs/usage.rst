@@ -20,7 +20,8 @@ Command-Line Arguments
 ======================
 
 .. argparse::
-   :ref: cmp.multiscalebrainparcellator.project.get_parser
+	 :filename: ../cmp/multiscalebrainparcellator/project.py
+ 	 :func: get_parser
    :prog: multiscalebrainparcellator
 	 :nodefault:
    :nodefaultconst:
