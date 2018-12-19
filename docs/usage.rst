@@ -12,75 +12,31 @@ Structure)` format, and it must include at least one T1w or MPRAGE structural im
 We highly recommend that you validate your dataset with the free, online
 `BIDS Validator <http://bids-standard.github.io/bids-validator/>`_.
 
-Commandline
-=============================
-
-.. argparse::
-		:ref: cmp.multiscalebrainparcellator.parser.get
-
-Usage
+Commandline arguments
 =============================
 
 The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
-<https://github.com/BIDS-Apps>`_ definition with additional options specific to this pipeline::
+<https://github.com/BIDS-Apps>`_ definition with additional options specific to this pipeline.
 
-        $ docker -ti --rm sebastientourbier/multiscalebrainparcellator --help
+.. argparse::
+		:ref: cmp.multiscalebrainparcellator.parser.get
+		:proc: multiscalebrainparcellator
 
-        usage: multiscalebrainparcellator_bidsapp_entrypointscript [-h]
-                                        [--participant_label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]]
-																				[--isotropic_resolution RESOLUTION_IN_MM]
-                                        [--thalamic_nuclei]
-                                        [--hippocampal_subfields]
-                                        [--brainstem_structures]
-                                        [-v]
-                                        bids_dir output_dir {participant}
-
-        Multi-scale Brain Parcellator BIDS App entrypoint script.
-
-        positional arguments:
-          bids_dir              The directory with the input dataset formatted
-                                according to the BIDS standard.
-          output_dir            The directory where the output files should be stored.
-                                If you are running group level analysis this folder
-                                should be prepopulated with the results of
-                                theparticipant level analysis.
-          {participant} Level of the analysis that will be performed. Multiple
-                                participant level analyses can be run independently
-                                (in parallel) using the same output_dir. Only
-																participant level is available.
-
-        optional arguments:
-          -h, --help            show this help message and exit
-          --participant_label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]
-                                The label(s) of the participant(s) that should be
-                                analyzed. The label corresponds to
-                                sub-<participant_label> from the BIDS spec (so it does
-                                not include "sub-"). If this parameter is not provided
-                                all subjects should be analyzed. Multiple participants
-                                can be specified with a space separated list.
-					--isotropic_resolution RESOLUTION_IN_MM
-																The isotropic resolution in mm used to resample the
-																original anatomical images and applied at the
-																beginning of the processing pipeline.
-          --thalamic_nuclei     Segment thalamic thalamic_nuclei
-          --hippocampal_subfields Segment hippocampal subfields (FreeSurfer)
-          --brainstem_structures Segment brainstem structures (FreeSurfer)
-          -v, --version         show program's version number and exit
 
 Participant level
 ======================
 To run the docker image in participant level mode (for one participant)::
 
-        docker run -it --rm \
-        -v /home/localadmin/data/ds001:/bids_dataset \
-        -v /media/localadmin/data/ds001/derivatives:/bids_dataset/derivatives \
-        -v /usr/local/freesurfer/license.txt:/opt/freesurfer/license.txt \
-        sebastientourbier/multiscalebrainparcellator:latest \
-        /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
-				--isotropic_resolution 1.0 \
-				--thalamic_nuclei \
-				--hippocampal_subfields \
-				--brainstem_structures
+    docker run -it --rm \
+    -v /home/localadmin/data/ds001:/bids_dataset \
+    -v /media/localadmin/data/ds001/derivatives:/bids_dataset/derivatives \
+    -v /usr/local/freesurfer/license.txt:/opt/freesurfer/license.txt \
+    sebastientourbier/multiscalebrainparcellator:latest \
+    /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
+		--isotropic_resolution 1.0 \
+		--thalamic_nuclei \
+		--hippocampal_subfields \
+		--brainstem_structures
 
 .. note:: The local directory of the input BIDS dataset (here: /home/localadmin/data/ds001) and the output directory (here: /media/localadmin/data/ds001/derivatives) used to process have to be mapped to the folders /bids_dataset and /bids_dataset/derivatives respectively using the -v docker run option.
 

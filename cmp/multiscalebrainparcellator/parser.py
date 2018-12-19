@@ -22,16 +22,20 @@ def get():
                         'Multiple participant level analyses can be run independently '
                         '(in parallel) using the same output_dir.',
                         choices=['participant', 'group'])
-    p.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
+    p.add_argument('--participant_label', help='The label(s) of the participant(s) '
+                       'that should be analyzed. The label '
                        'corresponds to sub-<participant_label> from the BIDS spec '
                        '(so it does not include "sub-"). If this parameter is not '
                        'provided all subjects should be analyzed. Multiple '
                        'participants can be specified with a space separated list.',
                        nargs="+")
 
-    p.add_argument('--number_of_cores', help='The number of cores to be used for processing (Maximum number of available processing cores used by default)')
+    p.add_argument('--number_of_cores', help='The number of cores to be used for'
+                   'processing (Maximum number of available processing cores used by default)')
 
-    p.add_argument('--isotropic_resolution', help='The isotropic resolution in mm used to resample the original anatomical images and applied athe beginning of the processingpipeline.')
+    p.add_argument('--isotropic_resolution', help='The isotropic resolution in mm'
+                   'used to resample the original anatomical images'
+                   'and applied a tthe beginning of the processing pipeline.')
 
     p.add_argument('--thalamic_nuclei', help='Whether or not to parcellate the thalamic nuclei',
                         action='store_true')
