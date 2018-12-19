@@ -54,8 +54,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'The Connectome Mapper'
-copyright = u'2018, Brain Communication Pathways Sinergia Consortium'
+project = u'The Multi-Scale Brain Parcellator'
+copyright = u'2018-2019, Brain Communication Pathways Sinergia Consortium'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -119,14 +119,14 @@ html_theme_options = {
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = 'The Connectome Mapper'
+html_title = 'The Multi-Scale Brain Parcellator'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = '../resources/icons/cmp.png'
+html_logo = 'images/multiscalebrainparcellation.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -180,7 +180,7 @@ html_use_index = True
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'CMP3doc'
+htmlhelp_basename = 'MSBParcdoc'
 
 html_context = {'release_date': __release_date__}
 
@@ -200,7 +200,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'CMP.tex', u'CMP3 Documentation',
+  ('index', 'multiscalebrainparcellator.tex', u'Multi-Scale Brain Parcellator Documentation',
    u'Brain Communication Pathways Sinergia Consortium', 'manual'),
 ]
 
@@ -230,7 +230,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'cmp', u'CMP3 Documentation',
+    ('index', 'CMP/multiscalebrainparcellator', u'Multi-Scale Brain Parcellator Documentation',
      [u'Brain Communication Pathways Sinergia Consortium'], 1)
 ]
 
@@ -244,8 +244,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'CMP', u'CMP Documentation',
-   u'Brain Communication Pathways Sinergia Consortium', 'CMP', 'One line description of project.',
+  ('index', 'CMP/multiscalebrainparcellator', u'Multi-Scale Brain Parcellator Documentation',
+   u'Brain Communication Pathways Sinergia Consortium', 'CMP/multiscalebrainparcellator', 'One line description of project.',
    'Miscellaneous'),
 ]
 
