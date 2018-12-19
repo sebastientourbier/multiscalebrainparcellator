@@ -37,6 +37,7 @@ import multiprocessing
 
 from cmp.multiscalebrainparcellator.info import __version__
 import cmp.multiscalebrainparcellator.project
+import cmp.multiscalebrainparcellator.parser as parser
 
 # Remove warnings visible whenever you import scipy (or another package) that was compiled against an older numpy than is installed.
 import warnings
@@ -92,8 +93,8 @@ def run(command, env={}):
 
 if __name__ == '__main__':
     """Entry point"""
-    parser = project.get_parser()
-    args = parser.parse_args()
+    pars = parser.get_parser()
+    args = pars.parse_args()
 
     print('BIDS dataset: {}'.format(args.bids_dir))
 
