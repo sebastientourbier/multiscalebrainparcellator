@@ -180,7 +180,7 @@ html_use_index = True
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MSBParcdoc'
+htmlhelp_basename = 'multiscalebrainparcellatordoc'
 
 html_context = {'release_date': __release_date__}
 
@@ -230,7 +230,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'CMP/multiscalebrainparcellator', u'Multi-Scale Brain Parcellator Documentation',
+    ('index', 'multiscalebrainparcellator', u'Multi-Scale Brain Parcellator Documentation',
      [u'Brain Communication Pathways Sinergia Consortium'], 1)
 ]
 
@@ -244,8 +244,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'CMP/multiscalebrainparcellator', u'Multi-Scale Brain Parcellator Documentation',
-   u'Brain Communication Pathways Sinergia Consortium', 'CMP/multiscalebrainparcellator', 'One line description of project.',
+  ('index', 'multiscalebrainparcellator', u'Multi-Scale Brain Parcellator Documentation',
+   u'Brain Communication Pathways Sinergia Consortium', 'multiscalebrainparcellator', 'One line description of project.',
    'Miscellaneous'),
 ]
 
