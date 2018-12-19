@@ -6,6 +6,9 @@
 """ Multi-scale Brain Parcellator Commandline Parser
 """
 
+from info import __version__
+from info import __release_date__
+
 def get():
     import argparse
     p = argparse.ArgumentParser(description='Multi-scale Brain Parcellator BIDS App.')
@@ -42,6 +45,6 @@ def get():
     p.add_argument('--skip_bids_validator', help='Whether or not to perform BIDS dataset validation',
                         action='store_true')
 
-    p.add_argument('-v', '--version', action='version',
+    p.add_argument('-v', '--version', help='Display the version of Multi-scale Brain Parcellator BIDS-App', action='version',
                         version='Multi-scale Brain Parcellator BIDS-App {}'.format(__version__))
     return p
