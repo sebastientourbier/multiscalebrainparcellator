@@ -20,8 +20,7 @@ Command-Line Arguments
 ======================
 
 .. argparse::
-   :module: cmp.multiscalebrainparcellator.project
-   :func: get_parser
+   :ref: cmp.multiscalebrainparcellator.project.get_parser
    :prog: multiscalebrainparcellator
 	 :nodefault:
    :nodefaultconst:
