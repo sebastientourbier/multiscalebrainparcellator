@@ -38,7 +38,7 @@ To run the docker image in participant level mode (for one participant)::
 	--hippocampal_subfields \
 	--brainstem_structures
 
-.. note:: The local directory of the input BIDS dataset (here: /home/localadmin/data/ds001) and the output directory (here: /media/localadmin/data/ds001/derivatives) used to process have to be mapped to the folders /bids_dataset and /bids_dataset/derivatives respectively using the -v docker run option.
+.. note:: The local directory of the input BIDS dataset (here: ``/home/localadmin/data/ds001``) and the output directory (here: ``/media/localadmin/data/ds001/derivatives``) used to process have to be mapped to the folders ``/bids_dataset`` and ``/bids_dataset/derivatives`` respectively using the ``-v`` docker run option.
 
 
 Debugging
