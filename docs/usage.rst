@@ -19,7 +19,7 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
 Command-Line Arguments
 ======================
 
-..argparse::
+.. argparse::
 	:ref: cmp.multiscalebrainparcellator.project.get_parser
 	:prog: multiscalebrainparcellator
 	:nodefault:
