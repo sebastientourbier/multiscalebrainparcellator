@@ -20,9 +20,9 @@ Command-Line Arguments
 ======================
 
 .. argparse::
-	 :filename: ../scripts/multiscalebrainparcellator_bidsapp_entrypointscript
- 	 :func: get_parser
-   :prog: ../scripts/multiscalebrainparcellator_bidsapp_entrypointscript
+   :module: cmp.multiscalebrainparcellator.project
+   :func: get_parser
+   :prog: multiscalebrainparcellator
 	 :nodefault:
    :nodefaultconst:
 
