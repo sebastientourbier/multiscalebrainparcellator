@@ -110,6 +110,8 @@ parser.add_argument('--participant_label', help='The label(s) of the participant
 
 parser.add_argument('--number_of_cores', help='The number of cores to be used for processing (Maximum number of available processing cores used by default)')
 
+parser.add_argument('--isotropic_resolution', help='The isotropic resolution in mm used to resample the original anatomical images and applied athe beginning of the processingpipeline.')
+
 parser.add_argument('--thalamic_nuclei', help='Whether or not to parcellate the thalamic nuclei',
                     action='store_true')
 
@@ -143,6 +145,15 @@ elif maxprocs <= 0:
     maxprocs = max_number_of_cores
 else:
     print('INFO: Maximal number of processing cores set to {}'.format(maxprocs))
+
+#Setup the isotropic resolution
+
+resolution = args.isotropic_resolution
+if (resolution <= 0) or (resolution is None):
+    resolution=1.0
+    print('Default isotropic resolution for resampling: {}'.format(resolution))
+else:
+    print('Custom isotropic resolution for resampling: {}'.format(resolution))
 
 # Run or not the bids validator
 if not args.skip_bids_validator:
@@ -195,7 +206,7 @@ if args.analysis_level == "participant":
             while len(processes) == maxprocs:
                 cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-            project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
+            project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
             proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
             processes.append(proc)
 
@@ -210,7 +221,7 @@ if args.analysis_level == "participant":
             while len(processes) == maxprocs:
                 cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-            project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
+            project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
             proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
             processes.append(proc)
 

@@ -304,7 +304,7 @@ def update_anat_last_processed(project_info, pipeline):
     project_info.parcellation_scheme = pipeline.parcellation_scheme
     project_info.atlas_info = pipeline.atlas_info
 
-def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,thalamic_nuclei,hippocampal_subfields,brainstem_structures):
+def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,resolution,thalamic_nuclei,hippocampal_subfields,brainstem_structures):
 
     project_info = CMP_Project_Info()
     project_info.base_directory = bids_dir
@@ -320,9 +320,15 @@ def create_configuration_file_participant_level(bids_dir,output_dir,subjects,sub
         project_info.subject_session = ''
 
     anat_pipeline = init_anat_project(project_info, True)
+
+    anat_pipeline.stages['Segmentation'].config.make_isotropic = True
+    anat_pipeline.stages['Segmentation'].config.isotropic_vox_size = resolution
+    anat_pipeline.stages['Segmentation'].config.isotropic_interpolation = 'interpolate'
+
     anat_pipeline.stages['Parcellation'].config.include_thalamic_nuclei_parcellation = thalamic_nuclei
     anat_pipeline.stages['Parcellation'].config.segment_hippocampal_subfields = hippocampal_subfields
     anat_pipeline.stages['Parcellation'].config.segment_brainstem = brainstem_structures
+
     anat_save_config(pipeline=anat_pipeline,config_path=anat_pipeline.config_file)
     return project_info, anat_pipeline.config_file
 
