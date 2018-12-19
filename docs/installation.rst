@@ -10,15 +10,14 @@ Installation Instruction
              provision of patient care.
 
 
-The Multi-Scale Brain Parcellator is a BIDS App that relies on Docker. Make sure that you have Docker installed. Installation instructions are found in :ref:`manual-install-multiscalebrainparcellator`.
+The Multi-Scale Brain Parcellator is a BIDS App that relies on Docker. Make sure that you have Docker installed or follow the instructions found in :ref:`manual-install-docker`. Then, install the Multi-Scale Brain Parcellator by following the instructions found in :ref:`manual-install-multiscalebrainparcellator`.
 
-The Multi-Scale Brain Parcellator
+.. _manual-install-docker:
+
+Installation of Docker
 ===============================
 
-Prerequisites
--------------
-
-* Installed Docker Engine corresponding to your system:
+* Installed Docker Engine corresponding to your system
 
   * For Ubuntu 14.04/16.04/18.04, follow the instructions from the web page::
 
@@ -56,8 +55,8 @@ Prerequisites
 
 .. _manual-install-multiscalebrainparcellator:
 
-Manual installation
----------------------------------------
+Installation of the Multi-Scale Brain Parcellator
+===============================
 
 Installation and use of the Multi-Scale Brain Parcellator has been facilitated through the distribution of a Docker container image.
 
