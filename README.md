@@ -8,7 +8,7 @@ This pipeline is developed by the Hagmann’s group at the University Hospital o
 The Multi-Scale Brain Parcellator is a BIDS App that implements a full anatomical MRI processing pipeline interfacing with FreeSurfer 6.0.1, FSLMATHS (FSL 5.0.9), ANTs 2.2.0 and the Connectome Mapping Toolkit (CMTK), from raw T1w data to structural brain parcellation at five different scales.
 
 
-![Image not found](images/multiscalebrainparcellator.png)
+![Image not found](images/multiscalebrainparcellator_888x551.png)
 
 ### License
 This software is distributed under the open-source license Modified BSD. See [license](LICENSE) for more details.
