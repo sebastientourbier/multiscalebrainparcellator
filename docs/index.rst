@@ -12,8 +12,8 @@ This pipeline is developed by the Hagmann’s group at the University Hospital o
   :target: https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master
   :alt: Continuous Integration Status
 
-.. image:: https://readthedocs.org/projects/multiscalebrainparcellation/badge/?version=latest
-  :target: http://multiscalebrainparcellator.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/multiscalebrainparcellator/badge/?version=latest
+  :target: https://multiscalebrainparcellator.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
 
 
@@ -22,7 +22,7 @@ About
 *********
 
 .. image:: images/multiscalebrainparcellator.png
-	:height: 300
+	:width: 888
 	:align: center
 
 ``Multi-Scale Brain Parcellator``, part of the Connectome Mapping Toolkit (CMTK), is a BIDS App that implements a full anatomical MRI processing pipeline, from raw T1w data to structural brain parcellation at five different scales.
