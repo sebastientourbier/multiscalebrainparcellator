@@ -27,16 +27,16 @@ Participant Level Analysis
 ======================
 To run the docker image in participant level mode (for one participant)::
 
-    docker run -it --rm \
-    -v /home/localadmin/data/ds001:/bids_dataset \
-    -v /media/localadmin/data/ds001/derivatives:/bids_dataset/derivatives \
-    -v /usr/local/freesurfer/license.txt:/opt/freesurfer/license.txt \
-    sebastientourbier/multiscalebrainparcellator:latest \
-    /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
-		--isotropic_resolution 1.0 \
-		--thalamic_nuclei \
-		--hippocampal_subfields \
-		--brainstem_structures
+  docker run -it --rm \
+  -v /home/localadmin/data/ds001:/bids_dataset \
+  -v /media/localadmin/data/ds001/derivatives:/bids_dataset/derivatives \
+  -v /usr/local/freesurfer/license.txt:/opt/freesurfer/license.txt \
+  sebastientourbier/multiscalebrainparcellator:latest \
+  /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
+	--isotropic_resolution 1.0 \
+	--thalamic_nuclei \
+	--hippocampal_subfields \
+	--brainstem_structures
 
 .. note:: The local directory of the input BIDS dataset (here: /home/localadmin/data/ds001) and the output directory (here: /media/localadmin/data/ds001/derivatives) used to process have to be mapped to the folders /bids_dataset and /bids_dataset/derivatives respectively using the -v docker run option.
 
