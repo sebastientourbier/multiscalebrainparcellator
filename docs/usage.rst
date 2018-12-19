@@ -12,6 +12,11 @@ Structure)` format, and it must include at least one T1w or MPRAGE structural im
 We highly recommend that you validate your dataset with the free, online
 `BIDS Validator <http://bids-standard.github.io/bids-validator/>`_.
 
+Commandline
+=============================
+
+.. argparse::
+		:ref: cmp.multiscalebrainparcellator.parser.get
 
 Usage
 =============================
