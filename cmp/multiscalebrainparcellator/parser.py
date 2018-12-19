@@ -19,9 +19,10 @@ def get():
                         'this folder should be prepopulated with the results of the'
                         'participant level analysis.')
     p.add_argument('analysis_level', help='Level of the analysis that will be performed. '
+                        'Only participant level analysis i.e. --particpant, is available.'
                         'Multiple participant level analyses can be run independently '
                         '(in parallel) using the same output_dir.',
-                        choices=['participant', 'group'])
+                        choices=['participant'])
     p.add_argument('--participant_label', help='The label(s) of the participant(s) '
                        'that should be analyzed. The label '
                        'corresponds to sub-<participant_label> from the BIDS spec '
