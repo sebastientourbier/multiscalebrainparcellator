@@ -72,7 +72,7 @@ This App has the following command line arguments:
                                         [--hippocampal_subfields]
                                         [--brainstem_structures]
                                         [-v]
-                                        bids_dir output_dir {participant,group}
+                                        bids_dir output_dir {participant}
 
         Multi-scale Brain Parcellator BIDS App entrypoint script.
 
@@ -81,7 +81,7 @@ This App has the following command line arguments:
                                 according to the BIDS standard.
           output_dir            The directory where the output files should be
                                 stored.
-                                If you are running group level analysis this folder should be prepopulated with the results of the participant level analysis.
+                                If you are running group level analysis this folder should be pre-populated with the results of the participant level analysis.
           {participant}   Level of the analysis that will be performed. Note    
                                 that only the participant level analysis is available. Multiple participant level analyses can be run independently (in parallel) using the same output_dir.
 
