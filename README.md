@@ -99,18 +99,18 @@ This App has the following command line arguments:
           -v, --version         show program's version number and exit
 
 #### Participant level
-To run it in participant level mode (for one participant)::
+To run it in participant level mode (for one participant):
 
-  docker run -it --rm \
-  -v /home/localadmin/data/ds001:/bids_dataset \
-  -v /media/localadmin/data/ds001/derivatives:/bids_dataset/derivatives \
-  -v /usr/local/freesurfer/license.txt:/opt/freesurfer/license.txt \
-  sebastientourbier/multiscalebrainparcellator:latest \
-  /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
-  --isotropic_resolution
-  --thalamic_nuclei \
-  --hippocampal_subfields \
-  --brainstem_structures
+        $ docker run -it --rm \
+        -v /home/localadmin/data/ds001:/bids_dataset \
+        -v /media/localadmin/data/ds001/derivatives:/bids_dataset/derivatives \
+        -v /usr/local/freesurfer/license.txt:/opt/freesurfer/license.txt \
+        sebastientourbier/multiscalebrainparcellator:latest \
+        /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
+        --isotropic_resolution
+        --thalamic_nuclei \
+        --hippocampal_subfields \
+        --brainstem_structures
 
 ### Credits
 * Patric Hagmann (pahagman)
