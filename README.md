@@ -7,10 +7,23 @@ This pipeline is developed by the Hagmann’s group at the University Hospital o
 
 
 ### About
-The Multi-Scale Brain Parcellator is a BIDS App that implements a full anatomical MRI processing pipeline interfacing with FreeSurfer 6.0.1, FSLMATHS (FSL 5.0.9), ANTs 2.2.0 and the Connectome Mapping Toolkit (CMTK), from raw T1w data to structural brain parcellation at five different scales.
-
+<!--The Multi-Scale Brain Parcellator is a BIDS App that implements a full anatomical MRI processing pipeline interfacing with FreeSurfer 6.0.1, FSLMATHS (FSL 5.0.9), ANTs 2.2.0 and the Connectome Mapping Toolkit (CMTK), from raw T1w data to structural brain parcellation at five different scales.-->
+<mark>Multi-Scale Brain Parcellator</mark>, part of the Connectome Mapping Toolkit (CMTK), is a BIDS App that implements a full anatomical MRI processing pipeline, from raw T1w data to structural brain parcellation at five different scales.
 
 ![Image not found](images/multiscalebrainparcellator_888x551.png)
+
+The <mark>Multi-Scale Brain Parcellator</mark> pipelines uses a combination of tools from well-known software packages, including FSL_, FreeSurfer_, ANTs_ as well as in-house tools from CMTK.
+
+This tool allows you to easily do the following:
+
+- Take T1 from raw to brain parcellations at 5 different scales.
+- Implement tools from different software packages.
+- Automate and parallelize processing steps, which provides a significant
+  speed-up from typical linear, manual processing.
+
+Reproducibility and replicability is achieved through the distribution of a BIDSApp, a software container image which provide a frozen environment where versions of all external softwares and libraries are fixed.
+
+More information, installation instructions and documentation can be found at ![https://multiscalebrainparcellator.readthedocs.io/](https://multiscalebrainparcellator.readthedocs.io/)
 
 ### License
 This software is distributed under the open-source license Modified BSD. See [license](LICENSE) for more details.
@@ -19,7 +32,7 @@ This software is distributed under the open-source license Modified BSD. See [li
 
 If your are using the Multi-Scale Brain Parcellator in your work, please acknowledge this software and its dependencies. To help you to do so, we recommend you to use, modify to your needs, and include in your work the following text:
 
-> Results included in this manuscript come from the Multi-Scale Brain Parcellator version latest [1], a processing pipeline, written in Python which uses Nipype [2,3]. It is encapsulated in a BIDS app [4] based on Docker [5] and Singularity [6] container technologies. Resampling to isotropic resolution, Desikan-Killiany brain parcellation [7], brainstem parcellation [8], and hippocampal subfields segmentation [9] were performed using FreeSurfer 6.0.1. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [10], probabilistic atlas-based segmentation of the thalamic nuclei [11],and combination of all segmented structures, using in-house CMTK tools and the antsRegistrationSyNQuick of ANTS v2.2.0 [12].
+> Results included in this manuscript come from the Multi-Scale Brain Parcellator version latest [1], a processing pipeline, written in Python which uses Nipype [2,3]. It is encapsulated in a BIDS app [4] based on Docker [5] and Singularity [6] container technologies. Resampling to isotropic resolution, Desikan-Killiany brain parcellation [7], brainstem parcellation [8], and hippocampal subfields segmentation [9] were performed using FreeSurfer 6.0.1. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [10], probabilistic atlas-based segmentation of the thalamic nuclei [11],and combination of all segmented structures, using in-house CMTK tools and the antsRegistrationSyNQuick tool of ANTS v2.2.0 [12].
 
 #### References
 

@@ -21,12 +21,12 @@ This pipeline is developed by the Hagmann’s group at the University Hospital o
 About
 *********
 
+``Multi-Scale Brain Parcellator``, part of the Connectome Mapping Toolkit (CMTK), is a BIDS App that implements a full anatomical MRI processing pipeline, from raw T1w data to structural brain parcellation at five different scales.
+
 .. image:: images/multiscalebrainparcellator.png
 	:width: 888
 	:align: center
-
-``Multi-Scale Brain Parcellator``, part of the Connectome Mapping Toolkit (CMTK), is a BIDS App that implements a full anatomical MRI processing pipeline, from raw T1w data to structural brain parcellation at five different scales.
-
+  
 The ``Multi-Scale Brain Parcellator`` pipelines uses a combination of tools from well-known software packages, including FSL_, FreeSurfer_, ANTs_ as well as in-house tools from CMTK.
 
 This tool allows you to easily do the following:
