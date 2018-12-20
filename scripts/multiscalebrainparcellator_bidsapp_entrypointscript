@@ -93,7 +93,7 @@ def run(command, env={}):
 
 if __name__ == '__main__':
     """Entry point"""
-    pars = parser.get_parser()
+    pars = parser.get()
     args = pars.parse_args()
 
     print('BIDS dataset: {}'.format(args.bids_dir))
