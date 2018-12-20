@@ -23,6 +23,7 @@ This tool allows you to easily do the following:
 
 Reproducibility and replicability is achieved through the distribution of a BIDSApp, a software container image which provide a frozen environment where versions of all external softwares and libraries are fixed.
 
+### Documentation
 More information, installation instructions and documentation can be found at ![https://multiscalebrainparcellator.readthedocs.io/](https://multiscalebrainparcellator.readthedocs.io/)
 
 ### License
