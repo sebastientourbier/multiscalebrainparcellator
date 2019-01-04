@@ -117,18 +117,18 @@ jobs:
             - /tmp/data
             - /tmp/ds005/derivatives/freesurfer
 
-  update_cache:
-    machine:
-      # Ubuntu 14.04 with Docker 17.10.0-ce
-      image: circleci/classic:201711-01
-    working_directory: /tmp/src/multiscalebrainparcellator
-    steps:
-      - attach_workspace:
-          at: /tmp
-      - save_cache:
-         key: docker-{{ .Branch }}-{{ epoch }}
-         paths:
-           - /tmp/cache/docker.tar.gz
+  # update_cache:
+  #   machine:
+  #     # Ubuntu 14.04 with Docker 17.10.0-ce
+  #     image: circleci/classic:201711-01
+  #   working_directory: /tmp/src/multiscalebrainparcellator
+  #   steps:
+  #     - attach_workspace:
+  #         at: /tmp
+  #     - save_cache:
+  #        key: docker-{{ .Branch }}-{{ epoch }}
+  #        paths:
+  #          - /tmp/cache/docker.tar.gz
 
   test:
     machine:
@@ -180,7 +180,6 @@ jobs:
                 -v /tmp/data/ds005:/bids_dataset \
                 -v /tmp/data/ds005/derivatives:/bids_dataset/derivatives \
                 -v $FS_LICENSE:/opt/freesurfer/license.txt \
-                -u $(id -u):$(id -g) \
                 sebastientourbier/multiscalebrainparcellator:latest \
                 /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
                 --skip_bids_validator \
@@ -285,7 +284,7 @@ workflows:
       - test:
           requires:
             - get_data
-            - update_cache
+            # - update_cache
             - build
           filters:
             branches:
