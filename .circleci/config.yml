@@ -143,7 +143,7 @@ jobs:
       - run:
           name: Check whether build should be skipped
           command: |
-            cd /home/circleci/src/fmriprep
+            cd /home/circleci/src/multiscalebrainparcellator
             if [[ "$( git log --format=oneline -n 1 $CIRCLE_SHA1 | grep -i -E '\[skip[ _]?ds005\]' )" != "" ]]; then
               echo "Skipping ds000005 build"
               circleci step halt
