@@ -59,7 +59,7 @@ jobs:
           no_output_timeout: 40m
           command: |
             mkdir -p /tmp/cache
-            docker save ubuntu:16.04 sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest sebastientourbier/multiscalebrainparcellator:latest \
+            docker save sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest sebastientourbier/multiscalebrainparcellator:latest \
             | pigz -8 -p 3 > /tmp/cache/docker.tar.gz
       - persist_to_workspace:
           root: /tmp
