@@ -9,7 +9,7 @@ jobs:
     working_directory: tmp/src/multiscalebrainparcellator
     steps:
       - run:
-          name: Install parallel gzip
+          name: Install parallel gzip and python2
           command: |
             apk add --no-cache pigz python2
       - restore_cache:
@@ -55,7 +55,7 @@ jobs:
               && e=0 && break || sleep 15
             done && [ "$e" -eq "0" ]
       - run:
-          name: Docker save
+          name: Save Docker Images
           no_output_timeout: 40m
           command: |
             mkdir -p /tmp/cache
@@ -132,6 +132,7 @@ jobs:
 
   ds005:
     machine:
+      # Ubuntu 14.04 with Docker 17.10.0-ce
       image: circleci/classic:201711-01
     working_directory: /tmp/ds005
     environment:
