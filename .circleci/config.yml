@@ -130,7 +130,7 @@ jobs:
          paths:
            - /tmp/cache/docker.tar.gz
 
-  ds005:
+  test:
     machine:
       # Ubuntu 14.04 with Docker 17.10.0-ce
       image: circleci/classic:201711-01
@@ -183,6 +183,7 @@ jobs:
                 -u $(id -u):$(id -g) \
                 sebastientourbier/multiscalebrainparcellator:latest \
                 /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
+                --skip_bids_validator \
                 --isotropic_resolution 1.0 \
                 --thalamic_nuclei \
                 --hippocampal_subfields \
@@ -281,9 +282,10 @@ workflows:
             tags:
               only: /.*/
 
-      - ds005:
+      - test:
           requires:
             - get_data
+            - update_cache
             - build
           filters:
             branches:
@@ -296,7 +298,7 @@ workflows:
           requires:
             - build
             # - build_docs
-            - ds005
+            - test
           filters:
             branches:
               only: master
