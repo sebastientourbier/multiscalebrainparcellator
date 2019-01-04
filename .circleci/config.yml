@@ -51,7 +51,7 @@ jobs:
                 --cache-from=sebastientourbier/multiscalebrainparcellator \
                 --rm=false \
                 -t sebastientourbier/multiscalebrainparcellator:latest \
-                --build-arg VCS_REF=`git rev-parse --short HEAD` \
+                --build-arg VCS_REF=`git rev-parse --short HEAD`
               && e=0 && break || sleep 15
             done && [ "$e" -eq "0" ]
       - run:
