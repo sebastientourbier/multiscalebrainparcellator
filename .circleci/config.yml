@@ -178,8 +178,7 @@ jobs:
                 sudo setfacl -m group:$(id -gn):rwx /tmp/ds005/work
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dataset \
-                -v /tmp/data/ds005/derivatives:/bids_dataset/derivatives \
-                -v /tmp/data/ds005/derivatives/freesurfer:/bids_dataset/derivatives/freesurfer \
+                -v /tmp/ds005/derivatives:/bids_dataset/derivatives \
                 -v $FS_LICENSE:/opt/freesurfer/license.txt \
                 sebastientourbier/multiscalebrainparcellator:latest \
                 /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
