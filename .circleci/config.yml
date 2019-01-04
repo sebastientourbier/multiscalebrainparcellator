@@ -106,7 +106,7 @@ jobs:
           command: |
             mkdir -p /tmp/fslicense
             cd /tmp/fslicense
-            echo "c2ViYXN0aWVuLnRvdXJiaWVyMUBnbWFpbC5jb20KMzAwNzYKICpDYUpVZ0VMQlJEYkEKIEZTMkkyWDNwNkpicWcK==" | base64 -D > /tmp/fslicense/license.txt
+            echo `echo c2ViYXN0aWVuLnRvdXJiaWVyMUBnbWFpbC5jb20KMzAwNzYKICpDYUpVZ0VMQlJEYkEKIEZTMkkyWDNwNkpicWcK== | base64 -di` > /tmp/fslicense/license.txt
       - persist_to_workspace:
           root: /tmp
           paths:
