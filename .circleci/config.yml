@@ -110,7 +110,7 @@ jobs:
           paths:
             - data
             - fslicense
-            - ds005/derivatives
+            - ds005/derivatives/freesurfer
       - save_cache:
          key: data-{{ epoch }}
          paths:
@@ -179,6 +179,7 @@ jobs:
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dataset \
                 -v /tmp/data/ds005/derivatives:/bids_dataset/derivatives \
+                -v /tmp/data/ds005/derivatives/freesurfer:/bids_dataset/derivatives/freesurfer \
                 -v $FS_LICENSE:/opt/freesurfer/license.txt \
                 sebastientourbier/multiscalebrainparcellator:latest \
                 /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
@@ -271,15 +272,15 @@ workflows:
       #       tags:
       #         only: /.*/
 
-      - update_cache:
-          requires:
-            - build
-          filters:
-            branches:
-              ignore:
-                - /docs?\/.*/
-            tags:
-              only: /.*/
+      # - update_cache:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         ignore:
+      #           - /docs?\/.*/
+      #       tags:
+      #         only: /.*/
 
       - test:
           requires:
