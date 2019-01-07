@@ -2278,7 +2278,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
     def generate_single_parcellation(v,i,fs_string,subject_dir,subject_id):
 
         v=2
-        
+
     	# Multiscale parcellation - define annotation and segmentation variables
     	rh_annot_files = ['rh.lausanne2008.scale1.annot', 'rh.lausanne2008.scale2.annot', 'rh.lausanne2008.scale3.annot', 'rh.lausanne2008.scale4.annot', 'rh.lausanne2008.scale5.annot']
     	lh_annot_files = ['lh.lausanne2008.scale1.annot', 'lh.lausanne2008.scale2.annot', 'lh.lausanne2008.scale3.annot', 'lh.lausanne2008.scale4.annot', 'lh.lausanne2008.scale5.annot']
@@ -2326,19 +2326,12 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
         # 3. Update numerical IDs of cortical and subcortical regions
         # Load Nifti volume
         if v:
-            print('Freesurfer path {} existing? {}'.format(os.path.join(subject_dir, 'tmp'),os.path.isdir(os.path.join(subject_dir, 'tmp'))))
-            print('aseg_output[{}] existing? {}'.format(i,os.path.isfile(os.path.join(subject_dir, 'tmp', aseg_output[i]))))
-            try:
-                with open(os.path.join(subject_dir, 'tmp', aseg_output[i])) as f:
-                    s = f.read()
-                    print 'read', len(s), 'bytes.'
-            except IOError as x:
-                if x.errno == errno.ENOENT:
-                    print argv[1], '- does not exist'
-                elif x.errno == errno.EACCES:
-                    print argv[1], '- cannot be read'
-                else:
-                    print argv[1], '- some other error'
+            print('Freesurfer path {} existing? {}'.format(os.path.join(subject_dir, 'tmp'),os.access(os.path.join(subject_dir, 'tmp'),os.F_OK)))
+            print('Freesurfer path {} readable? {}'.format(os.path.join(subject_dir, 'tmp'),os.access(os.path.join(subject_dir, 'tmp'),os.R_OK)))
+            print('Freesurfer path {} writable? {}'.format(os.path.join(subject_dir, 'tmp'),os.access(os.path.join(subject_dir, 'tmp'),os.W_OK)))
+            print('aseg_output[{}] existing? {}'.format(i,os.access(os.path.join(subject_dir, 'tmp', aseg_output[i]),os.F_OK)))
+            print('aseg_output[{}] readable? {}'.format(i,os.access(os.path.join(subject_dir, 'tmp', aseg_output[i]),os.R_OK)))
+
             print('     > relabel cortical and subcortical regions')
         this_nifti = ni.load(os.path.join(subject_dir, 'tmp', aseg_output[i]))
         vol = this_nifti.get_data()	# numpy.ndarray
