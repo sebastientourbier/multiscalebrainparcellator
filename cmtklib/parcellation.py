@@ -2323,6 +2323,18 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
         # 3. Update numerical IDs of cortical and subcortical regions
         # Load Nifti volume
         if v:
+            print('aseg_output[{}] existing? {}'.format(i,os.path.isfile(os.path.join(subject_dir, 'tmp', aseg_output[i]))))
+            try:
+                with open(os.path.join(subject_dir, 'tmp', aseg_output[i])) as f:
+                    s = f.read()
+                    print 'read', len(s), 'bytes.'
+                except IOError as x:
+                    if x.errno == errno.ENOENT:
+                        print argv[1], '- does not exist'
+                    elif x.errno == errno.EACCES:
+                        print argv[1], '- cannot be read'
+                    else:
+                        print argv[1], '- some other error'
             print('     > relabel cortical and subcortical regions')
         this_nifti = ni.load(os.path.join(subject_dir, 'tmp', aseg_output[i]))
         vol = this_nifti.get_data()	# numpy.ndarray
