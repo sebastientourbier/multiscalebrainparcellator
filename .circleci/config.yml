@@ -198,7 +198,6 @@ jobs:
           command: |
             mkdir -p /tmp/ds005/test
             find /tmp/ds005/derivatives -path */figures -prune -o -name "*" -print | sed s+/tmp/ds005/derivatives/++ | sort > /tmp/ds005/test/outputs.out
-            diff /tmp/src/multiscalebrainparcellator/.circleci/ds005_outputs.txt /tmp/ds005/test/outputs.out
             exit $?
       - run:
           name: Clean working directory
