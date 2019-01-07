@@ -2278,6 +2278,16 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
     def generate_single_parcellation(v,i,fs_string,subject_dir,subject_id):
 
         v=2
+        if v:
+            print('     > Copy fsaverage')
+
+        src = os.path.join(os.environ['FREESURFER_HOME'], 'subjects', 'fsaverage')
+        dst = os.path.join(os.environ['SUBJECTS_DIR'],'fsaverage')
+
+        if os.path.isdir(dst):
+            shutil.rmtree(dst)
+
+        shutil.copytree(src, dst)
 
     	# Multiscale parcellation - define annotation and segmentation variables
     	rh_annot_files = ['rh.lausanne2008.scale1.annot', 'rh.lausanne2008.scale2.annot', 'rh.lausanne2008.scale3.annot', 'rh.lausanne2008.scale4.annot', 'rh.lausanne2008.scale5.annot']
