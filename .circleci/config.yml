@@ -207,7 +207,7 @@ jobs:
             find /tmp/ds005/work -not -name "*.svg" -not -name "*.html" -not -name "*.rst" \
                 -not -name "*.mat" -not -name "*.gpickle" -not -name "*.lta" -not -name "*.json" -not -name "*.txt" -not -name "*.pklz" -type f -delete
       - store_artifacts:
-          path: /tmp/ds005
+          path: /tmp/ds005/derivatives/cmp
 
   deploy_docker:
     machine:
