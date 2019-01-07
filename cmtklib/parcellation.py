@@ -2276,6 +2276,9 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
 	# 	os.remove(os.path.join(subject_dir, 'tmp', aseg_output[i]))
 
     def generate_single_parcellation(v,i,fs_string,subject_dir,subject_id):
+
+        v=2
+        
     	# Multiscale parcellation - define annotation and segmentation variables
     	rh_annot_files = ['rh.lausanne2008.scale1.annot', 'rh.lausanne2008.scale2.annot', 'rh.lausanne2008.scale3.annot', 'rh.lausanne2008.scale4.annot', 'rh.lausanne2008.scale5.annot']
     	lh_annot_files = ['lh.lausanne2008.scale1.annot', 'lh.lausanne2008.scale2.annot', 'lh.lausanne2008.scale3.annot', 'lh.lausanne2008.scale4.annot', 'lh.lausanne2008.scale5.annot']
@@ -2323,6 +2326,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
         # 3. Update numerical IDs of cortical and subcortical regions
         # Load Nifti volume
         if v:
+            print('Freesurfer path {} existing? {}'.format(os.path.join(subject_dir, 'tmp'),os.path.isdir(os.path.join(subject_dir, 'tmp'))))
             print('aseg_output[{}] existing? {}'.format(i,os.path.isfile(os.path.join(subject_dir, 'tmp', aseg_output[i]))))
             try:
                 with open(os.path.join(subject_dir, 'tmp', aseg_output[i])) as f:
