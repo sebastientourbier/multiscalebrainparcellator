@@ -2174,7 +2174,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
 
 	# We need to add these instructions when running FreeSurfer commands from Python
 	# (if these instructions are not present, Python rises a 'Symbol not found: ___emutls_get_address' exception in macOS)
-	fs_string = 'export SUBJECTS_DIR=' + freesurfer_subj
+	fs_string = 'export SUBJECTS_DIR=' + freesurfer_subja
 
 
 	# Redirect ouput if low verbose
