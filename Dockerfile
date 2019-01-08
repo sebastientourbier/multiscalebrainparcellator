@@ -20,4 +20,16 @@ WORKDIR /app
 RUN python setup.py install
 
 #COPY version /version
-#ENTRYPOINT ["multiscalebrainparcellator_bidsapp_entrypointscript"]
+ENTRYPOINT ["multiscalebrainparcellator_bidsapp_entrypointscript"]
+
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="MULTISCALEBRAINPARCELLATOR" \
+      org.label-schema.description="MULTISCALEBRAINPARCELLATOR - 5-scale brain parcellation tool" \
+      org.label-schema.url="https://multiscalebrainparcellator.readthedocs.io" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/sebastientourbier/multiscalebrainparcellator" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0"
