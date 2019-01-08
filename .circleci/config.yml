@@ -39,6 +39,8 @@ jobs:
           command: |
             # Get version, update files.
             THISVERSION=$( python get_version.py )
+            echo "THISVERSION : ${THISVERSION}"
+            echo "CIRCLE_TAG : ${CIRCLE_TAG}"
             if [[ ${THISVERSION:0:1} == "0" ]] ; then
               echo "WARNING: latest git tag could not be found"
               echo "Please, make sure you fetch all tags from upstream with"
@@ -171,7 +173,7 @@ jobs:
             fi
       - run:
           name: Run anatomical workflow on ds005
-          no_output_timeout: 2h
+          no_output_timeout: 3h
           command: |
             mkdir -p /tmp/ds005/work /tmp/ds005/derivatives
             docker run -it --rm \

@@ -456,11 +456,11 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         if(self.number_of_cores != 1):
             print("Number of cores used: {}".format(self.number_of_cores))
-            print(os.environ)
+            #print(os.environ)
             anat_flow.run(plugin='MultiProc', plugin_args={'n_procs' : self.number_of_cores})
         else:
             print("Number of cores used: {}".format(self.number_of_cores))
-            print(os.environ)
+            #print(os.environ)
             anat_flow.run()
 
         # Clean undesired folders/files

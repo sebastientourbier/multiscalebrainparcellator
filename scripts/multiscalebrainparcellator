@@ -25,8 +25,8 @@ def info():
     print("""Copyright (C) 2017-2019, Brain Communication Pathways Sinergia Consortium, Switzerland
              All rights reserved.\n""")
     print('###################################################################')
-    print('ENV : {}'.format(os.environ))
-    print('###################################################################')
+    #print('ENV : {}'.format(os.environ))
+    #print('###################################################################')
 
 def usage():
     print "Usage: multiscalebrainparcellator bids_folder sub-<label> (ses-<label>) anatomical_ini_file"
