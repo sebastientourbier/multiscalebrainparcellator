@@ -2279,13 +2279,13 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
 
         v=2
         if v:
-            print('     > Copy fsaverage')
+            print(' ... Copy fsaverage')
 
         src = os.path.join(os.environ['FREESURFER_HOME'], 'subjects', 'fsaverage')
-        dst = os.path.join(os.environ['SUBJECTS_DIR'],'fsaverage')
+        dst = os.path.join(os.path.join(subject_dir, os.pardir),'fsaverage')
 
         if os.path.isdir(dst):
-            shutil.rmtree(dst)
+            shutil.rmtree(dst,ignore_errors=True)
 
         shutil.copytree(src, dst)
 
@@ -2296,12 +2296,12 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
     	aseg_output = ['ROIv_scale1.nii.gz', 'ROIv_scale2.nii.gz', 'ROIv_scale3.nii.gz', 'ROIv_scale4.nii.gz', 'ROIv_scale5.nii.gz']
 
         if v:
-            print(' ... working on multiscale parcellation, SCALE {}'.format(i+1))
+            print(' ... Working on multiscale parcellation, SCALE {}'.format(i+1))
 
         # 1. Resample fsaverage CorticalSurface onto SUBJECT_ID CorticalSurface and map annotation for current scale
         # Left hemisphere
         if v:
-            print('     > resample fsaverage CorticalSurface to individual CorticalSurface')
+            print('     > Resample fsaverage CorticalSurface to individual CorticalSurface')
         mri_cmd = fs_string + '; mri_surf2surf --srcsubject fsaverage --trgsubject %s --hemi lh --sval-annot %s --tval %s' % (
                     subject_id,
                     pkg_resources.resource_filename('cmtklib',op.join('data','parcellation','lausanne2018', lh_annot_files[i])),
@@ -2323,7 +2323,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
         # 2. Generate Nifti volume from annotation
         #    Note: change here --wmparc-dmax (FS default 5mm) to dilate cortical regions toward the WM
         if v:
-            print('     > generate Nifti volume from annotation')
+            print('     > Generate Nifti volume from annotation')
         mri_cmd = fs_string + '; mri_aparc2aseg --s %s --annot %s --wmparc-dmax 0 --labelwm --hypo-as-wm --new-ribbon --o %s' % (
                     subject_id,
                     annot[i],
@@ -2342,7 +2342,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
             print('aseg_output[{}] existing? {}'.format(i,os.access(os.path.join(subject_dir, 'tmp', aseg_output[i]),os.F_OK)))
             print('aseg_output[{}] readable? {}'.format(i,os.access(os.path.join(subject_dir, 'tmp', aseg_output[i]),os.R_OK)))
 
-            print('     > relabel cortical and subcortical regions')
+            print('     > Relabel cortical and subcortical regions')
         this_nifti = ni.load(os.path.join(subject_dir, 'tmp', aseg_output[i]))
         vol = this_nifti.get_data()	# numpy.ndarray
         hdr = this_nifti.header
@@ -2378,7 +2378,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
 
         # 4. Save Nifti and mgz volumes
         if v:
-            print('     > save output volumes')
+            print('     > Save output volumes')
         this_out = os.path.join(subject_dir, 'mri', aseg_output[i])
         img = ni.Nifti1Image(vol, this_nifti.affine, hdr2)
         ni.save(img, this_out)
@@ -2395,7 +2395,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
 
     # Loop over parcellation scales
     if v:
-        print('Generate MULTISCALE PARCELLATION for input subject')
+        print('Generate MULTISCALE PARCELLATION for input subject {}'.format(subject_id))
 
     import multiprocessing as mp
     jobs = []

@@ -20,4 +20,4 @@ WORKDIR /app
 RUN python setup.py install
 
 #COPY version /version
-ENTRYPOINT ["multiscalebrainparcellator_bidsapp_entrypointscript"]
+#ENTRYPOINT ["multiscalebrainparcellator_bidsapp_entrypointscript"]
