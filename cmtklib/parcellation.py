@@ -2117,7 +2117,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
     freesurfer_subj = os.path.abspath(subjects_dir)
     subject_dir = os.path.join(freesurfer_subj, subject_id)
 
-    if not ( os.access(freesurfer_subj,os.F_OK) and os.access(os.path.join(freesurfer_subj, 'fsaverage'),os.F_OK) ):
+    if not ( os.access(freesurfer_subj,os.F_OK) ):
         print('ERROR: FreeSurfer subjects directory ($SUBJECTS_DIR) does not exist')
     else:
         if v:
