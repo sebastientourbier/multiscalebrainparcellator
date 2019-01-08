@@ -2118,12 +2118,18 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
     subject_dir = os.path.join(freesurfer_subj, subject_id)
 
     if not ( os.access(freesurfer_subj,os.F_OK) and os.access(os.path.join(freesurfer_subj, 'fsaverage'),os.F_OK) ):
-        print('ERROR: FreeSurfer subject directory is invalid. The folder does not exist or does not contain \'fsaverage\'')
+        print('ERROR: FreeSurfer subjects directory ($SUBJECTS_DIR) does not exist')
     else:
         if v:
             print('- FreeSurfer subjects directory ($SUBJECTS_DIR):\n  {}\n'.format(freesurfer_subj))
 
-    if not ( os.path.access(subject_dir,os.F_OK) ):
+    if not ( os.access(os.path.join(freesurfer_subj, 'fsaverage'),os.F_OK) ):
+        print('ERROR: FreeSurfer subjects directory ($SUBJECTS_DIR) DOES NOT contain \'fsaverage\'')
+    else:
+        if v:
+            print('-  FreeSurfer subjects directory ($SUBJECTS_DIR) DOES contain \'fsaverage\'\n')
+
+    if not ( os.access(subject_dir,os.F_OK) ):
         print('ERROR: No input subject directory was found in FreeSurfer $SUBJECTS_DIR')
     else:
         if v:
