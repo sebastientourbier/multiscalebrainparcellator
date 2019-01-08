@@ -172,10 +172,7 @@ jobs:
           no_output_timeout: 2h
           command: |
             mkdir -p /tmp/ds005/work /tmp/ds005/derivatives
-            sudo setfacl -d -m group:$(id -gn):rwx /tmp/ds005/derivatives && \
-                sudo setfacl -m group:$(id -gn):rwx /tmp/ds005/derivatives
-            sudo setfacl -d -m group:$(id -gn):rwx /tmp/ds005/work && \
-                sudo setfacl -m group:$(id -gn):rwx /tmp/ds005/work
+            
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dataset \
                 -v /tmp/ds005/derivatives:/bids_dataset/derivatives \
