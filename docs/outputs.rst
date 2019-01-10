@@ -2,7 +2,7 @@
 Outputs of Multi-Scale Brain Parcellator
 *********************
 
-.. note:: Multi-Scale Brain Parcellator outputs are currently being updated to conform to the :abbr:`BIDS (brain imaging data structure)` Derivatives specification (see `BIDS Derivatives RC1`_).
+.. note:: Multi-Scale Brain Parcellator outputs are currently being updated to conform to the :abbr:`BIDS (brain imaging data structure)` Common Derivatives specification (see `BIDS Common Derivatives Extension <https://docs.google.com/document/d/1Wwc4A6Mow4ZPPszDIWfCUCRNstn7d_zzaWPcfcHmgI4/edit>`_).
 
 Multi-Scale Brain Parcellator Derivatives
 ==============
