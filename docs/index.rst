@@ -6,8 +6,8 @@ This pipeline is developed by the Hagmann’s group at the University Hospital o
 
 
 
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2536779.svg
-   :target: https://doi.org/10.5281/zenodo.2536779
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2536778.svg
+   :target: https://doi.org/10.5281/zenodo.2536778
    :alt: Digital Object Identifier (DOI)
 
 
