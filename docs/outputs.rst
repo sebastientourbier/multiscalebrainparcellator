@@ -1,46 +1,57 @@
 *********************
-Outputs
+Outputs of Multi-Scale Brain Parcellator
 *********************
 
-Segmentation
+.. note:: Multi-Scale Brain Parcellator outputs are currently being updated to conform to the :abbr:`BIDS (brain imaging data structure)`
+Derivatives specification (see `BIDS Derivatives RC1`_).
+
+Multi-Scale Brain Parcellator Derivatives
 ==============
 
-Surfaces are extracted using Freesurfer.
+Processed, or derivative, data are written to
+``<bids_dataset/derivatives>/cmp/sub-<subject_label>/``.
+The `BIDS Derivatives RC1`_ specification describes the naming and metadata conventions we follow.
 
-.. image:: images/ex_segmentation1.png
-	:width: 600
+The configuration file generated and used for processing each participant is saved in this folder named sub-<subject_label>_anatomical_config.ini
 
-T1 is segmented using Freesurfer.
+Anatomical derivatives in the original ``T1w`` space are placed in each subject's ``anat`` subfolder including:
 
-.. image:: images/ex_segmentation2.png
-	:width: 600
+- ``anat/sub-<subject_label>_T1w_space-orig_desc-head.nii.gz``
+- ``/anat/sub-<subject_label>_T1w_space-orig_desc-brain.nii.gz``
+- ``/anat/sub-<subject_label>_T1w_space-orig_desc-brain_mask.nii.gz``
 
-Brainstem sub-structures are segmented using Freesurfer.
+- ``anat/sub-<subject_label>_T1w_space-orig_label-WM_dseg.nii.gz``
+- ``anat/sub-<subject_label>_T1w_space-orig_label-GM_dseg.nii.gz``
+- ``anat/sub-<subject_label>_T1w_space-orig_label-CSF_dseg.nii.gz``
 
-.. image:: images/sag_brainstemSS.png
-	:width: 600
+The five different brain parcellation are saved as:
 
-Hippocampal subfields are segmented using Freesurfer.
+- ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas.nii.gz``
 
-.. image:: images/sag_hippsub.png
-	:width: 600
+where ``<scale_label>`` : scale1, scale2, scale3, scale4, scale5 corresponds to the parcellation scale.
 
-Thalamic nuclei are segmented using an in-house tool of CMTK which implement the probabilistic atlas-based thalamic segmentation method with the help of ANTs (See Najdenovska 2018 in Citing Section).
-
-.. image:: images/ax_thalamus.png
-	:width: 600
+Additionally, the description of parcel labels and the updated FreeSurfer color lookup table are saved:
+- ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas.graphml``
+- ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas_FreeSurferColorLUT.txt``
 
 
-Parcellation
+FreeSurfer Derivatives
 ------------
 
-Desikan-Killiany brain parcellation is performed using Freesurfer.
+A FreeSurfer subjects directory is created in ``<bids_dataset/derivatives>/freesurfer``.
 
-.. image:: images/aparcaseg.png
-	:width: 600
+::
 
-5-Scale Brain parcellation is created according to Cammoun et al. 2012 (See ``Citing``) at 5 different scales.
-All structures are then combined to create the final brain parcellation at each scale.
+    freesurfer/
+        fsaverage/
+            mri/
+            surf/
+            ...
+        sub-<subject_label>/
+            mri/
+            surf/
+            ...
+        ...
 
-.. image:: images/multiscaleparcellation.png
-	:width: 600
+The ``fsaverage`` subject distributed with the running version of
+FreeSurfer is copied into this directory.
