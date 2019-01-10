@@ -7,7 +7,7 @@ Outputs of Multi-Scale Brain Parcellator
 Multi-Scale Brain Parcellator Derivatives
 ==============
 
-Processed, or derivative, data are written to ``<bids_dataset/derivatives>/cmp/sub-<subject_label>/``. In this folder, a configuration file generated and used for processing each participant is saved as ``sub-<subject_label>_anatomical_config.ini``
+Processed, or derivative, data are written to ``<bids_dataset/derivatives>/cmp/sub-<subject_label>/``. In this folder, a configuration file generated and used for processing each participant is saved as ``sub-<subject_label>_anatomical_config.ini``. It summarizes pipeline workflow options and parameters used for processing.
 
 Anatomical derivatives in the original ``T1w`` space are placed in each subject's ``anat`` subfolder including:
 
