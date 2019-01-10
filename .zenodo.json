@@ -33,16 +33,4 @@
       }
     ],
     "access_right": "open",
-    "related_identifiers": [
-        {
-            "scheme": "url",
-            "identifier": "https://github.com/sebastientourbier/multiscalebrainparcellator/tree/v1.0.0-beta5",
-            "relation": "isSupplementTo"
-        },
-        {
-            "scheme": "doi",
-            "identifier": "10.5281/zenodo.2536778",
-            "relation": "isVersionOf"
-        }
-    ]
 }
