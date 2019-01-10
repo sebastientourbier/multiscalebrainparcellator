@@ -4,6 +4,13 @@ Multi-Scale Brain Parcellator
 
 This pipeline is developed by the Hagmann’s group at the University Hospital of Lausanne (CHUV) for use within the `SNF Sinergia Project 170873 <http://p3.snf.ch/project-170873>`_, as well as for open-source software distribution.
 
+
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2536779.svg
+   :target: https://doi.org/10.5281/zenodo.2536779
+   :alt: Digital Object Identifier (DOI)
+
+
 .. image:: https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg
   :target: https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator
   :alt: Docker Build Status
@@ -26,7 +33,7 @@ About
 .. image:: images/multiscalebrainparcellator.png
 	:width: 888
 	:align: center
-  
+
 The ``Multi-Scale Brain Parcellator`` pipelines uses a combination of tools from well-known software packages, including FSL_, FreeSurfer_, ANTs_ as well as in-house tools from CMTK.
 
 This tool allows you to easily do the following:

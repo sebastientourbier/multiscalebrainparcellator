@@ -37,7 +37,8 @@ If your are using the Multi-Scale Brain Parcellator in your work, please acknowl
 
 #### References
 
-1.Multi-Scale Brain Parcellator available from: doi:xx.YYYY/zenodo.ZZZZZZ.
+1.Tourbier S, Aleman-Gomez Y, Griffa A, Hagmann P (2019, January 10) sebastientourbier/multiscalebrainparcellator: Multi-Scale Brain Parcellator v1.0.0-beta (Version v1.0.0-beta). Zenodo. http://doi.org/10.5281/zenodo.2536779
+
 
 2.Gorgolewski K, Burns CD, Madison C, Clark D, Halchenko YO, Waskom ML, Ghosh SS (2011). Nipype: a flexible, lightweight and extensible neuroimaging data processing framework in python. Front Neuroinform, vol. 5, no. 13. doi:10.3389/fninf.2011.00013.
 
