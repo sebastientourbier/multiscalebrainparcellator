@@ -7,10 +7,7 @@ Outputs of Multi-Scale Brain Parcellator
 Multi-Scale Brain Parcellator Derivatives
 ==============
 
-Processed, or derivative, data are written to
-``<bids_dataset/derivatives>/cmp/sub-<subject_label>/``.
-
-A configuration file generated and used for processing each participant is saved in this folder named ``sub-<subject_label>_anatomical_config.ini``
+Processed, or derivative, data are written to ``<bids_dataset/derivatives>/cmp/sub-<subject_label>/``. In this folder, a configuration file generated and used for processing each participant is saved as ``sub-<subject_label>_anatomical_config.ini``
 
 Anatomical derivatives in the original ``T1w`` space are placed in each subject's ``anat`` subfolder including:
 
@@ -29,6 +26,7 @@ The five different brain parcellation are saved as:
 where ``<scale_label>`` : ``scale1``, ``scale2``, ``scale3``, ``scale4``, ``scale5`` corresponds to the parcellation scale.
 
 Additionally, the description of parcel labels and the updated FreeSurfer color lookup table are saved:
+
 - ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas.graphml``
 - ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas_FreeSurferColorLUT.txt``
 
