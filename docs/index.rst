@@ -73,5 +73,6 @@ Contents
    index
    installation
    usage
+   workflow
    outputs
    citing
