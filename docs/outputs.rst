@@ -32,7 +32,7 @@ Additionally, the description of parcel labels and the updated FreeSurfer color 
 
 
 FreeSurfer Derivatives
-------------
+==============
 
 A FreeSurfer subjects directory is created in ``<bids_dataset/derivatives>/freesurfer``.
 
