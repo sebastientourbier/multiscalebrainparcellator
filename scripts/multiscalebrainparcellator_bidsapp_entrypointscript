@@ -139,7 +139,7 @@ if __name__ == '__main__':
 
     #Derivatives directory creation if it does not exist
     toolbox_derivatives_dir = os.path.join(args.output_dir , "cmp")
-    if not os.path.isdir(toolbox_derivatives_dir):
+    if not os.access(toolbox_derivatives_dir,os.F_OK):
         os.mkdir(toolbox_derivatives_dir)
 
     # Check subject/session structure og the BIDS dataset
