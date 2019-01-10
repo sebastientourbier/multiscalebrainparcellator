@@ -1,4 +1,4 @@
-""" This file contains multiscalebrainparcellator package information """
+""" This file contains multiscalebrainparcellator package version information """
 
 _version_major = 1
 _version_minor = 0
