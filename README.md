@@ -1,5 +1,7 @@
 ## Multi-Scale Brain Parcellator
 This pipeline is developed by the Hagmann’s group at the University Hospital of Lausanne (CHUV) for use within the SNF Sinergia Project 170873 (![project website](https://sinergiaconsortium.bitbucket.io/)), as well as for open-source software distribution.
+
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2536778.svg)](https://doi.org/10.5281/zenodo.2536778)
 <!-- [![DockerAutomatedBuild](https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg)](https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator) -->
 [![CircleCI](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master.svg?style=shield)](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master)
