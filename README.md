@@ -3,7 +3,6 @@ This pipeline is developed by the Hagmann’s group at the University Hospital o
 
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2536778.svg)](https://doi.org/10.5281/zenodo.2536778)
-<!-- [![DockerAutomatedBuild](https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg)](https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator) -->
 [![CircleCI](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master.svg?style=shield)](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master)
 [![Documentation Status](https://readthedocs.org/projects/multiscalebrainparcellator/badge/?version=latest)](https://multiscalebrainparcellator.readthedocs.io/en/latest/?badge=latest)
 
