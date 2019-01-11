@@ -1,7 +1,7 @@
 ## Multi-Scale Brain Parcellator
 This pipeline is developed by the Hagmann’s group at the University Hospital of Lausanne (CHUV) for use within the SNF Sinergia Project 170873 (![project website](https://sinergiaconsortium.bitbucket.io/)), as well as for open-source software distribution.
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2536778.svg)](https://doi.org/10.5281/zenodo.2536778)
-[![DockerAutomatedBuild](https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg)](https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator)
+<!-- [![DockerAutomatedBuild](https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg)](https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator) -->
 [![CircleCI](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master.svg?style=shield)](https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master)
 [![Documentation Status](https://readthedocs.org/projects/multiscalebrainparcellator/badge/?version=latest)](https://multiscalebrainparcellator.readthedocs.io/en/latest/?badge=latest)
 
@@ -115,13 +115,14 @@ To run it in participant level mode (for one participant):
         --brainstem_structures
 
 ### Credits
-* Patric Hagmann (pahagman)
+
 * Sebastien Tourbier (sebastientourbier)
 * Yasser Aleman (yasseraleman)
 * Alessandra Griffa (agriffa)
+* Patric Hagmann (pahagman)
 
 ### Funding
 Work supported by the [Sinergia SNF-170873 Grant](http://p3.snf.ch/Project-170873).
 
 ### Copyright
-Copyright (C) 2009-2019, Brain Communication Pathways Sinergia Consortium and the Multi Scale Brain Parcellator developers, Switzerland.
+Copyright (C) 2017-2019, Brain Communication Pathways Sinergia Consortium and the Multi Scale Brain Parcellator developers, Switzerland.
