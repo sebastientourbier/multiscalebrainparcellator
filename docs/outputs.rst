@@ -11,24 +11,24 @@ Processed, or derivative, data are written to ``<bids_dataset/derivatives>/cmp/s
 
 Anatomical derivatives in the original ``T1w`` space are placed in each subject's ``anat`` subfolder including:
 
-- ``anat/sub-<subject_label>_T1w_space-orig_desc-head.nii.gz``
-- ``anat/sub-<subject_label>_T1w_space-orig_desc-brain.nii.gz``
-- ``anat/sub-<subject_label>_T1w_space-orig_desc-brain_mask.nii.gz``
+- ``anat/sub-<subject_label>_desc-head_T1w.nii.gz``
+- ``anat/sub-<subject_label>_desc-brain_T1w.nii.gz``
+- ``anat/sub-<subject_label>_desc-brain_mask.nii.gz``
 
-- ``anat/sub-<subject_label>_T1w_space-orig_label-WM_dseg.nii.gz``
-- ``anat/sub-<subject_label>_T1w_space-orig_label-GM_dseg.nii.gz``
-- ``anat/sub-<subject_label>_T1w_space-orig_label-CSF_dseg.nii.gz``
+- ``anat/sub-<subject_label>_label-WM_dseg.nii.gz``
+- ``anat/sub-<subject_label>_label-GM_dseg.nii.gz``
+- ``anat/sub-<subject_label>_label-CSF_dseg.nii.gz``
 
 The five different brain parcellation are saved as:
 
-- ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas.nii.gz``
+- ``anat/sub-<subject_label>_label-L2018_desc-<scale_label>_atlas.nii.gz``
 
 where ``<scale_label>`` : ``scale1``, ``scale2``, ``scale3``, ``scale4``, ``scale5`` corresponds to the parcellation scale.
 
-Additionally, the description of parcel labels and the updated FreeSurfer color lookup table are saved:
+Additionally, the description of parcel labels and the updated FreeSurfer color lookup table are saved as:
 
-- ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas.graphml``
-- ``anat/sub-<subject_label>_T1w_space-orig_label-L2018_desc-<scale_label>_atlas_FreeSurferColorLUT.txt``
+- ``anat/sub-<subject_label>_label-L2018_desc-<scale_label>_atlas.graphml``
+- ``anat/sub-<subject_label>_label-L2018_desc-<scale_label>_atlas_FreeSurferColorLUT.txt``
 
 
 FreeSurfer Derivatives
