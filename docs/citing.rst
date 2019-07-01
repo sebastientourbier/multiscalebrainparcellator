@@ -3,14 +3,14 @@ Citing
 *********
 
 .. important::
-  * If your are using the Multi-Scale Brain Parcellator in your work, please acknowledge this software and its dependencies. To help you to do so, we recommend you to use, modify to your needs, and include in your work the following text:
+  * If your are using Multi-Scale Brain Parcellator in your work, please acknowledge this software and its dependencies. To help you to do so, we recommend you to use, modify to your needs, and include in your work the following text:
 
-    Results included in this manuscript come from the Multi-Scale Brain Parcellator version latest [1], a processing pipeline, written in Python which uses Nipype [2,3]. It is encapsulated in a BIDS app [4] based on Docker [5] and Singularity [6] container technologies. Resampling to isotropic resolution, Desikan-Killiany brain parcellation [7], brainstem parcellation [8], and hippocampal subfields segmentation [9] were performed using FreeSurfer 6.0.1. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [10], probabilistic atlas-based segmentation of the thalamic nuclei [11],and combination of all segmented structures, using in-house CMTK tools and the antsRegistrationSyNQuick tool of ANTS v2.2.0 [12].
+    Results included in this manuscript come from the Connectome Mapper 3 version latest [1], a processing pipeline, written in Python which uses Nipype [2,3]. It is encapsulated in a BIDS app [4] based on Docker [5] and Singularity [6] container technologies. Resampling to isotropic resolution, Desikan-Killiany brain parcellation [7], brainstem parcellation [8], and hippocampal subfields segmentation [9] were performed using FreeSurfer 6.0.1. Final parcellations were created by performing cortical brain parcellation on at 5 different scales [10], probabilistic atlas-based segmentation of the thalamic nuclei [11],and combination of all segmented structures, using in-house CMTK tools and the antsRegistrationSyNQuick tool of ANTS v2.2.0 [12].
 
     References
     -----------
 
-    1.Tourbier S, Aleman-Gomez Y, Griffa A, Hagmann P (2019, January 10) sebastientourbier/multiscalebrainparcellator: Multi-Scale Brain Parcellator (Version v1.0.0-beta8). Zenodo. http://doi.org/10.5281/zenodo.2536778
+    1.Tourbier S, Aleman-Gomez Y, Griffa A, Hagmann P (2019, January 10) csebastientourbier/multiscalebrainparcellator: Multi-Scale Brain Parcellator (Version v1.0.0-beta8). Zenodo. http://doi.org/10.5281/zenodo.2536778
 
     2.Gorgolewski K, Burns CD, Madison C, Clark D, Halchenko YO, Waskom ML, Ghosh SS (2011). Nipype: a flexible, lightweight and extensible neuroimaging data processing framework in python. Front Neuroinform, vol. 5, no. 13. doi:10.3389/fninf.2011.00013.
 
