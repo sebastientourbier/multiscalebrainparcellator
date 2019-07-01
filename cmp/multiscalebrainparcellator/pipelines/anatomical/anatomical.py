@@ -221,11 +221,11 @@ class AnatomicalPipeline(cmp_common.Pipeline):
             else:
                 anat_deriv_subject_directory = os.path.join(self.output_directory,"cmp",subject.split("_")[0],self.global_conf.subject_session,'anat')
 
-        T1_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_head.nii.gz')
-        brain_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_brain.nii.gz')
-        brainmask_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_brainmask.nii.gz')
-        wm_mask_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_class-WM.nii.gz')
-        roiv_files = glob.glob(anat_deriv_subject_directory+"/"+subject+"_T1w_parc_scale*.nii.gz")
+        T1_file = os.path.join(anat_deriv_subject_directory,subject+'_desc-head_T1w.nii.gz')
+        brain_file = os.path.join(anat_deriv_subject_directory,subject+'_desc-brain_T1w.nii.gz')
+        brainmask_file = os.path.join(anat_deriv_subject_directory,subject+'_desc-brainmask_dseg.nii.gz')
+        wm_mask_file = os.path.join(anat_deriv_subject_directory,subject+'_label-WM_dseg.nii.gz')
+        roiv_files = glob.glob(anat_deriv_subject_directory+"/"+subject+"_label-L2018_desc-scale*_atlas.nii.gz")
 
         error_message = ''
 
