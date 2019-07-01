@@ -37,7 +37,7 @@ This tool allows you to easily do the following:
 - Automate and parallelize processing steps, which provides a significant
   speed-up from typical linear, manual processing.
 
-Reproducibility and replicatibility is achieved through the distribution of a BIDSApp, a software container image which provide a frozen environment where versions of all external softwares and libraries are fixed.
+Reproducibility and replicatibility are promoted through the distribution of a BIDSApp, a software container image which provide a frozen environment where versions of all external softwares and libraries are fixed.
 
 
 *********
