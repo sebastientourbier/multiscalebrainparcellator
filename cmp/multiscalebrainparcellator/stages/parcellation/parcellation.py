@@ -20,7 +20,7 @@ import nipype.pipeline.engine as pe          # pypeline engine
 import cmtklib as cmtk
 import nipype.interfaces.utility as util
 
-from cmtklib.parcellation import Parcellate, ParcellateBrainstemStructures, ParcellateHippocampalSubfields, ParcellateThalamus, CombineParcellations
+from cmtklib.parcellation import Parcellate, ParcellateBrainstemStructures, ParcellateHippocampalSubfields, ParcellateThalamus, CombineParcellations, ComputeParcellationRoiVolumes
 # Own imports
 from cmp.multiscalebrainparcellator.stages.common import Stage
 
@@ -78,7 +78,8 @@ class ParcellationStage(Stage):
             "gm_mask_file",
             "aseg","aparc_aseg",
     	       #"cc_unknown_file","ribbon_file","roi_files",
-            "roi_volumes","roi_colorLUTs","roi_graphMLs","parcellation_scheme","atlas_info"]
+            "roi_volumes","roi_colorLUTs","roi_graphMLs","rois_volumetry",
+            "parcellation_scheme","atlas_info"]
 
     def create_workflow(self, flow, inputnode, outputnode):
         outputnode.inputs.parcellation_scheme = self.config.parcellation_scheme
@@ -148,6 +149,14 @@ class ParcellationStage(Stage):
                             (parcCombiner,outputnode,[("colorLUT_files","roi_colorLUTs")]),
                             (parcCombiner,outputnode,[("graphML_files","roi_graphMLs")]),
                         ])
+
+                computeROIVolumetry = pe.Node(interface=ComputeParcellationRoiVolumes(), name='computeROIVolumetry')
+
+                flow.connect([
+                            (parcCombiner,computeROIVolumetry,[("output_rois","roi_volumes")]),
+                            (parcCombiner,computeROIVolumetry,[("graphML_files","roi_graphMLs")]),
+                            (computeROIVolumetry,outputnode, [("rois_volumetry","rois_volumetry")]),
+                            ])
 
 
                     # create_atlas_info = pe.Node(interface=CreateLausanne2018AtlasInfo(),name="create_atlas_info")
