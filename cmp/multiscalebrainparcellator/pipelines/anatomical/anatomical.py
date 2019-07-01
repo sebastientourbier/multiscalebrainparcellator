@@ -476,7 +476,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         try:
             src = os.path.join(deriv_subject_directory,"anat","pypeline.log")
-            dest = os.path.join(deriv_subject_directory,"anat", "{}_log-multiscalbrainparcellator.txt".format(self.subject))
+            dest = os.path.join(deriv_subject_directory,"anat", "{}_log-multiscalebrainparcellator.txt".format(self.subject))
             shutil.move(src,dest)
         except:
             print("Skipped renaming of log file")
