@@ -33,6 +33,105 @@ try:
 except ImportError:
     raise Exception('Need scipy for binary erosion of white matter and CSF masks')
 
+class ComputeParcellationRoiVolumesInputSpec(BaseInterfaceInputSpec):
+    roi_volumes = InputMultiPath(File(exists=True), desc='ROI volumes registered to diffusion space', mandatory=True)
+    parcellation_scheme = traits.Enum('Lausanne2008',['Lausanne2008','Lausanne2018','NativeFreesurfer','Custom'], usedefault=True, mandatory=True)
+    roi_graphMLs = InputMultiPath(File(exists=True), desc='GraphML description of ROI volumes (Lausanne2018)', mandatory=True)
+    
+class ComputeParcellationRoiVolumesOutputSpec(TraitedSpec):
+    rois_volumetry = OutputMultiPath(File())
+
+class ComputeParcellationRoiVolumes(BaseInterface):
+    input_spec = ComputeParcellationRoiVolumesInputSpec
+    output_spec = ComputeParcellationRoiVolumesOutputSpec
+
+    def _run_interface(self, runtime):
+
+        if self.inputs.parcellation_scheme != "Custom":
+            if self.inputs.parcellation_scheme != "Lausanne2018":
+                resolutions = get_parcellation(self.inputs.parcellation_scheme)
+            else:
+                resolutions = get_parcellation(self.inputs.parcellation_scheme)
+                for parkey, parval in resolutions.items():
+                    for vol, graphml in zip(roi_volumes,roi_graphmls):
+                        if parkey in vol:
+                            roi_fname = vol
+                        if parkey in graphml:
+                            roi_graphml_fname = graphml
+                    
+                    roi       = nibabel.load(roi_fname)
+                    roiData   = roi.get_data()
+                    resolutions[parkey]['number_of_regions'] = roiData.max()
+                    resolutions[parkey]['node_information_graphml'] = op.abspath(roi_graphml_fname)
+
+                del roi, roiData
+        else:
+            resolutions = atlas_info
+
+        for parkey, parval in resolutions.items():
+
+            print("-------------------------------------------------------")
+            print("Processing {} parcellation - scale {}".format(self.inputs.parcellation_scheme,parkey))
+            print("-------------------------------------------------------")
+
+            # Initialize the TSV file used to store the parcellation volumetry resulty
+            volumetry_file = op.abspath('volumetry_{}.tsv'.format(parkey))
+            print("Create volumetry TSV file as %s".format(volumetry_file))
+            f_volumetry_file = open(volumetry_file,'w+')
+            time_now = strftime("%a, %d %b %Y %H:%M:%S",localtime())
+            hdr_lines = ['#$Id: volumetry_{}.tsv {} \n \n'.format(volumetry_file,time_now),
+                        '{:<4} {:<55} {:<10} {:>10} \n \n'.format("#No.","Label Name","Region Type","Volume (mm3)")]
+            f_volumetry_file.writelines (hdr_lines)
+            del hdr_lines
+
+
+            # add node information from parcellation
+            gp = nx.read_graphml(parval['node_information_graphml'])
+            n_nodes = len(gp)
+
+            # variables used by the percent counter
+            pc=-1
+            cnt=-1
+
+            # Loop over each parcel/ROI 
+            for u,d in gp.nodes(data=True):
+                # Percent counter
+                cnt+=1
+                pcN = int(round( float(100*cnt)/n_nodes ))
+                if pcN > pc and pcN%10 == 0:
+                    pc = pcN
+                    print('%4.0f%%' % (pc))
+
+                # Compute the parcel/ROI volume
+                parcel_volumetry = np.sum( roiData== int(d["dn_correspondence_id"]) )
+
+                # Get the label number
+                parcel_label = d["dn_multiscaleID"]
+
+                # Get each the parcel is cortical or subcortical 
+                parcel_type = d["dn_region"]
+
+                # Get the name of the parcel
+                parcel_name = d["dn_name"]
+
+                f_colorLUT.write('{:<4} {:<55} {:<10} {:>10} \n'.format(parcel_label,parcel_name,parcel_type,parcel_volumetry))
+
+            f_volumetry_file.close()
+            
+        return runtime
+
+    def _list_outputs(self):
+        outputs = self._outputs().get()
+        outputs['rois_volumetry'] = _gen_outfilenames('roi-volumetry', '.tsv')
+
+        return outputs
+
+    def _gen_outfilenames(self, basename, posfix):
+        filepaths = []
+        for scale in get_parcellation('Lausanne2018').keys():
+            filepaths.append(op.abspath(basename+'_'+scale+posfix))
+        return filepaths
+
 def erode_mask(maskFile):
     """ Erodes the mask """
     # Define erosion mask
