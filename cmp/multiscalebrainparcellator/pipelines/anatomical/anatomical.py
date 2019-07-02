@@ -17,7 +17,7 @@ import multiprocessing
 import time
 
 # PyBIDS import
-from bids.grabbids import BIDSLayout
+from bids import BIDSLayout
 
 # Nipype util imports
 import nipype.interfaces.io as nio
@@ -138,67 +138,107 @@ class AnatomicalPipeline(cmp_common.Pipeline):
             self.stages['Segmentation'].config.seg_tool = 'Freesurfer'
 
     def check_input(self, layout):
-        print '**** Check Inputs  ****'
+        print('**** Check Inputs  ****')
         t1_available = False
+        t1_json_available = False
         valid_inputs = False
 
-        types = layout.get_types()
+        print("> Looking in %s for...." % self.base_directory)  
+
+        types = layout.get_modalities()
 
         subjid = self.subject.split("-")[1]
 
         if self.global_conf.subject_session == '':
             T1_file = os.path.join(self.subject_directory,'anat',self.subject+'_T1w.nii.gz')
-            files = layout.get(subject=subjid,type='T1w',extensions='.nii.gz')
+            files = layout.get(subject=subjid,suffix='T1w',extensions='.nii.gz')
             if len(files) > 0:
-                T1_file = files[0].filename
+                T1_file = os.path.join(files[0].dirname,files[0].filename)
                 print T1_file
             else:
-                error(message="T1w image not found for subject %s, session %s."%(subjid,self.global_conf.subject_session), title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
                 return
         else:
             sessid = self.global_conf.subject_session.split("-")[1]
-            files = layout.get(subject=subjid,type='T1w',extensions='.nii.gz',session=sessid)
+            files = layout.get(subject=subjid,suffix='T1w',extensions='.nii.gz',session=sessid)
             if len(files) > 0:
-                T1_file = files[0].filename
+                T1_file = os.path.join(files[0].dirname,files[0].filename)
                 print T1_file
             else:
-                error(message="T1w image not found for subject %s, session %s."%(subjid,self.global_conf.subject_session), title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
                 return
 
-        print "Looking in %s for...." % self.base_directory
-        print "T1_file : %s" % T1_file
+        print("... t1_file : %s" % T1_file)
 
-        for typ in types:
-            if typ == 'T1w' and os.path.isfile(T1_file):
-                print "%s available" % typ
-                t1_available = True
+        if self.global_conf.subject_session == '':
+            T1_json_file = os.path.join(self.subject_directory,'anat',self.subject+'_T1w.json')
+            files = layout.get(subject=subjid,suffix='T1w',extensions='.json')
+            if len(files) > 0:
+                T1_json_file = os.path.join(files[0].dirname,files[0].filename)
+                print T1_json_file
+            else:
+                return
+        else:
+            sessid = self.global_conf.subject_session.split("-")[1]
+            files = layout.get(subject=subjid,suffix='T1w',extensions='.json',session=sessid)
+            if len(files) > 0:
+                T1_json_file = os.path.join(files[0].dirname,files[0].filename)
+                print T1_json_file
+            else:
+                return
+
+        print("... t1_json_file : %s" % T1_json_file)
+
+        if os.path.isfile(T1_file):
+            # print("%s available" % typ)
+            t1_available = True
+
+        if os.path.isfile(T1_json_file):
+            # print("%s available" % typ)
+            t1_json_available = True
 
         if t1_available:
-            #Copy diffusion data to derivatives / cmp  / subject / dwi
+            #Copy T1w data to derivatives / cmp  / subject / anat
             if self.global_conf.subject_session == '':
-                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,'anat',self.subject+'_T1w.nii.gz')
+                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,'anat',self.subject+'_desc-cmp_T1w.nii.gz')
             else:
-                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_T1w.nii.gz')
+                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.nii.gz')
 
             if not os.path.isfile(out_T1_file):
                 shutil.copy(src=T1_file,dst=out_T1_file)
 
             valid_inputs = True
             input_message = 'Inputs check finished successfully. \nOnly anatomical data (T1) available.'
+
+            if t1_json_available:
+                if self.global_conf.subject_session == '':
+                    out_T1_json_file = os.path.join(self.output_directory,'cmp',self.subject,'anat',self.subject+'_desc-cmp_T1w.json')
+                else:
+                    out_T1_json_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.json')
+
+                if not os.path.isfile(out_T1_json_file):
+                    shutil.copy(src=T1_json_file,dst=out_T1_json_file)
+
         else:
-            input_message = 'Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject)+'/anat/!'
+            if self.global_conf.subject_session == '':
+                input_message = 'Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject)+'/anat/!'
+            else:
+                input_message = 'Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject,self.global_conf.subject_session)+'/anat/!'
 
         print(input_message)
 
         if(t1_available):
             valid_inputs = True
         else:
-            print("Missing required inputs. Please see documentation for more details.")
+            print("ERROR : Missing required inputs. Please see documentation for more details.")
 
-        for stage in self.stages.values():
-            if stage.enabled:
-                print stage.name
-                print stage.stage_dir
+        if not t1_json_available:
+            print("Warning : Missing BIDS json sidecar. Please see documentation for more details.")
+
+        # for stage in self.stages.values():
+        #     if stage.enabled:
+        #         print stage.name
+        #         print stage.stage_dir
+
+        #self.fill_stages_outputs()
 
         return valid_inputs
 
