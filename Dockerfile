@@ -12,13 +12,10 @@ MAINTAINER Sebastien Tourbier <sebastien.tourbier@alumni.epfl.ch>
 WORKDIR /app
 ADD . /app
 
-#Clone the master branch of multiscalebrainparcellator from BitBucket
-#RUN apt-get -qq -y install git-core
-#RUN git clone --progress --verbose -b master --single-branch https://github.com/sebastientourbier/multiscalebrainparcellator.git multiscalebrainparcellator
-
-# Set the working directory to /app/multiscalebrainparcellator and install multiscalebrainparcellator
-WORKDIR /app
-RUN python setup.py install
+# Install multiscalebrainparcellator inside installed conda environment (see environment.yml)
+ENV CONDA_ENV py27msbparc
+RUN /bin/bash -c ". activate $CONDA_ENV && \
+    python setup.py install"
 
 ENV FS_LICENSE /bids_dir/code/license.txt
 
