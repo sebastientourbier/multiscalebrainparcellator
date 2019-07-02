@@ -67,7 +67,7 @@ def main(**extra_args):
           maintainer = 'Brain Communication Pathways Sinergia Consortium',
           maintainer_email = 'sebastien.tourbier@alumni.epfl.ch',
           package_data = package_data,
-          requires=["numpy (>=1.2)", "nibabel (>=2.0.0)"],
+          requires=["numpy (>=1.2)", "nibabel (>=2.0.0)", "pybids (>=0.6.4)"],
           **extra_args
          )
 
