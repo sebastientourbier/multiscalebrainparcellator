@@ -35,7 +35,7 @@ except ImportError:
 
 class ComputeParcellationRoiVolumesInputSpec(BaseInterfaceInputSpec):
     roi_volumes = InputMultiPath(File(exists=True), desc='ROI volumes registered to diffusion space', mandatory=True)
-    parcellation_scheme = traits.Enum('Lausanne2008',['Lausanne2008','Lausanne2018','NativeFreesurfer','Custom'], usedefault=True, mandatory=True)
+    parcellation_scheme = traits.Enum('Lausanne2018',['Lausanne2018'], usedefault=True, mandatory=True)
     roi_graphMLs = InputMultiPath(File(exists=True), desc='GraphML description of ROI volumes (Lausanne2018)', mandatory=True)
     
 class ComputeParcellationRoiVolumesOutputSpec(TraitedSpec):
@@ -47,27 +47,24 @@ class ComputeParcellationRoiVolumes(BaseInterface):
 
     def _run_interface(self, runtime):
 
-        if self.inputs.parcellation_scheme != "Custom":
-            if self.inputs.parcellation_scheme != "Lausanne2018":
-                resolutions = get_parcellation(self.inputs.parcellation_scheme)
-            else:
-                resolutions = get_parcellation(self.inputs.parcellation_scheme)
-                for parkey, parval in resolutions.items():
-                    for vol, graphml in zip(roi_volumes,roi_graphmls):
-                        if parkey in vol:
-                            roi_fname = vol
-                        if parkey in graphml:
-                            roi_graphml_fname = graphml
-                    
-                    roi       = nibabel.load(roi_fname)
-                    roiData   = roi.get_data()
-                    resolutions[parkey]['number_of_regions'] = roiData.max()
-                    resolutions[parkey]['node_information_graphml'] = op.abspath(roi_graphml_fname)
-
-                del roi, roiData
+        if self.inputs.parcellation_scheme != "Lausanne2018":
+            resolutions = get_parcellation(self.inputs.parcellation_scheme)
         else:
-            resolutions = atlas_info
+            resolutions = get_parcellation(self.inputs.parcellation_scheme)
+            for parkey, parval in resolutions.items():
+                for vol, graphml in zip(roi_volumes,roi_graphmls):
+                    if parkey in vol:
+                        roi_fname = vol
+                    if parkey in graphml:
+                        roi_graphml_fname = graphml
+                
+                roi       = nibabel.load(roi_fname)
+                roiData   = roi.get_data()
+                resolutions[parkey]['number_of_regions'] = roiData.max()
+                resolutions[parkey]['node_information_graphml'] = op.abspath(roi_graphml_fname)
 
+            del roi, roiData
+        
         for parkey, parval in resolutions.items():
 
             print("-------------------------------------------------------")
@@ -76,14 +73,15 @@ class ComputeParcellationRoiVolumes(BaseInterface):
 
             # Initialize the TSV file used to store the parcellation volumetry resulty
             volumetry_file = op.abspath('volumetry_{}.tsv'.format(parkey))
-            print("Create volumetry TSV file as %s".format(volumetry_file))
             f_volumetry_file = open(volumetry_file,'w+')
+            print("Volumetry TSV file created as %s".format(volumetry_file))
+            
             time_now = strftime("%a, %d %b %Y %H:%M:%S",localtime())
-            hdr_lines = ['#$Id: volumetry_{}.tsv {} \n \n'.format(volumetry_file,time_now),
+            hdr_lines = ['#$Id: {} {} \n \n'.format(volumetry_file,time_now),
                         '{:<4} {:<55} {:<10} {:>10} \n \n'.format("#No.","Label Name","Region Type","Volume (mm3)")]
+            
             f_volumetry_file.writelines (hdr_lines)
             del hdr_lines
-
 
             # add node information from parcellation
             gp = nx.read_graphml(parval['node_information_graphml'])
@@ -122,7 +120,7 @@ class ComputeParcellationRoiVolumes(BaseInterface):
 
     def _list_outputs(self):
         outputs = self._outputs().get()
-        outputs['rois_volumetry'] = _gen_outfilenames('roi-volumetry', '.tsv')
+        outputs['rois_volumetry'] = _gen_outfilenames('volumetry', '.tsv')
 
         return outputs
 
