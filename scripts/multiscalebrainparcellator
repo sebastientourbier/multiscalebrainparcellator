@@ -13,7 +13,7 @@ import subprocess
 
 
 #BIDS import
-from bids.grabbids import BIDSLayout
+from bids import BIDSLayout
 
 #CMP imports
 import cmp.multiscalebrainparcellator.project
