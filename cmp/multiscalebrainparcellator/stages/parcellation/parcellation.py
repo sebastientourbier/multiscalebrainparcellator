@@ -151,7 +151,8 @@ class ParcellationStage(Stage):
                         ])
 
                 computeROIVolumetry = pe.Node(interface=ComputeParcellationRoiVolumes(), name='computeROIVolumetry')
-
+                computeROIVolumetry.inputs.parcellation_scheme = self.config.parcellation_scheme
+                
                 flow.connect([
                             (parcCombiner,computeROIVolumetry,[("output_rois","roi_volumes")]),
                             (parcCombiner,computeROIVolumetry,[("graphML_files","roi_graphMLs")]),
