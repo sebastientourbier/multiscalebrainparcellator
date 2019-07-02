@@ -24,7 +24,7 @@ from subprocess import Popen
 import ConfigParser
 
 #PyBIDS import
-from bids.grabbids import BIDSLayout
+from bids import BIDSLayout
 
 # Own imports
 from pipelines.anatomical import anatomical as Anatomical_pipeline
