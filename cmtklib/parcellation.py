@@ -51,20 +51,29 @@ class ComputeParcellationRoiVolumes(BaseInterface):
         
         for parkey, parval in resolutions.items():
 
+            for roi in self.inputs.roi_volumes:
+                if parkey in roi:
+                    roi_fname = roi
+                    break
+
             print("-------------------------------------------------------")
-            print("Processing {} parcellation - scale {}".format(self.inputs.parcellation_scheme,parkey))
+            print("Processing {} parcellation - {}".format(self.inputs.parcellation_scheme,parkey))
             print("-------------------------------------------------------")
+
+            print("  > Load {}...".format(roi_fname)) 
+            roiData = ni.load(roi_fname).get_data()
 
             # Initialize the TSV file used to store the parcellation volumetry resulty
             volumetry_file = op.abspath('volumetry_{}.tsv'.format(parkey))
-            f_volumetry_file = open(volumetry_file,'w+')
-            print("Volumetry TSV file created as %s".format(volumetry_file))
+            f_volumetry = open(volumetry_file,'w+')
+            print("  > Create Volumetry TSV file as %s".format(volumetry_file))
             
-            time_now = strftime("%a, %d %b %Y %H:%M:%S",localtime())
-            hdr_lines = ['#$Id: {} {} \n \n'.format(volumetry_file,time_now),
-                        '{:<4} {:<55} {:<10} {:>10} \n \n'.format("#No.","Label Name","Region Type","Volume (mm3)")]
+            time_now = strftime("%a %d %b %Y %H:%M:%S",localtime())
+            hdr_lines = ['#$Id: {} \n'.format(volumetry_file),
+                        '#Time: {} \n \n'.format(time_now),
+                        '{:<4}, {:<55}, {:<10}, {:>10} \n \n'.format("#No.","Label Name","Region Type","Volume (mm3)")]
             
-            f_volumetry_file.writelines (hdr_lines)
+            f_volumetry.writelines (hdr_lines)
             del hdr_lines
 
             # add node information from parcellation
@@ -75,6 +84,8 @@ class ComputeParcellationRoiVolumes(BaseInterface):
             pc=-1
             cnt=-1
 
+            print("  > Processing parcels...") 
+
             # Loop over each parcel/ROI 
             for u,d in gp.nodes(data=True):
                 # Percent counter
@@ -83,9 +94,6 @@ class ComputeParcellationRoiVolumes(BaseInterface):
                 if pcN > pc and pcN%10 == 0:
                     pc = pcN
                     print('%4.0f%%' % (pc))
-
-                # Compute the parcel/ROI volume
-                parcel_volumetry = np.sum( roiData== int(d["dn_correspondence_id"]) )
 
                 # Get the label number
                 parcel_label = d["dn_multiscaleID"]
@@ -96,15 +104,18 @@ class ComputeParcellationRoiVolumes(BaseInterface):
                 # Get the name of the parcel
                 parcel_name = d["dn_name"]
 
-                f_colorLUT.write('{:<4} {:<55} {:<10} {:>10} \n'.format(parcel_label,parcel_name,parcel_type,parcel_volumetry))
+                # Compute the parcel/ROI volume
+                parcel_volumetry = np.sum( roiData== int(d["dn_multiscaleID"]) )
 
-            f_volumetry_file.close()
+                f_volumetry.write('{:<4}, {:<55}, {:<10}, {:>10} \n'.format(parcel_label,parcel_name,parcel_type,parcel_volumetry))
+
+            f_volumetry.close()
             
         return runtime
 
     def _list_outputs(self):
         outputs = self._outputs().get()
-        outputs['rois_volumetry'] = _gen_outfilenames('volumetry', '.tsv')
+        outputs['rois_volumetry'] = self._gen_outfilenames('volumetry', '.tsv')
 
         return outputs
 
