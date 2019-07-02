@@ -438,6 +438,39 @@ class CombineParcellations(BaseInterface):
 
         print("create color look up table : ",self.inputs.create_colorLUT)
 
+        #Dilate third ventricle and intersect with right and left ventral DC to get voxels of left and right hypothalamus
+
+        for roi_fname in self.inputs.input_rois:
+            if 'scale1' in roi_fname:
+                roi1_fname = roi_fname
+                break
+
+        V = ni.load(roi1_fname)
+        I = V.get_data()
+        tmp = np.zeros(I.shape)
+        indV = np.where(I == ventricle3)
+        tmp[indV] = 1
+
+        thirdV = op.abspath('{}.nii.gz'.format("ventricle3"))
+        hdr = V.get_header()
+        hdr2 = hdr.copy()
+        hdr2.set_data_dtype(np.int16)
+        print("Save output image to %s" % thirdV)
+        img = ni.Nifti1Image(tmp, V.get_affine(), hdr2)
+        ni.save(img, thirdV)
+
+        thirdV_dil = op.abspath('{}_dil.nii.gz'.format("ventricle3"))
+        fslmaths_cmd = 'fslmaths %s -kernel sphere 5 -dilD %s' % (thirdV,thirdV_dil)
+        print("RUN")
+        print(fslmaths_cmd)
+        process = subprocess.Popen(fslmaths_cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+        proc_stdout = process.communicate()[0].strip()
+
+        tmp = ni.load(thirdV_dil).get_data()
+        indrhypothal = np.where((tmp == 1) & (I == right_ventral))
+        indlhypothal = np.where((tmp == 1) & (I == left_ventral))
+        del(tmp)
+
         for roi_index, roi in enumerate(self.inputs.input_rois):
             # colorLUT creation if enabled
             if self.inputs.create_colorLUT:
@@ -479,31 +512,6 @@ class CombineParcellations(BaseInterface):
             # Replacing the brain stem (Stem is replaced by its own parcellation. Mismatch between both global volumes, mainly due to partial volume effect in the global stem parcellation)
             indrep = np.where(I == 16)
             I[indrep] = 0
-
-            #Dilate third ventricle and intersect with right and left ventral DC to get voxels of left and right hypothalamus
-            tmp = np.zeros(I.shape)
-            indV = np.where(I == ventricle3)
-            tmp[indV] = 1
-
-            thirdV = op.abspath('{}.nii.gz'.format("ventricle3"))
-            hdr = V.get_header()
-            hdr2 = hdr.copy()
-            hdr2.set_data_dtype(np.int16)
-            print("Save output image to %s" % thirdV)
-            img = ni.Nifti1Image(tmp, V.get_affine(), hdr2)
-            ni.save(img, thirdV)
-
-            thirdV_dil = op.abspath('{}_dil.nii.gz'.format("ventricle3"))
-            fslmaths_cmd = 'fslmaths %s -kernel sphere 5 -dilD %s' % (thirdV,thirdV_dil)
-            print("RUN")
-            print(fslmaths_cmd)
-            process = subprocess.Popen(fslmaths_cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-            proc_stdout = process.communicate()[0].strip()
-
-            tmp = ni.load(thirdV_dil).get_data()
-            indrhypothal = np.where((tmp == 1) & (I == right_ventral))
-            indlhypothal = np.where((tmp == 1) & (I == left_ventral))
-            del(tmp)
 
             ## Processing Right Hemisphere
             # Relabelling Right hemisphere
@@ -1026,28 +1034,28 @@ class CombineParcellations(BaseInterface):
                 f_graphML.writelines(bottom_lines)
                 f_graphML.close()
 
+        orig = op.join(fs_dir, 'mri', 'orig', '001.mgz')
+        aparcaseg_fs = op.join(fs_dir, 'mri', 'aparc+aseg.mgz')
+        tmp_aparcaseg_fs = op.join(fs_dir, 'tmp', 'aparc+aseg.mgz')
+        aparcaseg_native = op.join(fs_dir, 'tmp', 'aparc+aseg.native.nii.gz')
+
+        print("    Copy aparc+aseg to {}".format(tmp_aparcaseg_fs))
+        shutil.copyfile(aparcaseg_fs,tmp_aparcaseg_fs)
+
+        print("    Transform to native space")
+        cmd = 'mri_vol2vol --mov "%s" --targ "%s" --regheader --o "%s" --no-save-reg --interp nearest' % (aparcaseg_fs,orig,aparcaseg_native)
+        process = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+        proc_stdout = process.communicate()[0].strip()
+        iflogger.info(proc_stdout)
+
+        # mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', tmp_aparcaseg_fs, '-nc', aparcaseg_native]
+        # subprocess.check_call(mri_cmd)
+
+        Iaparcaseg= ni.load(aparcaseg_native).get_data()
+
         # Refine aparc+aseg.mgz with new subcortical and/or structures (if any)
         if thalamus_nuclei_defined or brainstem_defined or (lh_subfield_defined and rh_subfield_defined):
             print("Correct Freesurfer generated aparc+aseg.mgz...")
-
-            orig = op.join(fs_dir, 'mri', 'orig', '001.mgz')
-            aparcaseg_fs = op.join(fs_dir, 'mri', 'aparc+aseg.mgz')
-            tmp_aparcaseg_fs = op.join(fs_dir, 'tmp', 'aparc+aseg.mgz')
-            aparcaseg_native = op.join(fs_dir, 'tmp', 'aparc+aseg.native.nii.gz')
-
-            print("    Copy aparc+aseg to {}".format(tmp_aparcaseg_fs))
-            shutil.copyfile(aparcaseg_fs,tmp_aparcaseg_fs)
-
-            print("    Transform to native space")
-            cmd = 'mri_vol2vol --mov "%s" --targ "%s" --regheader --o "%s" --no-save-reg --interp nearest' % (aparcaseg_fs,orig,aparcaseg_native)
-            process = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-            proc_stdout = process.communicate()[0].strip()
-            iflogger.info(proc_stdout)
-
-            # mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', tmp_aparcaseg_fs, '-nc', aparcaseg_native]
-            # subprocess.check_call(mri_cmd)
-
-            Iaparcaseg= ni.load(aparcaseg_native).get_data()
 
             Iaparcaseg_new = Iaparcaseg.astype(np.int32)
 
@@ -1146,6 +1154,8 @@ class CombineParcellations(BaseInterface):
             #print("    Replace aparc+aseg.mgz file {} by {}".format(aparcaseg_fs,new_aparcaseg_fs))
             #shutil.copyfile(new_aparcaseg_fs,aparcaseg_fs)
         else:
+            print("Save Freesurfer generated aparc+aseg.mgz in native space with nifti format...")
+
             aparcaseg_native = op.abspath('aparc+aseg.Lausanne2018.native.nii.gz')
             print("    Save relabeled image to {}".format(aparcaseg_native))
             img = ni.Nifti1Image(Iaparcaseg, V.get_affine(), hdr2)
