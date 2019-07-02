@@ -110,8 +110,10 @@ if __name__ == '__main__':
         if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
             os.mkdir('{}/code'.format(args.bids_dir))
         shutil.copyfile(args.fs_license,dest)
+        print('INFO: Freesurfer license provided as input will be used'.format(dest))
     else
         src = '{}/license.txt'.format(os.environ['FREESURFER_HOME'])
+        dest = '{}/code/license.txt'.format(args.bids_dir)
         if os.environ['FREESURFER_HOME']:
             if os.access(src,os.F_OK):
                 if os.access(dest,os.F_OK):
@@ -120,13 +122,17 @@ if __name__ == '__main__':
                 if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
                     os.mkdir('{}/code'.format(args.bids_dir))
                 shutil.copyfile(src,dest)
+                print('INFO: Freesurfer license located in $FREESURFER_HOME will be used'.format(dest))
 
             else:
                 print('ERROR: Freesurfer license not found in directory pointed by $FREESURFER_HOME. Freesurfer license has to be defined using the --fs_license input flag.')
                 sys.exit(2)
         else:
-            print('ERROR: Variable $FREESURFER_HOME not found. Freesurfer license has to be defined using the --fs_license input flag.')
-            sys.exit(2)
+            if not os.access(dest,os.F_OK):
+                print('ERROR: Variable $FREESURFER_HOME not found. Freesurfer license has to be defined using the --fs_license input flag.')   
+                sys.exit(2)
+            else:
+                print('INFO: {} Freesurfer license found will be used'.format(dest))
 
     #Setup number of cores to use
     maxprocs = args.number_of_cores
