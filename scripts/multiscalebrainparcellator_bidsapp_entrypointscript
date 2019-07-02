@@ -102,8 +102,9 @@ if __name__ == '__main__':
     #Make Freesurfer happy with the ficense
     #Multiscale brain parcellator uses the FS_LICENSE environment to point to the license
     # It supposes that the license is stored as /bids_dir/code/license.txt
-    if args.fs_license:
-        dest = '{}/code/license.txt'.format(args.bids_dir)
+    
+    dest = '{}/code/license.txt'.format(args.bids_dir)
+    if args.fs_license:    
         if os.access(dest,os.F_OK):
             os.remove(dest)
             print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
@@ -111,28 +112,24 @@ if __name__ == '__main__':
             os.mkdir('{}/code'.format(args.bids_dir))
         shutil.copyfile(args.fs_license,dest)
         print('INFO: Freesurfer license provided as input will be used'.format(dest))
-    else
-        src = '{}/license.txt'.format(os.environ['FREESURFER_HOME'])
-        dest = '{}/code/license.txt'.format(args.bids_dir)
-        if os.environ['FREESURFER_HOME']:
-            if os.access(src,os.F_OK):
-                if os.access(dest,os.F_OK):
-                    os.remove(dest)
-                    print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
-                if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
-                    os.mkdir('{}/code'.format(args.bids_dir))
-                shutil.copyfile(src,dest)
-                print('INFO: Freesurfer license located in $FREESURFER_HOME will be used'.format(dest))
+    else:      
+        if not os.access(dest,os.F_OK):
+            if os.environ['FREESURFER_HOME']:
+                src = '{}/license.txt'.format(os.environ['FREESURFER_HOME'])
+                if os.access(src,os.F_OK):
+                    if os.access(dest,os.F_OK):
+                        os.remove(dest)
+                        print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
+                    if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
+                        os.mkdir('{}/code'.format(args.bids_dir))
+                    shutil.copyfile(src,dest)
+                    print('INFO: Freesurfer license located in $FREESURFER_HOME will be used'.format(dest))
 
             else:
                 print('ERROR: Freesurfer license not found in directory pointed by $FREESURFER_HOME. Freesurfer license has to be defined using the --fs_license input flag.')
                 sys.exit(2)
         else:
-            if not os.access(dest,os.F_OK):
-                print('ERROR: Variable $FREESURFER_HOME not found. Freesurfer license has to be defined using the --fs_license input flag.')   
-                sys.exit(2)
-            else:
-                print('INFO: {} Freesurfer license found will be used'.format(dest))
+            print('INFO: {} Freesurfer license found will be used'.format(dest))
 
     #Setup number of cores to use
     maxprocs = args.number_of_cores
