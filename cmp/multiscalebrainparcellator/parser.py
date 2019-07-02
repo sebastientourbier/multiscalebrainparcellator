@@ -34,6 +34,11 @@ def get():
     p.add_argument('--number_of_cores', help='The number of cores to be used for'
                    'processing (Maximum number of available processing cores used by default)')
 
+    p.add_argument('--fs_license', help='Freesurfer license to provide.'
+                   'Multi-scale brain parcellator requires your Freesurfer license. If the license is not'
+                   'provided as command line input, it will automatically look for it in your'
+                   '$FREESURFER_HOME and your /bids_dataset/code directory')
+
     p.add_argument('--isotropic_resolution', help='The isotropic resolution in mm'
                    'used to resample the original anatomical images'
                    'and applied a tthe beginning of the processing pipeline.')
