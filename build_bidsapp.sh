@@ -13,7 +13,7 @@ MAIN_DOCKER=sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$VERSION
 #MAIN_DOCKER="sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest"
 echo $MAIN_DOCKER
 
-cd ubuntu16.04
+cd environments
 docker build --rm --build-arg BUILD_DATE=$CMP_BUILD_DATE --build-arg VERSION=$VERSION --build-arg VCS_REF=$VCS_REF -t sebastientourbier/multiscalebrainparcellator-ubuntu16.04:${VERSION} .
 
 cd ..
