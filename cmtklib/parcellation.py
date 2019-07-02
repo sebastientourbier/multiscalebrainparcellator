@@ -47,23 +47,7 @@ class ComputeParcellationRoiVolumes(BaseInterface):
 
     def _run_interface(self, runtime):
 
-        if self.inputs.parcellation_scheme != "Lausanne2018":
-            resolutions = get_parcellation(self.inputs.parcellation_scheme)
-        else:
-            resolutions = get_parcellation(self.inputs.parcellation_scheme)
-            for parkey, parval in resolutions.items():
-                for vol, graphml in zip(roi_volumes,roi_graphmls):
-                    if parkey in vol:
-                        roi_fname = vol
-                    if parkey in graphml:
-                        roi_graphml_fname = graphml
-                
-                roi       = nibabel.load(roi_fname)
-                roiData   = roi.get_data()
-                resolutions[parkey]['number_of_regions'] = roiData.max()
-                resolutions[parkey]['node_information_graphml'] = op.abspath(roi_graphml_fname)
-
-            del roi, roiData
+        resolutions = get_parcellation(self.inputs.parcellation_scheme) 
         
         for parkey, parval in resolutions.items():
 
@@ -1117,7 +1101,7 @@ class CombineParcellations(BaseInterface):
                 print("    Save tmp image to {}".format(out_tmp))
                 img_tmp = ni.Nifti1Image(tmp, V.get_affine(), hdr2)
                 ni.save(img_tmp, out_tmp)
-
+            
             # # Hippocampal subfields (aparc+aseg labels: 17 and 53)
             # if (lh_subfield_defined and rh_subfield_defined):
             #
@@ -1161,6 +1145,12 @@ class CombineParcellations(BaseInterface):
 
             #print("    Replace aparc+aseg.mgz file {} by {}".format(aparcaseg_fs,new_aparcaseg_fs))
             #shutil.copyfile(new_aparcaseg_fs,aparcaseg_fs)
+        else:
+            aparcaseg_native = op.abspath('aparc+aseg.Lausanne2018.native.nii.gz')
+            print("    Save relabeled image to {}".format(aparcaseg_native))
+            img = ni.Nifti1Image(Iaparcaseg, V.get_affine(), hdr2)
+            ni.save(img, aparcaseg_native)
+
 
         return runtime
 
