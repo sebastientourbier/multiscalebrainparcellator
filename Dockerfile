@@ -3,7 +3,8 @@
 #
 #  This software is distributed under the open-source license Modified BSD.
 
-FROM sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest
+ARG MAIN_DOCKER
+FROM $MAIN_DOCKER
 
 MAINTAINER Sebastien Tourbier <sebastien.tourbier@alumni.epfl.ch>
 
@@ -18,6 +19,8 @@ ADD . /app
 # Set the working directory to /app/multiscalebrainparcellator and install multiscalebrainparcellator
 WORKDIR /app
 RUN python setup.py install
+
+ENV FS_LICENSE /bids_dir/code/license.txt
 
 #COPY version /version
 ENTRYPOINT ["multiscalebrainparcellator_bidsapp_entrypointscript"]
