@@ -1154,7 +1154,7 @@ class CombineParcellations(BaseInterface):
             #print("    Replace aparc+aseg.mgz file {} by {}".format(aparcaseg_fs,new_aparcaseg_fs))
             #shutil.copyfile(new_aparcaseg_fs,aparcaseg_fs)
         else:
-            print("Save Freesurfer generated aparc+aseg.mgz in native space with nifti format...")
+            print("Correct Freesurfer generated aparc+aseg.mgz...")
 
             aparcaseg_native = op.abspath('aparc+aseg.Lausanne2018.native.nii.gz')
             print("    Save relabeled image to {}".format(aparcaseg_native))
