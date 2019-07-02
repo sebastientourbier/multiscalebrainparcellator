@@ -14,7 +14,7 @@ ADD . /app
 
 # Install multiscalebrainparcellator inside installed conda environment (see environment.yml)
 ENV CONDA_ENV py27msbparc
-RUN /bin/bash -c ". activate $CONDA_ENV && \
+RUN /bin/bash -c ". activate $CONDA_ENV && pip install pybids==0.9.1 && \
     python setup.py install"
 
 ENV FS_LICENSE /bids_dir/code/license.txt
