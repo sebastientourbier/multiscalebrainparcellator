@@ -76,7 +76,7 @@ ENV PERL5LIB=$MINC_LIB_DIR/perl5/5.8.5 \
 
 # Installing Neurodebian packages (FSL)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends fsl-core=5.0.9-4~nd16.04+1
+    apt-get install -y --no-install-recommends fsl-core=5.0.9-5~nd16.04+1
 
 #Make FSL happy
 ENV FSLDIR=/usr/share/fsl/5.0 \
