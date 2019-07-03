@@ -49,11 +49,12 @@ jobs:
             fi
             
             # Build main docker image
+            cd environments
             e=1 && for i in {1..5}; do
               docker build \
                 --cache-from=sebastientourbier/multiscalebrainparcellator-ubuntu16.04 \
                 --rm=false \
-                -t sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest \
+                -t sebastientourbier/multiscalebrainparcellator-ubuntu16.04:${THISVERSION} \
                 --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
                 --build-arg VCS_REF=`git rev-parse --short HEAD` \
                 --build-arg VERSION="${CIRCLE_TAG:-$THISVERSION}" . \
@@ -61,11 +62,12 @@ jobs:
             done && [ "$e" -eq "0" ]
 
             # Build BIDS App docker image
+            cd ..
             e=1 && for i in {1..5}; do
               docker build \
                 --cache-from=sebastientourbier/multiscalebrainparcellator \
                 --rm=false \
-                -t sebastientourbier/multiscalebrainparcellator:latest \
+                -t sebastientourbier/multiscalebrainparcellator:${THISVERSION} \
                 --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
                 --build-arg VCS_REF=`git rev-parse --short HEAD` \
                 --build-arg VERSION="${CIRCLE_TAG:-$THISVERSION}" . \
