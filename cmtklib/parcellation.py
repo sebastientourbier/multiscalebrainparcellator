@@ -56,12 +56,23 @@ class ComputeParcellationRoiVolumes(BaseInterface):
                     roi_fname = roi
                     break
 
+            for graphml in self.inputs.roi_graphMLs:
+                if parkey in graphml:
+                    roi_info_graphml = graphml
+                    break
+
             print("-------------------------------------------------------")
             print("Processing {} parcellation - {}".format(self.inputs.parcellation_scheme,parkey))
             print("-------------------------------------------------------")
 
             print("  > Load {}...".format(roi_fname)) 
-            roiData = ni.load(roi_fname).get_data()
+            roiImg = ni.load(roi_fname)
+            roiData = roiImg.get_data()
+
+            # Compute the volume of the voxel
+            voxel_dimX, voxel_dimY, voxel_dimZ = roiImg.header.get_zooms()
+            voxel_volume = voxel_dimX * voxel_dimY * voxel_dimZ
+            print("    ... Voxel volume = {} mm3".format(roi_fname)) 
 
             # Initialize the TSV file used to store the parcellation volumetry resulty
             volumetry_file = op.abspath('volumetry_{}.tsv'.format(parkey))
@@ -77,7 +88,8 @@ class ComputeParcellationRoiVolumes(BaseInterface):
             del hdr_lines
 
             # add node information from parcellation
-            gp = nx.read_graphml(parval['node_information_graphml'])
+            print("  > Load {}...".format(roi_info_graphml))
+            gp = nx.read_graphml(roi_info_graphml)
             n_nodes = len(gp)
 
             # variables used by the percent counter
@@ -105,7 +117,7 @@ class ComputeParcellationRoiVolumes(BaseInterface):
                 parcel_name = d["dn_name"]
 
                 # Compute the parcel/ROI volume
-                parcel_volumetry = np.sum( roiData== int(d["dn_multiscaleID"]) )
+                parcel_volumetry = np.sum( roiData== int(d["dn_multiscaleID"]) ) * voxel_volume
 
                 f_volumetry.write('{:<4}, {:<55}, {:<10}, {:>10} \n'.format(parcel_label,parcel_name,parcel_type,parcel_volumetry))
 
