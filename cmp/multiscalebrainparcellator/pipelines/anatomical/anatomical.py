@@ -340,6 +340,11 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                                             ('gmmask.nii.gz',self.subject+'_label-GM_dseg.nii.gz'),
                                             ('aparc+aseg.native.nii.gz',self.subject+'_desc-aparcaseg_dseg.nii.gz'),
                                             ('aparc+aseg.Lausanne2018.native.nii.gz',self.subject+'_desc-aparcaseg_dseg.nii.gz'),
+                                            ('roi_stats_scale1.tsv',self.subject+'_label-L2018_desc-scale1_stats.tsv'),
+                                            ('roi_stats_scale2.tsv',self.subject+'_label-L2018_desc-scale2_stats.tsv'),
+                                            ('roi_stats_scale3.tsv',self.subject+'_label-L2018_desc-scale3_stats.tsv'),
+                                            ('roi_stats_scale4.tsv',self.subject+'_label-L2018_desc-scale4_stats.tsv'),
+                                            ('roi_stats_scale5.tsv',self.subject+'_label-L2018_desc-scale5_stats.tsv'),
                                             ('ROIv_HR_th_scale1.nii.gz',self.subject+'_label-L2018_desc-scale1_atlas.nii.gz'),
                                             ('ROIv_HR_th_scale2.nii.gz',self.subject+'_label-L2018_desc-scale2_atlas.nii.gz'),
                                             ('ROIv_HR_th_scale3.nii.gz',self.subject+'_label-L2018_desc-scale3_atlas.nii.gz'),
@@ -393,7 +398,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         anat_flow = pe.Workflow(name='anatomical_pipeline', base_dir=os.path.join(deriv_subject_directory,'tmp'))
         anat_inputnode = pe.Node(interface=util.IdentityInterface(fields=["T1"]),name="inputnode")
         anat_outputnode = pe.Node(interface=util.IdentityInterface(fields=["subjects_dir","subject_id","T1","aseg","aparc_aseg","brain","brain_mask","wm_mask_file", "gm_mask_file", "wm_eroded","brain_eroded","csf_eroded",
-            "roi_volumes","rois_volumetry","parcellation_scheme","atlas_info","roi_colorLUTs", "roi_graphMLs"]),name="outputnode")
+            "roi_volumes","roi_volumes_stats","parcellation_scheme","atlas_info","roi_colorLUTs", "roi_graphMLs"]),name="outputnode")
         
         anat_flow.add_nodes([anat_inputnode,anat_outputnode])
 
@@ -431,6 +436,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                                                                ("outputnode.roi_volumes","roi_volumes"),
                                                                ("outputnode.roi_colorLUTs","roi_colorLUTs"),
                                                                ("outputnode.roi_graphMLs","roi_graphMLs"),
+                                                               ("outputnode.roi_volumes_stats","roi_volumes_stats"),
                                                                ("outputnode.wm_eroded","wm_eroded"),
                                                                ("outputnode.gm_mask_file","gm_mask_file"),
                                                                ("outputnode.csf_eroded","csf_eroded"),
@@ -453,7 +459,8 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                         (anat_outputnode,sinker,[("gm_mask_file","anat.@gm_mask")]),
                         (anat_outputnode,sinker,[("roi_volumes","anat.@roivs")]),
                         (anat_outputnode,sinker,[("roi_colorLUTs","anat.@luts")]),
-                        (anat_outputnode,sinker,[("roi_graphMLs","anat.@graphmls")])
+                        (anat_outputnode,sinker,[("roi_graphMLs","anat.@graphmls")]),
+                        (anat_outputnode,sinker,[("roi_volumes_stats","anat.@stats")]),
                         ])
 
         self.flow = anat_flow
