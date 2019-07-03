@@ -18,6 +18,9 @@ RUN /bin/bash -c ". activate $CONDA_ENV && python setup.py install"
 
 ENV FS_LICENSE /bids_dir/code/license.txt
 
+# Make it work under singularity (source: https://brainlife.io/docs/apps/container/)
+RUN ldconfig
+
 #COPY version /version
 ENTRYPOINT ["multiscalebrainparcellator_bidsapp_entrypointscript"]
 
