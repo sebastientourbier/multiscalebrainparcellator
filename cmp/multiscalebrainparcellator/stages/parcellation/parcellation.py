@@ -78,7 +78,7 @@ class ParcellationStage(Stage):
             "gm_mask_file",
             "aseg","aparc_aseg",
     	       #"cc_unknown_file","ribbon_file","roi_files",
-            "roi_volumes","roi_colorLUTs","roi_graphMLs","rois_volumetry",
+            "roi_volumes","roi_colorLUTs","roi_graphMLs","roi_volumes_stats",
             "parcellation_scheme","atlas_info"]
 
     def create_workflow(self, flow, inputnode, outputnode):
@@ -156,7 +156,7 @@ class ParcellationStage(Stage):
                 flow.connect([
                             (parcCombiner,computeROIVolumetry,[("output_rois","roi_volumes")]),
                             (parcCombiner,computeROIVolumetry,[("graphML_files","roi_graphMLs")]),
-                            (computeROIVolumetry,outputnode, [("rois_volumetry","rois_volumetry")]),
+                            (computeROIVolumetry,outputnode, [("roi_volumes_stats","roi_volumes_stats")]),
                             ])
 
 

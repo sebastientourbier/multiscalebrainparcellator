@@ -39,7 +39,7 @@ class ComputeParcellationRoiVolumesInputSpec(BaseInterfaceInputSpec):
     roi_graphMLs = InputMultiPath(File(exists=True), desc='GraphML description of ROI volumes (Lausanne2018)', mandatory=True)
     
 class ComputeParcellationRoiVolumesOutputSpec(TraitedSpec):
-    rois_volumetry = OutputMultiPath(File())
+    roi_volumes_stats = OutputMultiPath(File())
 
 class ComputeParcellationRoiVolumes(BaseInterface):
     input_spec = ComputeParcellationRoiVolumesInputSpec
@@ -75,16 +75,15 @@ class ComputeParcellationRoiVolumes(BaseInterface):
             print("    ... Voxel volume = {} mm3".format(roi_fname)) 
 
             # Initialize the TSV file used to store the parcellation volumetry resulty
-            volumetry_file = op.abspath('volumetry_{}.tsv'.format(parkey))
+            volumetry_file = op.abspath('roi_stats_{}.tsv'.format(parkey))
             f_volumetry = open(volumetry_file,'w+')
             print("  > Create Volumetry TSV file as %s".format(volumetry_file))
             
+            # Format the TSV file according to BIDS Extension Proposal 11 (BEP011): The structural preprocessing derivatives.
             time_now = strftime("%a %d %b %Y %H:%M:%S",localtime())
-            hdr_lines = ['#$Id: {} \n'.format(volumetry_file),
-                        '#Time: {} \n \n'.format(time_now),
-                        '{:<4}, {:<55}, {:<10}, {:>10} \n \n'.format("#No.","Label Name","Region Type","Volume (mm3)")]
+            hdr_lines = ['{:<4}, {:<55}, {:<10}, {:>10} \n'.format("index","name","type","volume-mm3")]
             
-            f_volumetry.writelines (hdr_lines)
+            f_volumetry.writelines(hdr_lines)
             del hdr_lines
 
             # add node information from parcellation
@@ -127,7 +126,7 @@ class ComputeParcellationRoiVolumes(BaseInterface):
 
     def _list_outputs(self):
         outputs = self._outputs().get()
-        outputs['rois_volumetry'] = self._gen_outfilenames('volumetry', '.tsv')
+        outputs['roi_volumes_stats'] = self._gen_outfilenames('roi_stats', '.tsv')
 
         return outputs
 
