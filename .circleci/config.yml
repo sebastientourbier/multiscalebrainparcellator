@@ -35,7 +35,7 @@ jobs:
             fi
       - run:
           name: Build Docker image
-          no_output_timeout: 60m
+          no_output_timeout: 120m
           command: |
             # Get version, update files.
             THISVERSION=$( python get_version.py )
@@ -47,7 +47,20 @@ jobs:
               echo "the command ``git fetch --tags --verbose`` and push"
               echo "them to your fork with ``git push origin --tags``"
             fi
-            # Build docker image
+            
+            # Build main docker image
+            e=1 && for i in {1..5}; do
+              docker build \
+                --cache-from=sebastientourbier/multiscalebrainparcellator-ubuntu16.04 \
+                --rm=false \
+                -t sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest \
+                --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+                --build-arg VCS_REF=`git rev-parse --short HEAD` \
+                --build-arg VERSION="${CIRCLE_TAG:-$THISVERSION}" . \
+              && e=0 && break || sleep 15
+            done && [ "$e" -eq "0" ]
+
+            # Build BIDS App docker image
             e=1 && for i in {1..5}; do
               docker build \
                 --cache-from=sebastientourbier/multiscalebrainparcellator \
@@ -187,7 +200,8 @@ jobs:
                 --isotropic_resolution 1.0 \
                 --thalamic_nuclei \
                 --hippocampal_subfields \
-                --brainstem_structures
+                --brainstem_structures \
+                --fs_license /opt/freesurfer/license.txt
 
       - save_cache:
          key: ds005-anat-v12-{{ .Branch }}-{{ epoch }}
