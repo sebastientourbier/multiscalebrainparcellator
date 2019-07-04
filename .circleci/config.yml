@@ -78,8 +78,18 @@ jobs:
           name: Save Docker Images
           no_output_timeout: 40m
           command: |
+            # Get version, update files.
+            THISVERSION=$( python get_version.py )
+            echo "THISVERSION : ${THISVERSION}"
+            echo "CIRCLE_TAG : ${CIRCLE_TAG}"
+            if [[ ${THISVERSION:0:1} == "0" ]] ; then
+              echo "WARNING: latest git tag could not be found"
+              echo "Please, make sure you fetch all tags from upstream with"
+              echo "the command ``git fetch --tags --verbose`` and push"
+              echo "them to your fork with ``git push origin --tags``"
+            fi
             mkdir -p /tmp/cache
-            docker save sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest sebastientourbier/multiscalebrainparcellator:latest \
+            docker save sebastientourbier/multiscalebrainparcellator-ubuntu16.04:${THISVERSION} sebastientourbier/multiscalebrainparcellator:${THISVERSION} \
             | pigz -8 -p 3 > /tmp/cache/docker.tar.gz
       - persist_to_workspace:
           root: /tmp
@@ -191,13 +201,24 @@ jobs:
           name: Run anatomical workflow on ds005
           no_output_timeout: 3h
           command: |
+            # Get version, update files.
+            THISVERSION=$( python get_version.py )
+            echo "THISVERSION : ${THISVERSION}"
+            echo "CIRCLE_TAG : ${CIRCLE_TAG}"
+            if [[ ${THISVERSION:0:1} == "0" ]] ; then
+              echo "WARNING: latest git tag could not be found"
+              echo "Please, make sure you fetch all tags from upstream with"
+              echo "the command ``git fetch --tags --verbose`` and push"
+              echo "them to your fork with ``git push origin --tags``"
+            fi
+
             mkdir -p /tmp/ds005/work /tmp/ds005/derivatives
             rm -R /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dataset \
                 -v /tmp/ds005/derivatives:/bids_dataset/derivatives \
                 -v $FS_LICENSE:/opt/freesurfer/license.txt \
-                sebastientourbier/multiscalebrainparcellator:latest \
+                sebastientourbier/multiscalebrainparcellator:${THISVERSION} \
                 /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
                 --skip_bids_validator \
                 --isotropic_resolution 1.0 \
@@ -257,7 +278,6 @@ jobs:
               docker tag sebastientourbier/multiscalebrainparcellator sebastientourbier/multiscalebrainparcellator:unstable
               docker push sebastientourbier/multiscalebrainparcellator:unstable
               if [[ -n "$CIRCLE_TAG" ]]; then
-                docker push sebastientourbier/multiscalebrainparcellator:latest
                 docker tag sebastientourbier/multiscalebrainparcellator sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
                 docker push sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
               fi
