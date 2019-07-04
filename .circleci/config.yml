@@ -202,7 +202,7 @@ jobs:
           no_output_timeout: 3h
           command: |
             # Get version, update files.
-            THISVERSION=$( python get_version.py )
+            THISVERSION=$( python /home/circleci/src/multiscalebrainparcellator/get_version.py )
             echo "THISVERSION : ${THISVERSION}"
             echo "CIRCLE_TAG : ${CIRCLE_TAG}"
             if [[ ${THISVERSION:0:1} == "0" ]] ; then
