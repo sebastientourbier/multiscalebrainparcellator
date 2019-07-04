@@ -213,19 +213,21 @@ jobs:
             fi
 
             mkdir -p /tmp/ds005/work /tmp/ds005/derivatives
-            rm -R /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation
+            if [ -d /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation]; then
+              rm -R 
+            fi
             docker run -it --rm \
-                -v /tmp/data/ds005:/bids_dataset \
-                -v /tmp/ds005/derivatives:/bids_dataset/derivatives \
+                -v /tmp/data/ds005:/bids_dir \
+                -v /tmp/ds005/derivatives:/output_dir \
                 -v $FS_LICENSE:/opt/freesurfer/license.txt \
                 sebastientourbier/multiscalebrainparcellator:${THISVERSION} \
-                /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
-                --skip_bids_validator \
+                /bids_dir /output_dir participant --participant_label 01 \
                 --isotropic_resolution 1.0 \
                 --thalamic_nuclei \
                 --hippocampal_subfields \
                 --brainstem_structures \
-                --fs_license /opt/freesurfer/license.txt
+                --fs_license /opt/freesurfer/license.txt \
+                --skip_bids_validator
 
       - save_cache:
          key: ds005-anat-v12-{{ .Branch }}-{{ epoch }}
