@@ -24,7 +24,7 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
 
 
 Participant Level Analysis
-======================
+===========================
 To run the docker image in participant level mode (for one participant)::
 
   docker run -it --rm \
