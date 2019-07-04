@@ -30,6 +30,9 @@ Additionally, the description of parcel labels and the updated FreeSurfer color 
 - ``anat/sub-<subject_label>_label-L2018_desc-<scale_label>_atlas.graphml``
 - ``anat/sub-<subject_label>_label-L2018_desc-<scale_label>_atlas_FreeSurferColorLUT.txt``
 
+Finally, parcel volumetry results for each scale are saved in a TSV file as:
+
+- ``anat/sub-<subject_label>_label-L2018_desc-<scale_label>_stats.tsv``
 
 FreeSurfer Derivatives
 ==============
