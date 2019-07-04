@@ -214,7 +214,7 @@ jobs:
 
             mkdir -p /tmp/ds005/work /tmp/ds005/derivatives
             if [ -d /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation]; then
-              rm -R 
+              rm -R /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation
             fi
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dir \
