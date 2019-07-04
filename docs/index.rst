@@ -39,6 +39,12 @@ This tool allows you to easily do the following:
 
 Reproducibility and replicatibility are promoted through the distribution of a BIDSApp, a software container image which provide a frozen environment where versions of all external softwares and libraries are fixed.
 
+.. _FSL: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki
+
+.. _FreeSurfer: https://surfer.nmr.mgh.harvard.edu/fswiki/FreeSurferWiki
+
+.. _ANTs: http://stnava.github.io/ANTs/
+
 
 *********
 Funding
@@ -61,12 +67,30 @@ Copyright (C) 2009-2019, Brain Communication Pathways Sinergia Consortium, Switz
 Contents
 ********
 
-.. toctree::
-   :maxdepth: 1
+.. _getting_started:
 
-   index
+.. toctree::
+   :maxdepth: 2
+   :caption: Getting started
+
    installation
+
+.. _user-docs:
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User Documentation
+
    usage
    workflow
    outputs
+
+.. _about-docs:
+
+.. toctree::
+   :maxdepth: 1
+   :caption: About Connectome Mapper
+
+   LICENSE
    citing
+   contributing
