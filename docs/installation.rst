@@ -56,7 +56,7 @@ Installation of Docker
 .. _manual-install-multiscalebrainparcellator:
 
 Installation of the Multi-Scale Brain Parcellator
-===============================
+==================================================
 
 Installation and use of the Multi-Scale Brain Parcellator has been facilitated through the distribution of a Docker container image.
 
@@ -74,6 +74,6 @@ You should see the docker image "multiscalebrainparcellator" with tag "latest" i
 
 
 Help/Questions
---------------
+---------------
 
 If you run into any problems or have any questions, you can post to the `CMTK-users group <http://groups.google.com/group/cmtk-users>`_. Code bugs can be reported by creating a "New Issue" on the `source code repository <https://github.com/sebastientourbier/multiscalebrainparcellator/issues>`_.

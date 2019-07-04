@@ -1,11 +1,11 @@
-*********************
+*****************************************
 Outputs of Multi-Scale Brain Parcellator
-*********************
+*****************************************
 
 .. note:: Multi-Scale Brain Parcellator outputs are currently being updated to conform to the :abbr:`BIDS (brain imaging data structure)` Common Derivatives specification (see `BIDS Common Derivatives Extension <https://docs.google.com/document/d/1Wwc4A6Mow4ZPPszDIWfCUCRNstn7d_zzaWPcfcHmgI4/edit>`_).
 
 Multi-Scale Brain Parcellator Derivatives
-==============
+==========================================
 
 Processed, or derivative, data are written to ``<bids_dataset/derivatives>/cmp/sub-<subject_label>/``. In this folder, a configuration file generated and used for processing each participant is saved as ``sub-<subject_label>_anatomical_config.ini``. It summarizes pipeline workflow options and parameters used for processing.
 
@@ -35,7 +35,7 @@ Finally, parcel volumetry results for each scale are saved in a TSV file as:
 - ``anat/sub-<subject_label>_label-L2018_desc-<scale_label>_stats.tsv``
 
 FreeSurfer Derivatives
-==============
+=======================
 
 A FreeSurfer subjects directory is created in ``<bids_dataset/derivatives>/freesurfer``.
 
