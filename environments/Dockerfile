@@ -91,6 +91,18 @@ ENV PATH=/usr/lib/fsl/5.0:$PATH
 
 # Add fsaverage
 WORKDIR /opt/freesurfer/subjects/fsaverage
-ADD . /bids_dataset/derivatives/freesurfer/fsaverage
+ADD . /bids_dir/derivatives/freesurfer/fsaverage
 
 WORKDIR /
+
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="MULTISCALEBRAINPARCELLATOR SYSTEM IMAGE" \
+      org.label-schema.description="Parent image of the multiscalebrainparcellator that provides a ubuntu 16.04 Xenial system with all prerequisites installed" \
+      org.label-schema.url="https://multiscalebrainparcellator.readthedocs.io" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/sebastientourbier/multiscalebrainparcellator/environments" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0"
