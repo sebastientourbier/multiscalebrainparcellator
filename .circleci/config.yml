@@ -68,6 +68,7 @@ jobs:
                 --cache-from=sebastientourbier/multiscalebrainparcellator \
                 --rm=false \
                 -t sebastientourbier/multiscalebrainparcellator:${THISVERSION} \
+                --build-arg MAIN_DOCKER="sebastientourbier/multiscalebrainparcellator-ubuntu16.04:${THISVERSION}" \
                 --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
                 --build-arg VCS_REF=`git rev-parse --short HEAD` \
                 --build-arg VERSION="${CIRCLE_TAG:-$THISVERSION}" . \
