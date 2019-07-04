@@ -44,5 +44,6 @@ Poster
 
   .. _Poster : https://files.aievolution.com/hbm1901/abstracts/51863/W616_Tourbier.pdf
   
-  .. image:: images/Tourbier_et_al_poster#W616_OHBM.png
-   :width: 600
+.. image:: images/Tourbier_et_al_posterW616_OHBM.png
+  :width: 888
+  :align: center
