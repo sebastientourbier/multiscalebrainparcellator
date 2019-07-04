@@ -34,3 +34,15 @@ Citing
     12.Najdenovska E, Alemán-Gómez Y, Battistella G, Descoteaux M, Hagmann P, Jacquemont S, Maeder P, Thiran JP, Fornari E, Bach Cuadra M (2018). In-vivo probabilistic atlas of human thalamic nuclei based on diffusion- weighted magnetic resonance imaging. Scientific Data, vol. 5, no. 180270. doi: 10.1038/sdata.2018.270
 
     13.Avants BB, Epstein CL, Grossman M, Gee JC (2008). Symmetric diffeomorphic image registration with cross-correlation: evaluating automated labeling of elderly and neurodegenerative brain. Medical Image Analysis, vol. 12, no. 1, pp. 26–41. doi:10.1016/j.media.2007.06.004.
+
+Poster
+-------
+
+* Organization for Human Brain Mapping 2019 (Abstract_; Poster_)
+
+  .. _Abstract : https://ww5.aievolution.com/hbm1901/index.cfm?do=abs.viewAbs&abs=1714 
+
+  .. _Poster : https://files.aievolution.com/hbm1901/abstracts/51863/W616_Tourbier.pdf
+  
+  .. image:: images/Tourbier_et_al_poster#W616_OHBM.png
+   :width: 600
