@@ -38,7 +38,7 @@ If your are using the Multi-Scale Brain Parcellator in your work, please acknowl
 
 #### References
 
-1.Tourbier S, Aleman-Gomez Y, Griffa A, Hagmann P (2019, January 10) sebastientourbier/multiscalebrainparcellator: Multi-Scale Brain Parcellator (Version v1.0.0-beta8). Zenodo. http://doi.org/10.5281/zenodo.2536778
+1.Tourbier S, Aleman-Gomez Y, Griffa A, Hagmann P (2019, January 10) sebastientourbier/multiscalebrainparcellator: Multi-Scale Brain Parcellator (Version v1.0.1). Zenodo. http://doi.org/10.5281/zenodo.2536778
 
 2.Tourbier S, Aleman-Gomez Y, Griffa A, Bach Cuadra M, Hagmann P (2019, June 12). Multi-Scale Brain Parcellator: a BIDS App for the Lausanne Connectome Parcellation. 25th Annual Meeting of the Organization for Human Brain Mapping (OHBM), [abstract #1714](https://ww5.aievolution.com/hbm1901/index.cfm?do=abs.viewAbs&abs=1714), [poster #W616](https://files.aievolution.com/hbm1901/abstracts/51863/W616_Tourbier.pdf).
 
@@ -109,15 +109,15 @@ To run it in participant level mode (for one participant):
 
         $ docker run -it --rm \
         -v /home/localadmin/data/ds001:/bids_dir \
-        -v /media/localadmin/data/ds001/derivatives:/output_dir \
+        -v /home/localadmin/data/ds001/derivatives:/output_dir \
         -v /usr/local/freesurfer/license.txt:/bids_dir/code/license.txt \
         sebastientourbier/multiscalebrainparcellator:latest \
-        /bids_dataset /bids_dataset/derivatives participant --participant_label 01 \
-        
+        /bids_dir /output_dir participant --participant_label 01 \
+        --fs_license /bids_dir/code/license.txt \
         --thalamic_nuclei \
         --hippocampal_subfields \
-        --brainstem_structures
-        --isotropic_resolution
+        --brainstem_structures \
+        --isotropic_resolution 1.0
 
 ### Credits
 
