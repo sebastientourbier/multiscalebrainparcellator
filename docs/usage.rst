@@ -7,10 +7,41 @@ Execution and the BIDS format
 
 The ``Multi-Scale Brain Parcellator`` workflow takes as principal input the path of the dataset
 that is to be processed.
+
 The input dataset is required to be in valid :abbr:`BIDS (Brain Imaging Data
-Structure)` format, and it must include at least one T1w or MPRAGE structural image.
-We highly recommend that you validate your dataset with the free, online
+Structure)` format, and it must include at least one T1w or MPRAGE structural image. 
+
+::
+
+    ds-example/
+    	
+    	README
+    	CHANGES
+    	participants.tsv
+    	dataset_description.json
+        
+        sub-01/
+            anat/
+            	sub-01_T1w.nii.gz
+            	sub-01_T1w.json
+        
+        ...
+
+        sub-<subject_label>/
+            anat/
+            	sub-<subject_label>_T1w.nii.gz
+            	sub-<subject_label>_T1w.json
+            ...
+        ...
+
+For more information about BIDS, please consult the ``BIDS Website <https://bids.neuroimaging.io/>`_ and the `Online BIDS Specifications <https://bids-specification.readthedocs.io/en/stable/>`_.
+
+
+.. important:: We highly recommend that you validate your dataset with the free, online
 `BIDS Validator <http://bids-standard.github.io/bids-validator/>`_.
+
+`HeuDiConv <https://github.com/nipy/heudiconv>`_ can assist you in converting DICOM brain imaging data to BIDS. A nice tutorial can be found @ `BIDS Tutorial Series: HeuDiConv Walkthrough <http://reproducibility.stanford.edu/bids-tutorial-series-part-2a/>`_ .
+
 
 Commandline Arguments
 =============================
