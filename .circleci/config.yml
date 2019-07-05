@@ -5,7 +5,7 @@ jobs:
       TZ: "/usr/share/zoneinfo/Europe/Zurich"
       SCRATCH: "/scratch"
     docker:
-      - image: docker:18.09.3-ce-git
+      - image: docker:18.09.3-rc1-git
     working_directory: tmp/src/multiscalebrainparcellator
     steps:
       - run:
