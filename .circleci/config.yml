@@ -5,7 +5,7 @@ jobs:
       TZ: "/usr/share/zoneinfo/Europe/Zurich"
       SCRATCH: "/scratch"
     docker:
-      - image: docker:18.01.0-ce-git
+      - image: docker:18.09.3-ce-git
     working_directory: tmp/src/multiscalebrainparcellator
     steps:
       - run:
@@ -99,8 +99,10 @@ jobs:
 
   get_data:
     machine:
+      # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      image: ubuntu-1604:201903-01
       # Ubuntu 14.04 with Docker 17.10.0-ce
-      image: circleci/classic:201711-01
+      #image: circleci/classic:201711-01
     working_directory: /home/circleci/data
     steps:
       - restore_cache:
@@ -162,8 +164,10 @@ jobs:
 
   test:
     machine:
+      # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      image: ubuntu-1604:201903-01
       # Ubuntu 14.04 with Docker 17.10.0-ce
-      image: circleci/classic:201711-01
+      #image: circleci/classic:201711-01
     working_directory: /tmp/ds005
     environment:
       - FS_LICENSE: /tmp/fslicense/license.txt
