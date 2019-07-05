@@ -216,17 +216,18 @@ jobs:
             if [ -d /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation]; then
               rm -R /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation
             fi
+            mv 
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dir \
                 -v /tmp/ds005/derivatives:/output_dir \
-                -v $FS_LICENSE:/opt/freesurfer/license.txt \
+                -v $FS_LICENSE:/bids_dir/code/license.txt \
                 sebastientourbier/multiscalebrainparcellator:${THISVERSION} \
                 /bids_dir /output_dir participant --participant_label 01 \
                 --isotropic_resolution 1.0 \
                 --thalamic_nuclei \
                 --hippocampal_subfields \
                 --brainstem_structures \
-                --fs_license /opt/freesurfer/license.txt \
+                --fs_license /bids_dir/code/license.txt \
                 --skip_bids_validator
 
       - save_cache:
