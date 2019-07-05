@@ -37,8 +37,8 @@ Structure)` format, and it must include at least one T1w or MPRAGE structural im
 For more information about BIDS, please consult the `BIDS Website <https://bids.neuroimaging.io/>`_ and the `Online BIDS Specifications <https://bids-specification.readthedocs.io/en/stable/>`_.
 
 
-.. important:: We highly recommend that you validate your dataset with the free, online
-`BIDS Validator <http://bids-standard.github.io/bids-validator/>`_.
+.. important:: 
+	We highly recommend that you validate your dataset with the free, online `BIDS Validator <http://bids-standard.github.io/bids-validator/>`_.
 
 `HeuDiConv <https://github.com/nipy/heudiconv>`_ can assist you in converting DICOM brain imaging data to BIDS. A nice tutorial can be found @ `BIDS Tutorial Series: HeuDiConv Walkthrough <http://reproducibility.stanford.edu/bids-tutorial-series-part-2a/>`_ .
 
