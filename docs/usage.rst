@@ -34,7 +34,7 @@ Structure)` format, and it must include at least one T1w or MPRAGE structural im
             ...
         ...
 
-For more information about BIDS, please consult the ``BIDS Website <https://bids.neuroimaging.io/>`_ and the `Online BIDS Specifications <https://bids-specification.readthedocs.io/en/stable/>`_.
+For more information about BIDS, please consult the `BIDS Website <https://bids.neuroimaging.io/>`_ and the `Online BIDS Specifications <https://bids-specification.readthedocs.io/en/stable/>`_.
 
 
 .. important:: We highly recommend that you validate your dataset with the free, online
@@ -52,6 +52,9 @@ The command to run ``Multi-Scale Brain Parcellator`` follow the `BIDS-Apps
 .. argparse::
 		:ref: cmp.multiscalebrainparcellator.parser.get
 		:prog: multiscalebrainparcellator
+
+.. seealso:: 
+	More information about BIDS Apps? Please check directly on the `BIDS Apps Website <http://bids-apps.neuroimaging.io/>`_.
 
 
 Participant Level Analysis
