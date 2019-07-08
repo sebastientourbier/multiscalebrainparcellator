@@ -5,7 +5,7 @@ jobs:
       TZ: "/usr/share/zoneinfo/Europe/Zurich"
       SCRATCH: "/scratch"
     docker:
-      - image: docker:18.01.0-ce-git
+      - image: docker:18.09.3-rc1-git
     working_directory: tmp/src/multiscalebrainparcellator
     steps:
       - run:
@@ -99,8 +99,10 @@ jobs:
 
   get_data:
     machine:
+      # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      image: ubuntu-1604:201903-01
       # Ubuntu 14.04 with Docker 17.10.0-ce
-      image: circleci/classic:201711-01
+      #image: circleci/classic:201711-01
     working_directory: /home/circleci/data
     steps:
       - restore_cache:
@@ -162,8 +164,10 @@ jobs:
 
   test:
     machine:
+      # Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      image: ubuntu-1604:201903-01
       # Ubuntu 14.04 with Docker 17.10.0-ce
-      image: circleci/classic:201711-01
+      #image: circleci/classic:201711-01
     working_directory: /tmp/ds005
     environment:
       - FS_LICENSE: /tmp/fslicense/license.txt
@@ -216,17 +220,18 @@ jobs:
             if [ -d /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation]; then
               rm -R /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation
             fi
+            ls -a /tmp/ds005
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dir \
                 -v /tmp/ds005/derivatives:/output_dir \
-                -v $FS_LICENSE:/opt/freesurfer/license.txt \
+                -v $FS_LICENSE:/bids_dir/code/license.txt \
                 sebastientourbier/multiscalebrainparcellator:${THISVERSION} \
                 /bids_dir /output_dir participant --participant_label 01 \
                 --isotropic_resolution 1.0 \
                 --thalamic_nuclei \
                 --hippocampal_subfields \
                 --brainstem_structures \
-                --fs_license /opt/freesurfer/license.txt \
+                --fs_license /bids_dir/code/license.txt \
                 --skip_bids_validator
 
       - save_cache:
