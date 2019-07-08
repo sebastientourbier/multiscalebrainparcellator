@@ -4,9 +4,10 @@ Multi-Scale Brain Parcellator
 
 This pipeline is developed by the Hagmann’s group at the University Hospital of Lausanne (CHUV) for use within the `SNF Sinergia Project 170873 <http://p3.snf.ch/project-170873>`_, as well as for open-source software distribution.
 
-.. image:: https://img.shields.io/docker/build/sebastientourbier/multiscalebrainparcellator.svg
-  :target: https://cloud.docker.com/repository/docker/sebastientourbier/multiscalebrainparcellator
-  :alt: Docker Build Status
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2536778.svg
+   :target: https://doi.org/10.5281/zenodo.2536778
+   :alt: Digital Object Identifier (DOI)
 
 .. image:: https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master.svg?style=shield
   :target: https://circleci.com/gh/sebastientourbier/multiscalebrainparcellator/tree/master
@@ -26,7 +27,7 @@ About
 .. image:: images/multiscalebrainparcellator.png
 	:width: 888
 	:align: center
-  
+
 The ``Multi-Scale Brain Parcellator`` pipelines uses a combination of tools from well-known software packages, including FSL_, FreeSurfer_, ANTs_ as well as in-house tools from CMTK.
 
 This tool allows you to easily do the following:
@@ -36,7 +37,7 @@ This tool allows you to easily do the following:
 - Automate and parallelize processing steps, which provides a significant
   speed-up from typical linear, manual processing.
 
-Reproducibility and replicatibility is achieved through the distribution of a BIDSApp, a software container image which provide a frozen environment where versions of all external softwares and libraries are fixed.
+Reproducibility and replicatibility are promoted through the distribution of a BIDSApp, a software container image which provide a frozen environment where versions of all external softwares and libraries are fixed.
 
 
 *********
@@ -66,5 +67,6 @@ Contents
    index
    installation
    usage
+   workflow
    outputs
    citing

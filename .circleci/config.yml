@@ -301,7 +301,10 @@ workflows:
             # - build_docs
             - test
           filters:
+            # ignore any commit on any branch by default
             branches:
-              only: master
+              ignore: /.*/
+              # only: master
+            # only act on version tags
             tags:
               only: /^v.*/

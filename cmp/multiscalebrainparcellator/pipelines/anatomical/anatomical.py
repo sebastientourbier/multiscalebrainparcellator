@@ -221,11 +221,11 @@ class AnatomicalPipeline(cmp_common.Pipeline):
             else:
                 anat_deriv_subject_directory = os.path.join(self.output_directory,"cmp",subject.split("_")[0],self.global_conf.subject_session,'anat')
 
-        T1_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_head.nii.gz')
-        brain_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_brain.nii.gz')
-        brainmask_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_brainmask.nii.gz')
-        wm_mask_file = os.path.join(anat_deriv_subject_directory,subject+'_T1w_class-WM.nii.gz')
-        roiv_files = glob.glob(anat_deriv_subject_directory+"/"+subject+"_T1w_parc_scale*.nii.gz")
+        T1_file = os.path.join(anat_deriv_subject_directory,subject+'_desc-head_T1w.nii.gz')
+        brain_file = os.path.join(anat_deriv_subject_directory,subject+'_desc-brain_T1w.nii.gz')
+        brainmask_file = os.path.join(anat_deriv_subject_directory,subject+'_desc-brainmask_dseg.nii.gz')
+        wm_mask_file = os.path.join(anat_deriv_subject_directory,subject+'_label-WM_dseg.nii.gz')
+        roiv_files = glob.glob(anat_deriv_subject_directory+"/"+subject+"_label-L2018_desc-scale*_atlas.nii.gz")
 
         error_message = ''
 
@@ -292,39 +292,39 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         #Dataname substitutions in order to comply with BIDS derivatives specifications
         if self.stages['Segmentation'].config.seg_tool == "Freesurfer":
-            sinker.inputs.substitutions = [ ('T1.nii.gz', self.subject+'_T1w_space-orig_desc-head.nii.gz'),
-                                            ('brain.nii.gz', self.subject+'_T1w_space-orig_desc-brain.nii.gz'),
-                                            ('brain_mask.nii.gz', self.subject+'_T1w_space-orig_desc-brain_mask.nii.gz'),
-                                            ('aseg.nii.gz', self.subject+'_T1w_space-orig_label-aseg_atlas.nii.gz'),
-                                            ('fsmask_1mm.nii.gz',self.subject+'_T1w_space-orig_label-WM_dseg.nii.gz'),
-                                            ('gmmask.nii.gz',self.subject+'_T1w_space-orig_label-GM_dseg.nii.gz'),
-                                            ('aparc+aseg.native.nii.gz',self.subject+'_T1w_space-orig_label-Desikan_atlas.nii.gz'),
-                                            ('aparc+aseg.Lausanne2018.native.nii.gz',self.subject+'_T1w_space-orig_label-Desikan_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale1.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale1_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale2.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale2_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale3.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale3_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale4.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale4_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale5.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale5_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale1_final.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale1_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale2_final.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale2_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale3_final.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale3_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale4_final.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale4_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale5_final.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale5_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale1.graphml',self.subject+'_T1w_space-orig_label-L2018_desc-scale1_atlas.graphml'),
-                                            ('ROIv_HR_th_scale2.graphml',self.subject+'_T1w_space-orig_label-L2018_desc-scale2_atlas.graphml'),
-                                            ('ROIv_HR_th_scale3.graphml',self.subject+'_T1w_space-orig_label-L2018_desc-scale3_atlas.graphml'),
-                                            ('ROIv_HR_th_scale4.graphml',self.subject+'_T1w_space-orig_label-L2018_desc-scale4_atlas.graphml'),
-                                            ('ROIv_HR_th_scale5.graphml',self.subject+'_T1w_space-orig_label-L2018_desc-scale5_atlas.graphml'),
-                                            ('ROIv_HR_th_scale1_FreeSurferColorLUT.txt',self.subject+'_T1w_space-orig_label-L2018_desc-scale1_atlas_FreeSurferColorLUT.txt'),
-                                            ('ROIv_HR_th_scale2_FreeSurferColorLUT.txt',self.subject+'_T1w_space-orig_label-L2018_desc-scale2_atlas_FreeSurferColorLUT.txt'),
-                                            ('ROIv_HR_th_scale3_FreeSurferColorLUT.txt',self.subject+'_T1w_space-orig_label-L2018_desc-scale3_atlas_FreeSurferColorLUT.txt'),
-                                            ('ROIv_HR_th_scale4_FreeSurferColorLUT.txt',self.subject+'_T1w_space-orig_label-L2018_desc-scale4_atlas_FreeSurferColorLUT.txt'),
-                                            ('ROIv_HR_th_scale5_FreeSurferColorLUT.txt',self.subject+'_T1w_space-orig_label-L2018_desc-scale5_atlas_FreeSurferColorLUT.txt'),
-                                            ('ROIv_HR_th_scale33.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale1_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale60.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale2_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale125.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale3_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale250.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale4_atlas.nii.gz'),
-                                            ('ROIv_HR_th_scale500.nii.gz',self.subject+'_T1w_space-orig_label-L2018_desc-scale5_atlas.nii.gz'),
+            sinker.inputs.substitutions = [ ('T1.nii.gz', self.subject+'_desc-head_T1w.nii.gz'),
+                                            ('brain.nii.gz', self.subject+'_desc-brain_T1w.nii.gz'),
+                                            ('brain_mask.nii.gz', self.subject+'_desc-brain_mask.nii.gz'),
+                                            ('aseg.nii.gz', self.subject+'_desc-aseg_dseg.nii.gz'),
+                                            ('fsmask_1mm.nii.gz',self.subject+'_label-WM_dseg.nii.gz'),
+                                            ('gmmask.nii.gz',self.subject+'_label-GM_dseg.nii.gz'),
+                                            ('aparc+aseg.native.nii.gz',self.subject+'_desc-aparcaseg_dseg.nii.gz'),
+                                            ('aparc+aseg.Lausanne2018.native.nii.gz',self.subject+'_desc-aparcaseg_dseg.nii.gz'),
+                                            ('ROIv_HR_th_scale1.nii.gz',self.subject+'_label-L2018_desc-scale1_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale2.nii.gz',self.subject+'_label-L2018_desc-scale2_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale3.nii.gz',self.subject+'_label-L2018_desc-scale3_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale4.nii.gz',self.subject+'_label-L2018_desc-scale4_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale5.nii.gz',self.subject+'_label-L2018_desc-scale5_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale1_final.nii.gz',self.subject+'_label-L2018_desc-scale1_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale2_final.nii.gz',self.subject+'_label-L2018_desc-scale2_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale3_final.nii.gz',self.subject+'_label-L2018_desc-scale3_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale4_final.nii.gz',self.subject+'_label-L2018_desc-scale4_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale5_final.nii.gz',self.subject+'_label-L2018_desc-scale5_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale1.graphml',self.subject+'_label-L2018_desc-scale1_atlas.graphml'),
+                                            ('ROIv_HR_th_scale2.graphml',self.subject+'_label-L2018_desc-scale2_atlas.graphml'),
+                                            ('ROIv_HR_th_scale3.graphml',self.subject+'_label-L2018_desc-scale3_atlas.graphml'),
+                                            ('ROIv_HR_th_scale4.graphml',self.subject+'_label-L2018_desc-scale4_atlas.graphml'),
+                                            ('ROIv_HR_th_scale5.graphml',self.subject+'_label-L2018_desc-scale5_atlas.graphml'),
+                                            ('ROIv_HR_th_scale1_FreeSurferColorLUT.txt',self.subject+'_label-L2018_desc-scale1_atlas_FreeSurferColorLUT.txt'),
+                                            ('ROIv_HR_th_scale2_FreeSurferColorLUT.txt',self.subject+'_label-L2018_desc-scale2_atlas_FreeSurferColorLUT.txt'),
+                                            ('ROIv_HR_th_scale3_FreeSurferColorLUT.txt',self.subject+'_label-L2018_desc-scale3_atlas_FreeSurferColorLUT.txt'),
+                                            ('ROIv_HR_th_scale4_FreeSurferColorLUT.txt',self.subject+'_label-L2018_desc-scale4_atlas_FreeSurferColorLUT.txt'),
+                                            ('ROIv_HR_th_scale5_FreeSurferColorLUT.txt',self.subject+'_label-L2018_desc-scale5_atlas_FreeSurferColorLUT.txt'),
+                                            ('ROIv_HR_th_scale33.nii.gz',self.subject+'_label-L2018_desc-scale1_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale60.nii.gz',self.subject+'_label-L2018_desc-scale2_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale125.nii.gz',self.subject+'_label-L2018_desc-scale3_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale250.nii.gz',self.subject+'_label-L2018_desc-scale4_atlas.nii.gz'),
+                                            ('ROIv_HR_th_scale500.nii.gz',self.subject+'_label-L2018_desc-scale5_atlas.nii.gz'),
                                           ]
         else:
             sinker.inputs.substitutions = [ (self.subject+'_T1w.nii.gz', self.subject+'_T1w_head.nii.gz'),
