@@ -487,8 +487,8 @@ class AnatomicalPipeline(cmp_common.Pipeline):
             self.subject = "_".join((self.subject,self.global_conf.subject_session))
 
         # Initialization
-        if os.path.isfile(os.path.join(deriv_subject_directory,"anat","{}_log-multiscalbrainparcellator.txt".format(self.subject))):
-            os.unlink(os.path.join(deriv_subject_directory,"anat","{}_log-multiscalbrainparcellator.txt".format(self.subject)))
+        if os.path.isfile(os.path.join(deriv_subject_directory,"anat","{}_desc-multiscalbrainparcellator_log.txt".format(self.subject))):
+            os.unlink(os.path.join(deriv_subject_directory,"anat","{}_desc-multiscalbrainparcellator_log.txt".format(self.subject)))
 
         config.update_config({'logging': {'log_directory': os.path.join(deriv_subject_directory,"anat"),
                                   'log_to_file': True},
@@ -525,7 +525,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         try:
             src = os.path.join(deriv_subject_directory,"anat","pypeline.log")
-            dest = os.path.join(deriv_subject_directory,"anat", "{}_log-multiscalebrainparcellator.txt".format(self.subject))
+            dest = os.path.join(deriv_subject_directory,"anat", "{}_desc-multiscalebrainparcellator_log.txt".format(self.subject))
             shutil.move(src,dest)
         except:
             print("Skipped renaming of log file")
