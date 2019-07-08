@@ -105,7 +105,7 @@ if __name__ == '__main__':
     
     dest = '{}/code/license.txt'.format(args.bids_dir)
     if args.fs_license:    
-        if os.access(dest,os.F_OK):
+        if os.access(dest,os.F_OK) and args.fs_license != dest:
             os.remove(dest)
             print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
         if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
