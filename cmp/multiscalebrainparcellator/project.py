@@ -229,7 +229,7 @@ def init_anat_project(project_info, is_new_project):
 
     print anat_pipeline
 
-    derivatives_directory = os.path.join(project_info.base_directory,'derivatives')
+    derivatives_directory = os.path.join(project_info.output_directory)
 
     if (project_info.subject_session != '') and (project_info.subject_session != None) :
         print('Refresh folder WITH session')
