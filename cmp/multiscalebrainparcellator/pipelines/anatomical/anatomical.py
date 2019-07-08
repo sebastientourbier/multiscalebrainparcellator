@@ -203,7 +203,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                 out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.nii.gz')
 
             if not os.path.isfile(out_T1_file):
-                print('INFO: Copying {} to {}'.format()T1_file,out_T1_file)
+                print('INFO: Copying {} to {}'.format(T1_file,out_T1_file))
                 shutil.copy(src=T1_file,dst=out_T1_file)
 
             valid_inputs = True
@@ -216,7 +216,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                     out_T1_json_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.json')
 
                 if not os.path.isfile(out_T1_json_file):
-                    print('INFO: Copying {} to {}'.format()T1_json_file,out_T1_json_file)
+                    print('INFO: Copying {} to {}'.format(T1_json_file,out_T1_json_file))
                     shutil.copy(src=T1_json_file,dst=out_T1_json_file)
 
         else:
