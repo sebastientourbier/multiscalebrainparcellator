@@ -203,6 +203,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                 out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.nii.gz')
 
             if not os.path.isfile(out_T1_file):
+                print('INFO: Copying {} to {}'.format()T1_file,out_T1_file)
                 shutil.copy(src=T1_file,dst=out_T1_file)
 
             valid_inputs = True
@@ -215,6 +216,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                     out_T1_json_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.json')
 
                 if not os.path.isfile(out_T1_json_file):
+                    print('INFO: Copying {} to {}'.format()T1_json_file,out_T1_json_file)
                     shutil.copy(src=T1_json_file,dst=out_T1_json_file)
 
         else:
@@ -323,7 +325,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         datasource.inputs.base_directory = deriv_subject_directory
         datasource.inputs.template = '*'
         datasource.inputs.raise_on_empty = False
-        datasource.inputs.field_template = dict(T1='anat/'+self.subject+'_T1w.nii.gz')
+        datasource.inputs.field_template = dict(T1='anat/'+self.subject+'_desc-cmp_T1w.nii.gz')
         datasource.inputs.sort_filelist=False
 
         # Data sinker for output
