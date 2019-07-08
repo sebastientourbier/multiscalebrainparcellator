@@ -224,6 +224,10 @@ def refresh_folder(derivatives_directory, subject, input_folders, session=None):
             finally:
                 print "Created directory %s" % full_p
 
+    write_derivative_description(bids_directory, derivatives_directory, 'cmp')
+    write_derivative_description(bids_directory, derivatives_directory, 'freesurfer')
+    write_derivative_description(bids_directory, derivatives_directory, 'nipype')
+
 def init_anat_project(project_info, is_new_project):
     anat_pipeline = Anatomical_pipeline.AnatomicalPipeline(project_info)
 
