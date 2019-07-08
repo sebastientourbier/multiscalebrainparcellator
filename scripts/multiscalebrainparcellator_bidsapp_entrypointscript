@@ -104,14 +104,17 @@ if __name__ == '__main__':
     # It supposes that the license is stored as /bids_dir/code/license.txt
     
     dest = '{}/code/license.txt'.format(args.bids_dir)
-    if args.fs_license:    
-        if os.access(dest,os.F_OK) and args.fs_license != dest:
-            os.remove(dest)
-            print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
-        if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
-            os.mkdir('{}/code'.format(args.bids_dir))
-        shutil.copyfile(args.fs_license,dest)
-        print('INFO: Freesurfer license provided as input will be used'.format(dest))
+    if args.fs_license:
+        if not shutil._samefile(args.fs_license,dest):    
+            if os.access(dest,os.F_OK):
+                os.remove(dest)
+                print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
+            if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
+                os.mkdir('{}/code'.format(args.bids_dir))
+            shutil.copyfile(args.fs_license,dest)
+            print('INFO: Freesurfer license provided as input will be used'.format(dest))       
+        else:
+            print('WARNING: Freesurfer license specified by --fs_license () is the same as the destination license and will not be copied'.format(dest))              
     else:      
         if not os.access(dest,os.F_OK):
             if os.environ['FREESURFER_HOME']:
