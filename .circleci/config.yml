@@ -261,7 +261,7 @@ jobs:
           path: /tmp/ds005/test
       - store_artifacts:
           path: /tmp/ds005/derivatives/cmp
-       - store_artifacts:
+      - store_artifacts:
           path: /tmp/ds005/derivatives/nipype
 
   deploy_docker:
