@@ -28,6 +28,7 @@ from bids import BIDSLayout
 
 # Own imports
 from pipelines.anatomical import anatomical as Anatomical_pipeline
+from cmtklib.bids.utils import write_derivative_description
 
 class CMP_Project_Info(HasTraits):
     base_directory = Directory
