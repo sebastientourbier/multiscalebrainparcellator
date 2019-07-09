@@ -21,7 +21,7 @@ def write_derivative_description(bids_dir, deriv_dir, pipeline_name):
             'Name': 'Multiscalebrainparcellator processing workflow',
             'BIDSVersion': '1.1.1',
             'PipelineDescription': {
-                'Name': 'Multi-Scale Brain Parcellator',
+                'Name': 'General BIDS outputs of the Multi-Scale Brain Parcellator',
                 'Version': __version__,
                 'CodeURL': DOWNLOAD_URL,
             },
@@ -36,7 +36,7 @@ def write_derivative_description(bids_dir, deriv_dir, pipeline_name):
             'Name': 'Multiscalebrainparcellator processing workflow',
             'BIDSVersion': '1.1.1',
             'PipelineDescription': {
-                'Name': 'Freesurfer v6.0.1 outputs of the Connectome Mapper',
+                'Name': 'Freesurfer v6.0.1 outputs of the Multi-Scale Brain Parcellator',
                 'Version': __version__,
                 'CodeURL': DOWNLOAD_URL,
             },
