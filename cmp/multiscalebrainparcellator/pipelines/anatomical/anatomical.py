@@ -317,7 +317,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         return valid_output,error_message
 
-    def create_pipeline_flow(self,deriv_subject_directory):
+    def create_pipeline_flow(self,deriv_subject_directory,nipype_deriv_subject_directory):
         subject_directory = self.subject_directory
 
         # Data import
@@ -481,8 +481,10 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         if self.global_conf.subject_session == '':
             deriv_subject_directory = os.path.join(self.output_directory,"cmp",self.subject)
+            nipype_deriv_subject_directory = os.path.join(self.output_directory,"nipype",self.subject)
         else:
             deriv_subject_directory = os.path.join(self.output_directory,"cmp",self.subject,self.global_conf.subject_session)
+            nipype_deriv_subject_directory = os.path.join(self.output_directory,"nipype",self.subject,self.global_conf.subject_session)
 
             self.subject = "_".join((self.subject,self.global_conf.subject_session))
 
@@ -500,7 +502,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         iflogger = logging.getLogger('nipype.interface')
 
         iflogger.info("**** Processing ****")
-        anat_flow = self.create_pipeline_flow(deriv_subject_directory=deriv_subject_directory)
+        anat_flow = self.create_pipeline_flow(deriv_subject_directory=deriv_subject_directory, nipype_deriv_subject_directory=nipype_deriv_subject_directory)
         anat_flow.write_graph(graph2use='colored', format='svg', simple_form=True)
 
         if(self.number_of_cores != 1):
@@ -519,21 +521,21 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         #         os.remove(os.path.join(self.base_directory,file_to_rm))
 
         # copy .ini and log file
-        outdir = deriv_subject_directory
-        if not os.path.exists(outdir):
-            os.makedirs(outdir)
+        # outdir = deriv_subject_directory
+        # if not os.path.exists(outdir):
+        #     os.makedirs(outdir)
 
-        try:
-            src = os.path.join(deriv_subject_directory,"anat","pypeline.log")
-            dest = os.path.join(deriv_subject_directory,"anat", "{}_desc-multiscalebrainparcellator_log.txt".format(self.subject))
-            shutil.move(src,dest)
-        except:
-            print("Skipped renaming of log file")
+        # try:
+        #     src = os.path.join(deriv_subject_directory,"anat","pypeline.log")
+        #     dest = os.path.join(deriv_subject_directory,"anat", "{}_desc-multiscalebrainparcellator_log.txt".format(self.subject))
+        #     shutil.move(src,dest)
+        # except:
+        #     print("Skipped renaming of log file")
 
-        try:
-            shutil.copy(self.config_file,outdir)
-        except shutil.Error:
-            print("Skipped copy of config file")
+        # try:
+        #     shutil.copy(self.config_file,outdir)
+        # except shutil.Error:
+        #     print("Skipped copy of config file")
 
         #shutil.copy(os.path.join(self.output_directory,"cmp",self.subject,'pypeline.log'),outdir)
 
