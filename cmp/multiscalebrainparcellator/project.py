@@ -196,7 +196,7 @@ def anat_load_config(pipeline, config_path):
 
 ## Creates (if needed) the folder hierarchy
 #
-def refresh_folder(derivatives_directory, subject, input_folders, session=None):
+def refresh_folder(bids_directory,derivatives_directory, subject, input_folders, session=None):
     paths = []
 
     if session == None or session == '':
@@ -206,7 +206,7 @@ def refresh_folder(derivatives_directory, subject, input_folders, session=None):
         for in_f in input_folders:
             paths.append(os.path.join(derivatives_directory,'cmp',subject,in_f))
 
-        paths.append(os.path.join(derivatives_directory,'cmp',subject,'tmp'))
+        paths.append(os.path.join(derivatives_directory,'nipype',subject))
     else:
         paths.append(os.path.join(derivatives_directory,'freesurfer','%s_%s'%(subject,session)))
         paths.append(os.path.join(derivatives_directory,'cmp',subject,session))
@@ -214,7 +214,7 @@ def refresh_folder(derivatives_directory, subject, input_folders, session=None):
         for in_f in input_folders:
             paths.append(os.path.join(derivatives_directory,'cmp',subject,session,in_f))
 
-        paths.append(os.path.join(derivatives_directory,'cmp',subject,session,'tmp'))
+        paths.append(os.path.join(derivatives_directory,'nipype',subject,session))
 
     for full_p in paths:
         if not os.path.exists(full_p):
@@ -234,14 +234,15 @@ def init_anat_project(project_info, is_new_project):
 
     print anat_pipeline
 
+    bids_directory = os.path.abspath(project_info.base_directory)
     derivatives_directory = os.path.join(project_info.output_directory)
 
     if (project_info.subject_session != '') and (project_info.subject_session != None) :
         print('Refresh folder WITH session')
-        refresh_folder(derivatives_directory, project_info.subject, anat_pipeline.input_folders, session=project_info.subject_session)
+        refresh_folder(bids_directory, derivatives_directory, project_info.subject, anat_pipeline.input_folders, session=project_info.subject_session)
     else:
         print('Refresh folder WITHOUT session')
-        refresh_folder(derivatives_directory, project_info.subject, anat_pipeline.input_folders)
+        refresh_folder(bids_directory, derivatives_directory, project_info.subject, anat_pipeline.input_folders)
 
     if is_new_project and anat_pipeline!= None: #and dmri_pipeline!= None:
         print('INFO: New project with newly created (or overwritten) configuration file')
