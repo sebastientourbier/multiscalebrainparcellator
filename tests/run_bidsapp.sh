@@ -12,8 +12,11 @@ then
   exit 0
 fi
 
+VERSION=$(python get_version.py)
+echo $VERSION
+
 docker run -v ${1}:/bids_dir \
 -v ${2}:/output_dir \
--it sebastientourbier/multiscalebrainparcellator:1.0.0-beta \
+-it sebastientourbier/multiscalebrainparcellator:$VERSION \
 '/bids_dir' '/output_dir' \
 participant --participant_label ${3} --skip_bids_validator
