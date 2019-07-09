@@ -108,13 +108,13 @@ if __name__ == '__main__':
         if not shutil._samefile(args.fs_license,dest):    
             if os.access(dest,os.F_OK):
                 os.remove(dest)
-                print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
+                print('MAIN WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
             if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
                 os.mkdir('{}/code'.format(args.bids_dir))
             shutil.copyfile(args.fs_license,dest)
-            print('INFO: Freesurfer license provided as input will be used'.format(dest))       
+            print('MAIN INFO: Freesurfer license provided as input will be used'.format(dest))       
         else:
-            print('WARNING: Freesurfer license specified by --fs_license () is the same as the destination license and will not be copied'.format(dest))              
+            print('MAIN WARNING: Freesurfer license specified by --fs_license () is the same as the destination license and will not be copied'.format(dest))              
     else:      
         if not os.access(dest,os.F_OK):
             if os.environ['FREESURFER_HOME']:
@@ -122,41 +122,41 @@ if __name__ == '__main__':
                 if os.access(src,os.F_OK):
                     if os.access(dest,os.F_OK):
                         os.remove(dest)
-                        print('WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
+                        print('MAIN WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder')
                     if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
                         os.mkdir('{}/code'.format(args.bids_dir))
                     shutil.copyfile(src,dest)
-                    print('INFO: Freesurfer license located in $FREESURFER_HOME will be used'.format(dest))
+                    print('MAIN INFO: Freesurfer license located in $FREESURFER_HOME will be used'.format(dest))
 
             else:
-                print('ERROR: Freesurfer license not found in directory pointed by $FREESURFER_HOME. Freesurfer license has to be defined using the --fs_license input flag.')
+                print('MAIN ERROR: Freesurfer license not found in directory pointed by $FREESURFER_HOME. Freesurfer license has to be defined using the --fs_license input flag.')
                 sys.exit(2)
         else:
-            print('INFO: {} Freesurfer license found will be used'.format(dest))
+            print('MAIN INFO: {} Freesurfer license found will be used'.format(dest))
 
     #Setup number of cores to use
     maxprocs = args.number_of_cores
     max_number_of_cores = multiprocessing.cpu_count()
     if maxprocs > max_number_of_cores:
-        print('WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.number_of_cores,max_number_of_cores))
-        print('INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+        print('MAIN WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.number_of_cores,max_number_of_cores))
+        print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
         maxprocs = max_number_of_cores
     elif maxprocs <= 0:
-        print('WARNING: the specified number of cores ({}) should be greater to 0'.format(args.number_of_cores))
-        print('INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+        print('MAIN WARNING: the specified number of cores ({}) should be greater to 0'.format(args.number_of_cores))
+        print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
         maxprocs = max_number_of_cores
     else:
-        print('INFO: Maximal number of processing cores set to {}'.format(maxprocs))
+        print('MAIN INFO: Maximal number of processing cores set to {}'.format(maxprocs))
 
     #Setup the isotropic resolution
 
     resolution = args.isotropic_resolution
     if (resolution <= 0) or (resolution is None):
         resolution=1.0
-        print('Default isotropic resolution for resampling: {}'.format(resolution))
+        print('MAIN INFO: Default isotropic resolution for resampling: {}'.format(resolution))
     else:
         resolution = float(resolution)
-        print('Custom isotropic resolution for resampling: {}'.format(resolution))
+        print('MAIN INFO: Custom isotropic resolution for resampling: {}'.format(resolution))
 
     # Run or not the bids validator
     if not args.skip_bids_validator:
@@ -187,9 +187,9 @@ if __name__ == '__main__':
             for f in files:
                 fp = os.path.join(path, f)
                 total_size += os.path.getsize(fp)
-        print("INFO: Existing freesurfer derivatives found (size: {})".format(total_size))
+        print("MAIN INFO: Existing freesurfer derivatives found (size: {})".format(total_size))
     else:
-        print("INFO: Existing freesurfer derivatives NOT found")
+        print("MAIN INFO: Existing freesurfer derivatives NOT found")
 
     # Check subject/session structure og the BIDS dataset
     # Create a new list of (subject,session) pairs if sessions are used
@@ -205,12 +205,12 @@ if __name__ == '__main__':
             use_session_structure = True
             for subject_session in subject_sessions:
                 subjects_sessions.append([subject,subject_session])
-    print('Session structured dataset: {}'.format(use_session_structure))
+    print('INFO: Session structured dataset: {}'.format(use_session_structure))
 
     if not use_session_structure:
-        print("Subjects to be analyzed: {}".format(subjects))
+        print("MAIN INFO: Subjects to be analyzed: {}".format(subjects))
     else:
-        print("Subjects/Sessions to be analyzed: {}".format(subjects_sessions))
+        print("MAIN INFO: Subjects/Sessions to be analyzed: {}".format(subjects_sessions))
 
     # running participant level
     if args.analysis_level == "participant":
@@ -229,7 +229,7 @@ if __name__ == '__main__':
                 while len(processes) > 0:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                print("Processing with the Multi-scale Brain Parcellator BIDS App finished!")
+                print("MAIN INFO: Processing with the Multi-scale Brain Parcellator BIDS App finished!")
 
 
         else:
@@ -244,10 +244,10 @@ if __name__ == '__main__':
                 while len(processes) > 0:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                print("Processing with the Multi-scale Brain Parcellator BIDS App finished!")
+                print("MAIN INFO: Processing with the Multi-scale Brain Parcellator BIDS App finished!")
 
 
     # running group level; ultimately it will compute average connectivity matrices
     elif args.analysis_level == "group":
-        print('Error: Sorry but this BIDS App has only the subject level processing pipeline implemented that can be run with --participant' )
+        print('MAIN ERROR: Sorry but this BIDS App has only the subject level processing pipeline implemented that can be run with --participant' )
         sys.exit(1)
