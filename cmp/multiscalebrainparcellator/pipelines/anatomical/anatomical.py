@@ -397,7 +397,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                                           ]
 
         # Create common_flow
-        anat_flow = pe.Workflow(name='anatomical_pipeline', base_dir=os.path.join(deriv_subject_directory,'tmp'))
+        anat_flow = pe.Workflow(name='anatomical_pipeline', base_dir=nipype_deriv_subject_directory)
         anat_inputnode = pe.Node(interface=util.IdentityInterface(fields=["T1"]),name="inputnode")
         anat_outputnode = pe.Node(interface=util.IdentityInterface(fields=["subjects_dir","subject_id","T1","aseg","aparc_aseg","brain","brain_mask","wm_mask_file", "gm_mask_file", "wm_eroded","brain_eroded","csf_eroded",
             "roi_volumes","roi_volumes_stats","parcellation_scheme","atlas_info","roi_colorLUTs", "roi_graphMLs"]),name="outputnode")
