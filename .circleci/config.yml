@@ -215,12 +215,13 @@ jobs:
               echo "the command ``git fetch --tags --verbose`` and push"
               echo "them to your fork with ``git push origin --tags``"
             fi
-
-            mkdir -p /tmp/ds005/work /tmp/ds005/derivatives
-            if [ -d /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation]; then
-              rm -R /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation
-            fi
-            ls -a /tmp/ds005
+            ls -al /tmp/ds005/derivatives/freesurfer
+            mkdir -p /tmp/ds005/work 
+            # /tmp/ds005/derivatives
+            # if [ -d /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation ]; then
+            #   rm -R /tmp/ds005/derivatives/cmp/sub-01/tmp/anatomical_pipeline/parcellation_stage/Lausanne2018_parcellation
+            # fi
+            ls -al /tmp/ds005/derivatives
             docker run -it --rm \
                 -v /tmp/data/ds005:/bids_dir \
                 -v /tmp/ds005/derivatives:/output_dir \
