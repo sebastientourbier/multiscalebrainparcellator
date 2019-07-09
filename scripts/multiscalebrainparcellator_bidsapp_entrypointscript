@@ -178,6 +178,19 @@ if __name__ == '__main__':
     if not os.access(toolbox_derivatives_dir,os.F_OK):
         os.mkdir(toolbox_derivatives_dir)
 
+    #Check if freesurfer derivatives is already present
+    freesurfer_derivatives_dir = os.path.join(args.output_dir , "freesurfer")
+    if os.access(freesurfer_derivatives_dir,os.F_OK):
+        # Compute freesurfer derivatives directory size
+        total_size = 0
+        for path, dirs, files in os.walk(freesurfer_derivatives_dir):
+            for f in files:
+                fp = os.path.join(path, f)
+                total_size += os.path.getsize(fp)
+        print("INFO: Existing freesurfer derivatives found (size: {})".format(total_size))
+    else:
+        print("INFO: Existing freesurfer derivatives NOT found")
+
     # Check subject/session structure og the BIDS dataset
     # Create a new list of (subject,session) pairs if sessions are used
 
