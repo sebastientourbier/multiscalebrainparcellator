@@ -15,7 +15,8 @@ packages=["cmp",
           "cmp.multiscalebrainparcellator.stages.parcellation",
           "cmp.multiscalebrainparcellator.pipelines",
           "cmp.multiscalebrainparcellator.pipelines.anatomical",
-          "cmtklib"]
+          "cmtklib",
+          "cmtklib.bids"]
 
 package_data = {'cmtklib':
                 ['data/parcellation/lausanne2008/*/*.*',
