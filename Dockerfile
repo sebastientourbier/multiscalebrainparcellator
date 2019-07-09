@@ -12,8 +12,6 @@ MAINTAINER Sebastien Tourbier <sebastien.tourbier@alumni.epfl.ch>
 WORKDIR /app
 ADD . /app
 
-RUN apt-get -qq -y install libxt6
-
 # Install multiscalebrainparcellator inside installed conda environment (see environment.yml)
 ENV CONDA_ENV py27msbparc
 RUN /bin/bash -c ". activate $CONDA_ENV && python setup.py install"

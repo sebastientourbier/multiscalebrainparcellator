@@ -52,6 +52,10 @@ WORKDIR /opt/freesurfer
 RUN curl "http://surfer.nmr.mgh.harvard.edu/fswiki/MatlabRuntime?action=AttachFile&do=get&target=runtime2012bLinux.tar.gz" -o "runtime2012b.tar.gz"
 RUN tar xvf runtime2012b.tar.gz
 RUN rm runtime2012b.tar.gz
+
+# Make Matlab runtime environment happy
+RUN apt-get install -y -qq libxt6 libxmu-dev
+
 # Make FreeSurfer happy
 RUN apt-get install -y -qq tcsh bc
 

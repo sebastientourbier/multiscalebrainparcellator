@@ -19,4 +19,4 @@ docker run -v ${1}:/bids_dir \
 -v ${2}:/output_dir \
 -it sebastientourbier/multiscalebrainparcellator:$VERSION \
 '/bids_dir' '/output_dir' \
-participant --participant_label ${3} --skip_bids_validator
+participant --participant_label ${3} --skip_bids_validator --brainstem_structures
