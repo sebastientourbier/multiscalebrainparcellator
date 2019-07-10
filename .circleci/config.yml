@@ -287,12 +287,18 @@ jobs:
           name: Deploy to Docker Hub
           no_output_timeout: 40m
           command: |
+            # Get version, update files.
+            THISVERSION=$( python /home/circleci/src/multiscalebrainparcellator/get_version.py )
+            echo "THISVERSION : ${THISVERSION}"
+            echo "CIRCLE_TAG : ${CIRCLE_TAG}"
+
             if [[ -n "$DOCKER_PASS" ]]; then
               docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker tag sebastientourbier/multiscalebrainparcellator sebastientourbier/multiscalebrainparcellator:unstable
-              docker push sebastientourbier/multiscalebrainparcellator:unstable
+
               if [[ -n "$CIRCLE_TAG" ]]; then
-                docker tag sebastientourbier/multiscalebrainparcellator sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
+                docker tag sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$THISVERSION sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$CIRCLE_TAG
+                docker push sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$CIRCLE_TAG
+                docker tag sebastientourbier/multiscalebrainparcellator:$THISVERSION sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
                 docker push sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
               fi
             fi
