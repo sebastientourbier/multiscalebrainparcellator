@@ -521,7 +521,7 @@ class CombineParcellations(BaseInterface):
         f_colorLUT = None
         f_graphML = None
 
-        for roi_index, roi in enumerate(self.inputs.input_rois):
+        for roi_index, roi in sorted(enumerate(self.inputs.input_rois)):
             # colorLUT creation if enabled
             if self.inputs.create_colorLUT:
                 outprefixName = roi.split(".")[0]
