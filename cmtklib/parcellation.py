@@ -2258,7 +2258,8 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
     """ Creates the ROI_%s.nii.gz files using the given parcellation information
     from networks. Iteratively create volume. """
 
-    iflogger.info("  > Creates the ROI_*.nii.gz parcellation files".format(out))
+    if v:
+        iflogger.info('Generate LAUSANNE2018 MULTISCALE PARCELLATION for input subject {}'.format(subject_id))
 
     freesurfer_subj = os.path.abspath(subjects_dir)
     subject_dir = os.path.join(freesurfer_subj, subject_id)
@@ -2267,20 +2268,19 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
         iflogger.info('    ... ERROR: FreeSurfer subjects directory ($SUBJECTS_DIR) does not exist')
     else:
         if v:
-            iflogger.info('- FreeSurfer subjects directory ($SUBJECTS_DIR):\n  {}\n'.format(freesurfer_subj))
+            iflogger.info('* FreeSurfer subjects directory ($SUBJECTS_DIR):  {}\n'.format(freesurfer_subj))
 
     if not ( os.access(os.path.join(freesurfer_subj, 'fsaverage'),os.F_OK) ):
         iflogger.info('    ... ERROR: FreeSurfer subjects directory ($SUBJECTS_DIR) DOES NOT contain \'fsaverage\'')
     else:
         if v:
-            iflogger.info('-  FreeSurfer subjects directory ($SUBJECTS_DIR) DOES contain \'fsaverage\'\n')
+            iflogger.info('* FreeSurfer subjects directory ($SUBJECTS_DIR) DOES contain \'fsaverage\'\n')
 
     if not ( os.access(subject_dir,os.F_OK) ):
         iflogger.info('    ... ERROR: No input subject directory was found in FreeSurfer $SUBJECTS_DIR')
     else:
         if v:
-            iflogger.info('    ... Freesurfer subject id:\n  {}\n'.format(subject_id))
-            iflogger.info('    ... Freesurfer subject directory:\n  {}\n'.format(subject_dir))
+            iflogger.info('* Freesurfer subject directory:  {} (subject id: {})\n'.format(subject_dir,subject_id))
 
 	# Number of scales in multiscale parcellation
 	nscales = 5
@@ -2304,16 +2304,6 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
     def generate_single_parcellation(v,i,fs_string,subject_dir,subject_id):
 
         #v=2 #If v set to 2, it will show in details the terminal outputs of each program execution
-        if v:
-            iflogger.info(' ... Copy fsaverage')
-
-        src = os.path.join(os.environ['FREESURFER_HOME'], 'subjects', 'fsaverage')
-        dst = os.path.join(os.path.join(subject_dir, os.pardir),'fsaverage')
-
-        if os.path.isdir(dst):
-            shutil.rmtree(dst,ignore_errors=True)
-
-        shutil.copytree(src, dst)
 
     	# Multiscale parcellation - define annotation and segmentation variables
     	rh_annot_files = ['rh.lausanne2008.scale1.annot', 'rh.lausanne2008.scale2.annot', 'rh.lausanne2008.scale3.annot', 'rh.lausanne2008.scale4.annot', 'rh.lausanne2008.scale5.annot']
@@ -2368,7 +2358,7 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
         #     iflogger.info('Freesurfer path {} writable? {}'.format(os.path.join(subject_dir, 'tmp'),os.access(os.path.join(subject_dir, 'tmp'),os.W_OK)))
         #     iflogger.info('aseg_output[{}] existing? {}'.format(i,os.access(os.path.join(subject_dir, 'tmp', aseg_output[i]),os.F_OK)))
         #     iflogger.info('aseg_output[{}] readable? {}'.format(i,os.access(os.path.join(subject_dir, 'tmp', aseg_output[i]),os.R_OK)))
-
+        if v:
             iflogger.info('     > Relabel cortical and subcortical regions')
         this_nifti = ni.load(os.path.join(subject_dir, 'tmp', aseg_output[i]))
         vol = this_nifti.get_data()	# numpy.ndarray
@@ -2421,10 +2411,19 @@ def create_roi_v2(subject_id, subjects_dir,v=True):
 
         return 1
 
-    # Loop over parcellation scales
+    # Hard copy of fsaverage because of symlink not workin / broken in docker containers
     if v:
-        iflogger.info('Generate MULTISCALE PARCELLATION for input subject {}'.format(subject_id))
+        iflogger.info('Copy fsaverage')
 
+    src = os.path.join(os.environ['FREESURFER_HOME'], 'subjects', 'fsaverage')
+    dst = os.path.join(os.path.join(subject_dir, os.pardir),'fsaverage')
+
+    if os.path.isdir(dst):
+        shutil.rmtree(dst,ignore_errors=True)
+
+    shutil.copytree(src, dst)
+
+    # Loop over parcellation scales
     import multiprocessing as mp
     jobs = []
     for i in range(0, nscales):
@@ -2611,15 +2610,18 @@ def create_wm_mask(subject_id, subjects_dir):
     mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
 
-def create_wm_mask_v2(subject_id, subjects_dir):
-    iflogger.info("  > Create white matter mask")
+def create_wm_mask_v2(subject_id, subjects_dir, v=True):
+    if v:
+        iflogger.info("  > Create white matter mask")
 
     fs_dir = op.join(subjects_dir,subject_id)
 
-    iflogger.info("    ... FreeSurfer dir: %s"%fs_dir)
+    if v:
+        iflogger.info("    ... FreeSurfer dir: %s"%fs_dir)
 
     # load ribbon as basis for white matter mask
-    iflogger.info("    > load ribbon")
+    if v:
+        iflogger.info("    > load ribbon")
     fsmask = ni.load(op.join(fs_dir, 'mri', 'ribbon.nii.gz'))
     fsmaskd = fsmask.get_data()
 
@@ -2629,7 +2631,8 @@ def create_wm_mask_v2(subject_id, subjects_dir):
 
     #FIXME understand when ribbon file has default value or has "aseg" value
     # extract right and left white matter
-    iflogger.info("    > Extract right and left wm")
+    if v:
+        iflogger.info("    > Extract right and left wm")
     #Ribbon labels by default
     if fsmaskd.max() == 120:
         idx_lh = np.where(fsmaskd == 120)
@@ -2644,7 +2647,8 @@ def create_wm_mask_v2(subject_id, subjects_dir):
     wmmask[idx_rh] = 1
 
     # remove subcortical nuclei from white matter mask
-    iflogger.info("     > Load aseg")
+    if v:
+        iflogger.info("     > Load aseg")
     aseg = ni.load(op.join(fs_dir, 'mri', 'aseg.nii.gz'))
     asegd = aseg.get_data()
 
@@ -2679,7 +2683,8 @@ def create_wm_mask_v2(subject_id, subjects_dir):
                     (asegd == 49) )
     csfA[idx] = 1
 
-    iflogger.info("    > Save CSF mask")
+    if v:
+        iflogger.info("    > Save CSF mask")
     img = ni.Nifti1Image(csfA, aseg.get_affine(), aseg.get_header())
     ni.save(img, op.join(fs_dir, 'mri', 'csf_mask.nii.gz'))
     csfA = imerode(imerode(csfA, se1),se)
@@ -2713,7 +2718,8 @@ def create_wm_mask_v2(subject_id, subjects_dir):
     # would stop the fiber going to the segmented "brainstem"
 
     # grey nuclei, either with or without erosion
-    iflogger.info("    > Grey nuclei, either with or without erosion")
+    if v:
+        iflogger.info("    > Grey nuclei, either with or without erosion")
     gr_ncl = np.zeros( asegd.shape )
 
     # with erosion
@@ -2732,7 +2738,8 @@ def create_wm_mask_v2(subject_id, subjects_dir):
         gr_ncl[idx] = 1
 
     # remove remaining structure, e.g. brainstem
-    iflogger.info("    > Remove remaining structure, e.g. brainstem")
+    if v:
+        iflogger.info("    > Remove remaining structure, e.g. brainstem")
     remaining = np.zeros( asegd.shape )
     idx = np.where( asegd == 16 )
     remaining[idx] = 1
@@ -2740,7 +2747,8 @@ def create_wm_mask_v2(subject_id, subjects_dir):
     # now remove all the structures from the white matter
     idx = np.where( (csfA != 0) | (csfB != 0) | (gr_ncl != 0) | (remaining != 0) )
     wmmask[idx] = 0
-    iflogger.info("    > Removing lateral ventricles and eroded grey nuclei and brainstem from white matter mask")
+    if v:
+        iflogger.info("    > Removing lateral ventricles and eroded grey nuclei and brainstem from white matter mask")
 
     # ADD voxels from 'cc_unknown.nii.gz' dataset
     # ccun = ni.load(op.join(fs_dir, 'label', 'cc_unknown.nii.gz'))
@@ -2801,12 +2809,14 @@ def create_wm_mask_v2(subject_id, subjects_dir):
     # output white matter mask. crop and move it afterwards
     wm_out = op.join(fs_dir, 'mri', 'fsmask_1mm.nii.gz')
     img = ni.Nifti1Image(wmmask, fsmask.get_affine(), fsmask.get_header() )
-    iflogger.info("    > Save white matter mask: %s" % wm_out)
+    if v:
+        iflogger.info("    > Save white matter mask: %s" % wm_out)
     ni.save(img, wm_out)
 
     gm_out = op.join(fs_dir, 'mri', 'gmmask.nii.gz')
     img = ni.Nifti1Image(gmmask, fsmask.get_affine(), fsmask.get_header() )
-    iflogger.info("    > Save gray matter mask: %s" % gm_out)
+    if v:
+        iflogger.info("    > Save gray matter mask: %s" % gm_out)
     ni.save(img, gm_out)
 
     # Convert whole brain mask
@@ -2815,10 +2825,11 @@ def create_wm_mask_v2(subject_id, subjects_dir):
     mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
 
-def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir):
+def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=True):
     fs_dir = op.join(subjects_dir,subject_id)
 
-    iflogger.info("  > Cropping and moving created images")
+    if v:
+        iflogger.info("  > Cropping and moving created images")
 
     # datasets to crop and move: (from, to)
     ds = [
@@ -2845,7 +2856,8 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir):
     orig = op.join(fs_dir, 'mri', 'orig', '001.mgz')
 
     for d in ds:
-        iflogger.info("    ... Processing {}:".format(d[0]))
+        if v:
+            iflogger.info("    ... Processing {}:".format(d[0]))
 
         # does it exist at all?
         if not op.exists(d[0]):
@@ -2864,7 +2876,8 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir):
 
     for d in ds:
         if op.exists(d[0]):
-            iflogger.info("    ... Processing %s:" % d[0])
+            if v:
+                iflogger.info("    ... Processing %s:" % d[0])
             mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', d[0], '-nc', d[1]]
             subprocess.check_call(mri_cmd)
 
@@ -2874,7 +2887,8 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir):
 
     for d in ds:
         if op.exists(d[0]):
-            iflogger.info("    ... Processing %s:" % d[0])
+            if v:
+                iflogger.info("    ... Processing %s:" % d[0])
             mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'cubic', d[0], '-nc', d[1]]
             subprocess.check_call(mri_cmd)
 
