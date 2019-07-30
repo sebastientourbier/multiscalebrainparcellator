@@ -95,7 +95,7 @@ class ComputeParcellationRoiVolumes(BaseInterface):
             # Initialize the TSV file used to store the parcellation volumetry resulty
             volumetry_file = op.abspath('roi_stats_{}.tsv'.format(parkey))
             f_volumetry = open(volumetry_file,'w+')
-            iflogger.info("  > Create Volumetry TSV file as %s".format(volumetry_file))
+            iflogger.info("  > Create Volumetry TSV file as {}".format(volumetry_file))
             
             # Format the TSV file according to BIDS Extension Proposal 11 (BEP011): The structural preprocessing derivatives.
             time_now = strftime("%a %d %b %Y %H:%M:%S",localtime())
