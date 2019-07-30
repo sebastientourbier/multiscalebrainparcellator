@@ -34,14 +34,32 @@ except ImportError:
     raise Exception('Need scipy for binary erosion of white matter and CSF masks')
 
 class ComputeParcellationRoiVolumesInputSpec(BaseInterfaceInputSpec):
+    """ 
+    This is a class for the definition of inputs of the ComputeParcellationRoiVolumes nipype interface. 
+      
+    Attributes: 
+        roi_volumes (files): ROI volumes registered to diffusion space
+        parcellation_scheme (files): Parcellation scheme being used (only Lausanne2018) 
+        roi_graphMLs (files): GraphML description of ROI volumes (Lausanne2018)
+    """
     roi_volumes = InputMultiPath(File(exists=True), desc='ROI volumes registered to diffusion space', mandatory=True)
     parcellation_scheme = traits.Enum('Lausanne2018',['Lausanne2018'], usedefault=True, mandatory=True)
     roi_graphMLs = InputMultiPath(File(exists=True), desc='GraphML description of ROI volumes (Lausanne2018)', mandatory=True)
     
 class ComputeParcellationRoiVolumesOutputSpec(TraitedSpec):
+    """ 
+    This is a class for the definition of outputs of the ComputeParcellationRoiVolumes nipype interface. 
+      
+    Attributes: 
+        roi_volumes_stats (files): TSV files with volumes of ROIs for each scale
+    """
     roi_volumes_stats = OutputMultiPath(File())
 
 class ComputeParcellationRoiVolumes(BaseInterface):
+    """ 
+    This is a class for the definition of the ComputeParcellationRoiVolumes nipype interface.
+    It computes the volumes of each ROI for each parcellation scale. 
+    """
     input_spec = ComputeParcellationRoiVolumesInputSpec
     output_spec = ComputeParcellationRoiVolumesOutputSpec
 
@@ -293,6 +311,7 @@ class CombineParcellationsInputSpec(BaseInterfaceInputSpec):
     create_graphml = traits.Bool(True)
     subjects_dir = Directory(desc='Freesurfer subjects dir')
     subject_id = traits.Str(desc='Freesurfer subject id')
+    verbose_level = traits.Enum(1,2,desc='verbose level (1: partial (default) / 2: full)')
 
 class CombineParcellationsOutputSpec(TraitedSpec):
     aparc_aseg = File(exists=True)
@@ -465,10 +484,6 @@ class CombineParcellations(BaseInterface):
         rh_annot_files = ['rh.lausanne2008.scale1.annot', 'rh.lausanne2008.scale2.annot', 'rh.lausanne2008.scale3.annot', 'rh.lausanne2008.scale4.annot', 'rh.lausanne2008.scale5.annot']
     	lh_annot_files = ['lh.lausanne2008.scale1.annot', 'lh.lausanne2008.scale2.annot', 'lh.lausanne2008.scale3.annot', 'lh.lausanne2008.scale4.annot', 'lh.lausanne2008.scale5.annot']
 
-        f_colorLUT = None
-
-        iflogger.info("  > Create color look up table : ",self.inputs.create_colorLUT)
-
         #Dilate third ventricle and intersect with right and left ventral DC to get voxels of left and right hypothalamus
 
         for roi_fname in self.inputs.input_rois:
@@ -491,9 +506,10 @@ class CombineParcellations(BaseInterface):
         img = ni.Nifti1Image(tmp, V.get_affine(), hdr2)
         ni.save(img, thirdV)
 
+        iflogger.info("  > Dilate the ventricule image")
         thirdV_dil = op.abspath('{}_dil.nii.gz'.format("ventricle3"))
         fslmaths_cmd = 'fslmaths {} -kernel sphere 5 -dilD {}'.format(thirdV,thirdV_dil)
-        iflogger.info("  > Command: {}".format(fslmaths_cmd))
+        iflogger.info("    ... Command: {}".format(fslmaths_cmd))
         process = subprocess.Popen(fslmaths_cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
         proc_stdout = process.communicate()[0].strip()
 
@@ -501,6 +517,9 @@ class CombineParcellations(BaseInterface):
         indrhypothal = np.where((tmp == 1) & (I == right_ventral))
         indlhypothal = np.where((tmp == 1) & (I == left_ventral))
         del(tmp)
+
+        f_colorLUT = None
+        f_graphML = None
 
         for roi_index, roi in enumerate(self.inputs.input_rois):
             # colorLUT creation if enabled
@@ -606,7 +625,8 @@ class CombineParcellations(BaseInterface):
                 
                 i=0
                 for lab in right_thalNuclei:
-                    iflogger.info("  > Update right thalamic nucleus label ({} -> {})".format(lab,newLabels[i]))
+                    if self.inputs.verbose_level == 2:
+                        iflogger.info("  > Update right thalamic nucleus label ({} -> {})".format(lab,newLabels[i]))
 
                     if self.inputs.create_colorLUT:
                         r = right_thalNuclei_colors_r[i]
@@ -641,7 +661,8 @@ class CombineParcellations(BaseInterface):
 
             i=0
             for lab in right_subc_labels:
-                iflogger.info("  > Update right subcortical label ({} -> {})".format(lab,newLabels[i]))
+                if self.inputs.verbose_level == 2:
+                    iflogger.info("  > Update right subcortical label ({} -> {})".format(lab,newLabels[i]))
 
                 if self.inputs.create_colorLUT:
                     r = right_subcIds_colors_r[i]
@@ -676,7 +697,8 @@ class CombineParcellations(BaseInterface):
                 newLabels = np.arange(nlabel+1,nlabel+1+hippo_subf.shape[0])
                 i=0
                 for lab in hippo_subf:
-                    iflogger.info("  > Update right hippo subfield label ({} -> {})".format(lab,newLabels[i]))
+                    if self.inputs.verbose_level == 2:
+                        iflogger.info("  > Update right hippo subfield label ({} -> {})".format(lab,newLabels[i]))
 
                     if self.inputs.create_colorLUT:
                         # if len(ind) > 0:
@@ -707,7 +729,8 @@ class CombineParcellations(BaseInterface):
             if thalamus_nuclei_defined or brainstem_defined or (lh_subfield_defined and rh_subfield_defined):
                 # Relabelling Right VentralDC
                 newLabels = np.arange(nlabel+1,nlabel+2)
-                iflogger.info("  > Update right ventral DC label ({} -> {})".format(right_ventral,newLabels[0]))
+                if self.inputs.verbose_level == 2:
+                    iflogger.info("  > Update right ventral DC label ({} -> {})".format(right_ventral,newLabels[0]))
                 ind = np.where(I == right_ventral)
                 It[ind] = newLabels[0]
                 nlabel = It.max()
@@ -735,7 +758,8 @@ class CombineParcellations(BaseInterface):
             if thalamus_nuclei_defined or brainstem_defined or (lh_subfield_defined and rh_subfield_defined):
                 # Relabelling Right Hypothalamus
                 newLabels = np.arange(nlabel+1,nlabel+2)
-                iflogger.info("  > Update right hypothalamus label ({} -> {})".format(right_ventral,newLabels[0]))
+                if self.inputs.verbose_level == 2:
+                    iflogger.info("  > Update right hypothalamus label ({} -> {})".format(right_ventral,newLabels[0]))
                 It[indrhypothal] = newLabels[0]
                 nlabel = It.max()
 
@@ -818,7 +842,8 @@ class CombineParcellations(BaseInterface):
                 newLabels = np.arange(nlabel+1,nlabel+1+left_thalNuclei.shape[0])
                 i=0
                 for lab in left_thalNuclei:
-                    iflogger.info("  > Update left thalamic nucleus label ({} -> {})".format(lab,newLabels[i]))
+                    if self.inputs.verbose_level == 2:
+                        iflogger.info("  > Update left thalamic nucleus label ({} -> {})".format(lab,newLabels[i]))
 
                     if self.inputs.create_colorLUT:
                         r = left_thalNuclei_colors_r[i]
@@ -853,7 +878,8 @@ class CombineParcellations(BaseInterface):
 
             i=0
             for lab in left_subc_labels:
-                iflogger.info("  > Update left subcortical label ({} -> {})".format(lab,newLabels[i]))
+                if self.inputs.verbose_level == 2:
+                    iflogger.info("  > Update left subcortical label ({} -> {})".format(lab,newLabels[i]))
 
                 if self.inputs.create_colorLUT:
                     r = left_subcIds_colors_r[i]
@@ -888,7 +914,8 @@ class CombineParcellations(BaseInterface):
                 newLabels = np.arange(nlabel+1,nlabel+1+hippo_subf.shape[0])
                 i=0
                 for lab in hippo_subf:
-                    iflogger.info("  > Update left hippo subfield label ({} -> {})".format(lab,newLabels[i]))
+                    if self.inputs.verbose_level == 2:
+                        iflogger.info("  > Update left hippo subfield label ({} -> {})".format(lab,newLabels[i]))
 
                     if self.inputs.create_colorLUT:
                         r = hippo_subf_colors_r[i]
@@ -919,7 +946,8 @@ class CombineParcellations(BaseInterface):
             if thalamus_nuclei_defined or brainstem_defined or (lh_subfield_defined and rh_subfield_defined):
                 # Relabelling Left VentralDC
                 newLabels = np.arange(nlabel+1,nlabel+2)
-                iflogger.info("  > Update left ventral DC label ({} -> {})".format(left_ventral,newLabels[0]))
+                if self.inputs.verbose_level == 2:
+                    iflogger.info("  > Update left ventral DC label ({} -> {})".format(left_ventral,newLabels[0]))
                 ind = np.where(I == left_ventral)
                 It[ind] = newLabels[0]
                 nlabel = It.max()
@@ -948,7 +976,8 @@ class CombineParcellations(BaseInterface):
             if thalamus_nuclei_defined or brainstem_defined or (lh_subfield_defined and rh_subfield_defined):
                 # Relabelling Left Hypothalamus
                 newLabels = np.arange(nlabel+1,nlabel+2)
-                iflogger.info("  > Update left hypothalamus label ({} -> {})".format(-1,newLabels[0]))
+                if self.inputs.verbose_level == 2:
+                    iflogger.info("  > Update left hypothalamus label ({} -> {})".format(-1,newLabels[0]))
                 It[indlhypothal] = newLabels[0]
                 nlabel = It.max()
 
@@ -980,7 +1009,8 @@ class CombineParcellations(BaseInterface):
                 newLabels = np.arange(nlabel+1,nlabel+1+brainstem.shape[0])
                 i=0
                 for lab in brainstem:
-                    iflogger.info("  > Update brainstem parcellation label ({} -> {})".format(lab,newLabels[i]))
+                    if self.inputs.verbose_level == 2:
+                        iflogger.info("  > Update brainstem parcellation label ({} -> {})".format(lab,newLabels[i]))
 
                     if self.inputs.create_colorLUT:
                         r = brainstem_colors_r[i]
@@ -1013,7 +1043,8 @@ class CombineParcellations(BaseInterface):
                 newLabels = np.arange(nlabel+1,nlabel+2)
                 It[indrep] = newLabels[0]
 
-                iflogger.info("  > Update brainstem parcellation label ({} -> {})".format(lab,newLabels[0]))
+                if self.inputs.verbose_level == 2:
+                    iflogger.info("  > Update brainstem parcellation label ({} -> {})".format(lab,newLabels[0]))
 
                 if self.inputs.create_colorLUT:
                     r = 119
@@ -1068,11 +1099,16 @@ class CombineParcellations(BaseInterface):
         iflogger.info("    ... Copy aparc+aseg to {}".format(tmp_aparcaseg_fs))
         shutil.copyfile(aparcaseg_fs,tmp_aparcaseg_fs)
 
+        # Redirect ouput if low verbose
+        FNULL = open(os.devnull, 'w')
+
         iflogger.info("    ... Transform to native space")
         cmd = 'mri_vol2vol --mov "{}" --targ "{}" --regheader --o "{}" --no-save-reg --interp nearest'.format(aparcaseg_fs,orig,aparcaseg_native)
-        process = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-        proc_stdout = process.communicate()[0].strip()
-        iflogger.info(proc_stdout)
+        iflogger.info("        Command: {}".format(cmd))
+        if self.inputs.verbose_level == 2:
+            status = subprocess.call(cmd, shell=True)
+        else:
+            status = subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
         # mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', tmp_aparcaseg_fs, '-nc', aparcaseg_native]
         # subprocess.check_call(mri_cmd)
@@ -1826,23 +1862,23 @@ def create_T1_and_Brain(subject_id, subjects_dir, v=1):
     # Convert T1 image
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','T1.mgz'),'-o',op.join(fs_dir,'mri','T1.nii.gz')]
     if v == 2:
-        status = subprocess.call(mri_cmd, shell=True)
+        status = subprocess.call(' '.join(mri_cmd), shell=True)
     else:
-        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     # Convert Brain_masked T1 image
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','brain.mgz'),'-o',op.join(fs_dir,'mri','brain.nii.gz')]
     if v == 2:
-        status = subprocess.call(mri_cmd, shell=True)
+        status = subprocess.call(' '.join(mri_cmd), shell=True)
     else:
-        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     # Convert ASeg image
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','aseg.mgz'),'-o',op.join(fs_dir,'mri','aseg.nii.gz')]
     if v == 2:
-        status = subprocess.call(mri_cmd, shell=True)
+        status = subprocess.call(' '.join(mri_cmd), shell=True)
     else:
-        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     # Moving aparc+aseg.mgz back to its original space for ACT
     mov = op.join(fs_dir,'mri','aparc+aseg.mgz')
@@ -2456,6 +2492,8 @@ def create_roi_v2(subject_id, subjects_dir,v=1):
 	for j in jobs:
 		j.join()
 
+    if v:
+        iflogger.info('Convert ribbon.mgz to compressed nifti')
     mri_cmd = ['mri_convert','-i',op.join(subject_dir,'mri','ribbon.mgz'),'-o',op.join(subject_dir,'mri','ribbon.nii.gz')]
     subprocess.check_call(mri_cmd)
 
@@ -2843,16 +2881,16 @@ def create_wm_mask_v2(subject_id, subjects_dir, v=1):
     # Convert whole brain mask
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','brainmask.mgz'),'-o',op.join(fs_dir,'mri','brainmask.nii.gz')]
     if v == 2:
-        status = subprocess.call(mri_cmd, shell=True)
+        status = subprocess.call(' '.join(mri_cmd), shell=True)
     else:
-        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
     mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
     if v == 2:
-        status = subprocess.call(mri_cmd, shell=True)
+        status = subprocess.call(' '.join(mri_cmd), shell=True)
     else:
-        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+        status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
-def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=1):
+def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=2):
     # Redirect ouput if low verbose
     FNULL = open(os.devnull, 'w')
 
@@ -2879,10 +2917,7 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=1):
             #ds.append( (op.join(fs_dir, 'label', 'ROI_%s.nii.gz' % p), 'ROI_HR_th_%s.nii.gz' % p) )
             ds.append( (op.join(fs_dir, 'mri','ROIv_%s.nii.gz' % p), 'ROIv_HR_th_%s.nii.gz' % p) )
         ds.append( (op.join(fs_dir, 'mri','aparc+aseg.mgz'), 'aparc+aseg.native.nii.gz') )
-#        try:
-#            os.makedirs(op.join('.', p))
-#        except:
-#            pass
+
     orig = op.join(fs_dir, 'mri', 'orig', '001.mgz')
 
     for d in ds:
@@ -2892,15 +2927,14 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=1):
         # does it exist at all?
         if not op.exists(d[0]):
             raise Exception('    ... ERROR: File %s does not exist.' % d[0])
+
         # reslice to original volume because the roi creation with freesurfer
         # changed to 256x256x256 resolution
-        #mri_cmd = 'mri_convert -rl "%s" -rt nearest "%s" -nc "%s"' % (orig, d[0], d[1])
-        #runCmd( mri_cmd,log )
         mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', d[0], '-nc', d[1]]
         if v == 2:
-            status = subprocess.call(mri_cmd, shell=True)
+            status = subprocess.call(' '.join(mri_cmd), shell=True)
         else:
-            status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+            status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     ds =  [(op.join(fs_dir, 'mri', 'fsmask_1mm_eroded.nii.gz'), 'wm_eroded.nii.gz'),
           (op.join(fs_dir, 'mri', 'csf_mask_eroded.nii.gz'), 'csf_eroded.nii.gz'),
@@ -2913,13 +2947,12 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=1):
                 iflogger.info("    ... Processing %s:" % d[0])
             mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', d[0], '-nc', d[1]]
             if v == 2:
-                status = subprocess.call(mri_cmd, shell=True)
+                status = subprocess.call(' '.join(mri_cmd), shell=True)
             else:
-                status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+                status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     ds =  [(op.join(fs_dir, 'mri', 'T1.nii.gz'), 'T1.nii.gz'),
-          (op.join(fs_dir, 'mri', 'brain.nii.gz'), 'brain.nii.gz'),
-          ]
+          (op.join(fs_dir, 'mri', 'brain.nii.gz'), 'brain.nii.gz')]
 
     for d in ds:
         if op.exists(d[0]):
@@ -2927,9 +2960,9 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=1):
                 iflogger.info("    ... Processing %s:" % d[0])
             mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'cubic', d[0], '-nc', d[1]]
             if v == 2:
-                status = subprocess.call(mri_cmd, shell=True)
+                status = subprocess.call(' '.join(mri_cmd), shell=True)
             else:
-                status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+                status = subprocess.call(' '.join(mri_cmd), shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
 
 def generate_WM_and_GM_mask(subject_id, subjects_dir):
@@ -3075,10 +3108,9 @@ def crop_and_move_WM_and_GM(subject_id, subjects_dir):
         # does it exist at all?
         if not op.exists(d[0]):
             raise Exception('File %s does not exist.' % d[0])
+        
         # reslice to original volume because the roi creation with freesurfer
         # changed to 256x256x256 resolution
-#        mri_cmd = 'mri_convert -rl "%s" -rt nearest "%s" -nc "%s"' % (orig, d[0], d[1])
-#        runCmd( mri_cmd,log )
         mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', d[0], '-nc', d[1]]
         subprocess.check_call(mri_cmd)
 
@@ -3094,8 +3126,7 @@ def crop_and_move_WM_and_GM(subject_id, subjects_dir):
             subprocess.check_call(mri_cmd)
 
     ds =  [(op.join(fs_dir, 'mri', 'T1.nii.gz'), 'T1.nii.gz'),
-          (op.join(fs_dir, 'mri', 'brain.nii.gz'), 'brain.nii.gz'),
-          ]
+          (op.join(fs_dir, 'mri', 'brain.nii.gz'), 'brain.nii.gz')]
 
     for d in ds:
         if op.exists(d[0]):
