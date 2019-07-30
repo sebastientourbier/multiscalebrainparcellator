@@ -1619,12 +1619,11 @@ class Parcellate(BaseInterface):
     def _run_interface(self, runtime):
         #if self.inputs.subjects_dir:
         #   os.environ.update({'SUBJECTS_DIR': self.inputs.subjects_dir})
-        iflogger.info("-------------------------------------------------------")
-        iflogger.info("ROI_HR_th.nii.gz / fsmask_1mm.nii.gz CREATION")
-        iflogger.info("-------------------------------------------------------")
 
         if self.inputs.parcellation_scheme == "Lausanne2008":
-            print "  > Parcellation scheme : Lausanne2008"
+            iflogger.info("---------------------------------------------------------------------------------------")
+            iflogger.info(" ROI_HR_th.nii.gz / fsmask_1mm.nii.gz CREATION (Parcellation scheme : Lausanne2008)")
+            iflogger.info("---------------------------------------------------------------------------------------")
             create_T1_and_Brain(self.inputs.subject_id, self.inputs.subjects_dir)
             create_annot_label(self.inputs.subject_id, self.inputs.subjects_dir)
             create_roi(self.inputs.subject_id, self.inputs.subjects_dir)
@@ -1635,7 +1634,9 @@ class Parcellate(BaseInterface):
                 erode_mask(op.join(self.inputs.subjects_dir,self.inputs.subject_id,'mri','brainmask.nii.gz'))
             crop_and_move_datasets(self.inputs.parcellation_scheme,self.inputs.subject_id, self.inputs.subjects_dir)
         if self.inputs.parcellation_scheme == "Lausanne2018":
-            print "  > Parcellation scheme : Lausanne2018"
+            iflogger.info("---------------------------------------------------------------------------------------")
+            iflogger.info(" ROI_HR_th.nii.gz / fsmask_1mm.nii.gz CREATION (Parcellation scheme : Lausanne2018)")
+            iflogger.info("---------------------------------------------------------------------------------------")
             create_T1_and_Brain(self.inputs.subject_id, self.inputs.subjects_dir)
             #create_annot_label(self.inputs.subject_id, self.inputs.subjects_dir)
             create_roi_v2(self.inputs.subject_id, self.inputs.subjects_dir)
@@ -1646,7 +1647,9 @@ class Parcellate(BaseInterface):
                 erode_mask(op.join(self.inputs.subjects_dir,self.inputs.subject_id,'mri','brainmask.nii.gz'))
             crop_and_move_datasets(self.inputs.parcellation_scheme,self.inputs.subject_id, self.inputs.subjects_dir)
         if self.inputs.parcellation_scheme == "NativeFreesurfer":
-            print "  > Parcellation scheme : NativeFreesurfer"
+            iflogger.info("---------------------------------------------------------------------------------------")
+            iflogger.info(" ROI_HR_th.nii.gz / fsmask_1mm.nii.gz CREATION (Parcellation scheme : NativeFreesurfer)")
+            iflogger.info("---------------------------------------------------------------------------------------")
             create_T1_and_Brain(self.inputs.subject_id, self.inputs.subjects_dir)
             generate_WM_and_GM_mask(self.inputs.subject_id, self.inputs.subjects_dir)
             if self.inputs.erode_masks:
@@ -1814,21 +1817,32 @@ def extract(Z, shape, position, fill):
 
     return R
 
-def create_T1_and_Brain(subject_id, subjects_dir):
+def create_T1_and_Brain(subject_id, subjects_dir, v=1):
+    # Redirect ouput if low verbose
+    FNULL = open(os.devnull, 'w')
 
     fs_dir = op.join(subjects_dir,subject_id)
 
     # Convert T1 image
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','T1.mgz'),'-o',op.join(fs_dir,'mri','T1.nii.gz')]
-    subprocess.check_call(mri_cmd)
+    if v == 2:
+        status = subprocess.call(mri_cmd, shell=True)
+    else:
+        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     # Convert Brain_masked T1 image
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','brain.mgz'),'-o',op.join(fs_dir,'mri','brain.nii.gz')]
-    subprocess.check_call(mri_cmd)
+    if v == 2:
+        status = subprocess.call(mri_cmd, shell=True)
+    else:
+        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     # Convert ASeg image
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','aseg.mgz'),'-o',op.join(fs_dir,'mri','aseg.nii.gz')]
-    subprocess.check_call(mri_cmd)
+    if v == 2:
+        status = subprocess.call(mri_cmd, shell=True)
+    else:
+        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     # Moving aparc+aseg.mgz back to its original space for ACT
     mov = op.join(fs_dir,'mri','aparc+aseg.mgz')
@@ -1840,9 +1854,10 @@ def create_T1_and_Brain(subject_id, subjects_dir):
     iflogger.info("  > Create aparc+aseg.nii.gz in native space as {}".format(out))
     iflogger.info("    ... Command: {}".format(cmd))
 
-    process = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-    proc_stdout = process.communicate()[0].strip()
-    iflogger.info(proc_stdout)
+    if v == 2:
+        status = subprocess.call(cmd, shell=True)
+    else:
+        status = subprocess.call(cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     iflogger.info("    [DONE]")
 
@@ -2156,6 +2171,9 @@ def define_atlas_variables():
     return paths, comp, pardic, parkeys
 
 def generate_single_parcellation(v,i,fs_string,subject_dir,subject_id):
+    # Redirect ouput if low verbose
+    FNULL = open(os.devnull, 'w')
+
     # Multiscale parcellation - define annotation and segmentation variables
     rh_annot_files = ['rh.lausanne2008.scale1.annot', 'rh.lausanne2008.scale2.annot', 'rh.lausanne2008.scale3.annot', 'rh.lausanne2008.scale4.annot', 'rh.lausanne2008.scale5.annot']
     lh_annot_files = ['lh.lausanne2008.scale1.annot', 'lh.lausanne2008.scale2.annot', 'lh.lausanne2008.scale3.annot', 'lh.lausanne2008.scale4.annot', 'lh.lausanne2008.scale5.annot']
@@ -2254,9 +2272,9 @@ def generate_single_parcellation(v,i,fs_string,subject_dir,subject_id):
 
     return 1
 
-def create_roi_v2(subject_id, subjects_dir,v=True):
+def create_roi_v2(subject_id, subjects_dir,v=1):
     """ Creates the ROI_%s.nii.gz files using the given parcellation information
-    from networks. Iteratively create volume. """
+    from networks. Iteratively create volume. Verbose level (v=1: partial, v=2: full)"""
 
     if v:
         iflogger.info('Generate LAUSANNE2018 MULTISCALE PARCELLATION for input subject {}'.format(subject_id))
@@ -2610,7 +2628,7 @@ def create_wm_mask(subject_id, subjects_dir):
     mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
     subprocess.check_call(mri_cmd)
 
-def create_wm_mask_v2(subject_id, subjects_dir, v=True):
+def create_wm_mask_v2(subject_id, subjects_dir, v=1):
     if v:
         iflogger.info("  > Create white matter mask")
 
@@ -2819,13 +2837,25 @@ def create_wm_mask_v2(subject_id, subjects_dir, v=True):
         iflogger.info("    > Save gray matter mask: %s" % gm_out)
     ni.save(img, gm_out)
 
+    # Redirect ouput if low verbose
+    FNULL = open(os.devnull, 'w')
+
     # Convert whole brain mask
     mri_cmd = ['mri_convert','-i',op.join(fs_dir,'mri','brainmask.mgz'),'-o',op.join(fs_dir,'mri','brainmask.nii.gz')]
-    subprocess.check_call(mri_cmd)
+    if v == 2:
+        status = subprocess.call(mri_cmd, shell=True)
+    else:
+        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
     mri_cmd = ['fslmaths',op.join(fs_dir,'mri','brainmask.nii.gz'),'-bin',op.join(fs_dir,'mri','brainmask.nii.gz')]
-    subprocess.check_call(mri_cmd)
+    if v == 2:
+        status = subprocess.call(mri_cmd, shell=True)
+    else:
+        status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
-def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=True):
+def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=1):
+    # Redirect ouput if low verbose
+    FNULL = open(os.devnull, 'w')
+
     fs_dir = op.join(subjects_dir,subject_id)
 
     if v:
@@ -2867,7 +2897,10 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=True)
         #mri_cmd = 'mri_convert -rl "%s" -rt nearest "%s" -nc "%s"' % (orig, d[0], d[1])
         #runCmd( mri_cmd,log )
         mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', d[0], '-nc', d[1]]
-        subprocess.check_call(mri_cmd)
+        if v == 2:
+            status = subprocess.call(mri_cmd, shell=True)
+        else:
+            status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     ds =  [(op.join(fs_dir, 'mri', 'fsmask_1mm_eroded.nii.gz'), 'wm_eroded.nii.gz'),
           (op.join(fs_dir, 'mri', 'csf_mask_eroded.nii.gz'), 'csf_eroded.nii.gz'),
@@ -2879,7 +2912,10 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=True)
             if v:
                 iflogger.info("    ... Processing %s:" % d[0])
             mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'nearest', d[0], '-nc', d[1]]
-            subprocess.check_call(mri_cmd)
+            if v == 2:
+                status = subprocess.call(mri_cmd, shell=True)
+            else:
+                status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     ds =  [(op.join(fs_dir, 'mri', 'T1.nii.gz'), 'T1.nii.gz'),
           (op.join(fs_dir, 'mri', 'brain.nii.gz'), 'brain.nii.gz'),
@@ -2890,7 +2926,10 @@ def crop_and_move_datasets(parcellation_scheme,subject_id, subjects_dir, v=True)
             if v:
                 iflogger.info("    ... Processing %s:" % d[0])
             mri_cmd = ['mri_convert', '-rl', orig, '-rt', 'cubic', d[0], '-nc', d[1]]
-            subprocess.check_call(mri_cmd)
+            if v == 2:
+                status = subprocess.call(mri_cmd, shell=True)
+            else:
+                status = subprocess.call(mri_cmd, shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
 
 def generate_WM_and_GM_mask(subject_id, subjects_dir):
