@@ -276,29 +276,25 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         else:
             error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % T1_file
             print error_message
-            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
-
+            
         if os.path.isfile(brain_file):
             brain_available = True
         else:
             error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % brain_file
             print error_message
-            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
-
+            
         if os.path.isfile(brainmask_file):
             brainmask_available = True
         else:
             error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % brainmask_file
             print error_message
-            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
-
+            
         if os.path.isfile(wm_mask_file):
             wm_available = True
         else:
             error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % wm_mask_file
             print error_message
-            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
-
+            
         cnt1=0
         cnt2=0
         for roiv_file in roiv_files:
@@ -309,8 +305,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         else:
             error_message = "Missing %g/%g anatomical parcellation output files. Please re-run the anatomical pipeline" % (cnt1-cnt2,cnt1)
             print error_message
-            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
-
+            
         if t1_available == True and brain_available == True and brainmask_available == True and wm_available == True and roivs_available == True:
             print "valid deriv/anat output"
             valid_output = True
