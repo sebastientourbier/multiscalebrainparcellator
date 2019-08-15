@@ -14,7 +14,10 @@ MAIN_DOCKER=sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$VERSION
 echo $MAIN_DOCKER
 
 cd environments
-docker build --rm --build-arg BUILD_DATE=$CMP_BUILD_DATE --build-arg VERSION=$VERSION --build-arg VCS_REF=$VCS_REF -t sebastientourbier/multiscalebrainparcellator-ubuntu16.04:${VERSION} .
+docker build --rm --build-arg BUILD_DATE=$CMP_BUILD_DATE \
+				  --build-arg VERSION=$VERSION \
+				  --build-arg VCS_REF=$VCS_REF \
+				  -t sebastientourbier/multiscalebrainparcellator-ubuntu16.04:${VERSION} .
 
 cd ..
 docker build --no-cache --rm --build-arg BUILD_DATE=$CMP_BUILD_DATE \
