@@ -6,9 +6,7 @@ COPY files/neurodebian.gpg /root/.neurodebian.gpg
 
 MAINTAINER Sebastien Tourbier <sebastien.tourbier@alumni.epfl.ch>
 
-
 ## Install miniconda2 and multiscalebrainparcellator dependencies including exfat libraries for exfat-formatted hard-drives (only MAC?)
-
 RUN apt-get update && apt-get -qq -y install npm curl bzip2 exfat-fuse exfat-utils&& \
     curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     apt-get update && apt-get -qq -y install nodejs && \
