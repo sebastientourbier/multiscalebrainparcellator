@@ -1,8 +1,8 @@
 """ This file contains multiscalebrainparcellator package version information """
 
 _version_major = 1
-_version_minor = 0
-_version_micro = 1
+_version_minor = 1
+_version_micro = 0
 _version_extra = '-beta0' 
 
 __release_date__ = '2019.01.10'
