@@ -187,11 +187,11 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         print("... t1_json_file : %s" % T1_json_file)
 
-        if os.path.isfile(T1_file):
+        if os.access(T1_file,os.F_OK):
             # print("%s available" % typ)
             t1_available = True
 
-        if os.path.isfile(T1_json_file):
+        if os.access(T1_json_file,os.F_OK):
             # print("%s available" % typ)
             t1_json_available = True
 
