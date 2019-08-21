@@ -60,7 +60,7 @@ class CMP_Project_Info(HasTraits):
     anat_stage_names = List
     anat_custom_last_stage = Str
 
-    number_of_cores = Enum(1,range(1,multiprocessing.cpu_count()+1))
+    number_of_cores = Enum(1,range(1,multiprocessing.cpu_count()))
 
 
 def fix_dataset_directory_in_pickles(local_dir, mode='local'):
@@ -310,13 +310,14 @@ def update_anat_last_processed(project_info, pipeline):
     project_info.parcellation_scheme = pipeline.parcellation_scheme
     project_info.atlas_info = pipeline.atlas_info
 
-def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,resolution,thalamic_nuclei,hippocampal_subfields,brainstem_structures):
+def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,resolution,thalamic_nuclei,hippocampal_subfields,brainstem_structures,number_of_cores=1):
 
     project_info = CMP_Project_Info()
     project_info.base_directory = bids_dir
     project_info.output_directory = output_dir
     project_info.subjects = subjects
     project_info.subject = subject
+    project_info.number_of_cores = number_of_cores
 
     if subject_session != '':
         project_info.subject_sessions = ['{}'.format(subject_session)]
@@ -330,6 +331,7 @@ def create_configuration_file_participant_level(bids_dir,output_dir,subjects,sub
     anat_pipeline.stages['Segmentation'].config.make_isotropic = True
     anat_pipeline.stages['Segmentation'].config.isotropic_vox_size = resolution
     anat_pipeline.stages['Segmentation'].config.isotropic_interpolation = 'interpolate'
+    anat_pipeline.stages['Segmentation'].config.number_of_cores = number_of_cores
 
     anat_pipeline.stages['Parcellation'].config.include_thalamic_nuclei_parcellation = thalamic_nuclei
     anat_pipeline.stages['Parcellation'].config.segment_hippocampal_subfields = hippocampal_subfields

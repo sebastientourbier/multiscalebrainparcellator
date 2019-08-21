@@ -135,18 +135,23 @@ if __name__ == '__main__':
             print('MAIN INFO: {} Freesurfer license found will be used'.format(dest))
 
     #Setup number of cores to use
-    maxprocs = args.number_of_cores
-    max_number_of_cores = multiprocessing.cpu_count()
-    if maxprocs > max_number_of_cores:
-        print('MAIN WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.number_of_cores,max_number_of_cores))
-        print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
-        maxprocs = max_number_of_cores
-    elif maxprocs <= 0:
-        print('MAIN WARNING: the specified number of cores ({}) should be greater to 0'.format(args.number_of_cores))
-        print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
-        maxprocs = max_number_of_cores
+    maxprocs = int(args.number_of_cores)
+    max_number_of_cores = multiprocessing.cpu_count()-1
+
+    if maxprocs != None:
+        if maxprocs > max_number_of_cores:
+            print('MAIN WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.number_of_cores,max_number_of_cores))
+            print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+            maxprocs = max_number_of_cores
+        elif maxprocs <= 0:
+            print('MAIN WARNING: the specified number of cores ({}) should be greater to 0'.format(args.number_of_cores))
+            print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+            maxprocs = max_number_of_cores
+        else:
+            print('MAIN INFO: Maximal number of processing cores set to {}'.format(maxprocs))
     else:
-        print('MAIN INFO: Maximal number of processing cores set to {}'.format(maxprocs))
+        print('MAIN INFO: Maximal number of cores set to the single core ({})'.format(max_number_of_cores))
+        maxprocs = 1  
 
     #Setup the isotropic resolution
 
@@ -222,7 +227,7 @@ if __name__ == '__main__':
                 while len(processes) == maxprocs:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
+                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,number_of_cores=maxprocs)
                 proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
                 processes.append(proc)
 
@@ -237,7 +242,7 @@ if __name__ == '__main__':
                 while len(processes) == maxprocs:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
+                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,number_of_cores=maxprocs)
                 proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
                 processes.append(proc)
 
