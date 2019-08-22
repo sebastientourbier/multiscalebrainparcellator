@@ -46,6 +46,8 @@ import cmp.multiscalebrainparcellator.pipelines.common as cmp_common
 from cmp.multiscalebrainparcellator.stages.segmentation.segmentation import SegmentationStage
 from cmp.multiscalebrainparcellator.stages.parcellation.parcellation import ParcellationStage
 
+from cmtklib.util import bcolors
+
 class Global_Configuration(HasTraits):
     process_type = Str('anatomical')
     subjects = List(trait=Str)
