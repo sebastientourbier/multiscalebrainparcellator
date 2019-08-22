@@ -35,7 +35,7 @@ class SegmentationConfig(HasTraits):
     isotropic_interpolation = Enum('cubic', 'weighted', 'nearest', 'sinc', 'interpolate',
                                 desc='<interpolate|weighted|nearest|sinc|cubic> (default is cubic)')
     
-    number_of_cores = 1
+    fs_number_of_cores = Int(1)
     # brain_mask_extraction_tool = Enum("Freesurfer",["Freesurfer","BET","ANTs","Custom"])
     # ants_templatefile = File(desc="Anatomical template")
     # ants_probmaskfile = File(desc="Brain probability mask")
