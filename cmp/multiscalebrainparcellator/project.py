@@ -365,7 +365,7 @@ def participant_level_process(project_info, configuration_file):
     cmd.append('{}'.format(configuration_file))
     cmd = ' '.join(cmd)
 
-    print(' * Command: {}'.format(cmd))
+    print(bcolors.OKBLUE + '  * Command: {}'.format(cmd) + bcolors.ENDC)
 
     # if project_info.subject_session != '':
     #     log_filename = os.path.join(project_info.output_directory,'cmp','{}_{}log-cmpbidsapp.txt'.format(participant_label))

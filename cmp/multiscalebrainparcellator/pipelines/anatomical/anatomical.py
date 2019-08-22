@@ -143,7 +143,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         t1_json_available = False
         valid_inputs = False
 
-        print("> Looking in %s for...." % self.base_directory)  
+        print("  > Looking in %s for...." % self.base_directory)  
 
         types = layout.get_modalities()
 
@@ -166,7 +166,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
             else:
                 pass
 
-        print("... t1_file : %s" % T1_file)
+        print("  ... t1_file : %s" % T1_file)
 
         if self.global_conf.subject_session == '':
             T1_json_file = os.path.join(self.subject_directory,'anat',self.subject+'_T1w.json')
@@ -185,7 +185,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
             else:
                 pass
 
-        print("... t1_json_file : %s" % T1_json_file)
+        print("  ... t1_json_file : %s" % T1_json_file)
 
         if os.access(T1_file,os.F_OK):
             # print("%s available" % typ)
@@ -203,11 +203,11 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                 out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.nii.gz')
 
             if not os.path.isfile(out_T1_file):
-                print('INFO: Copying {} to {}'.format(T1_file,out_T1_file))
+                print('  * Copying {} to {}'.format(T1_file,out_T1_file))
                 shutil.copy(src=T1_file,dst=out_T1_file)
 
             valid_inputs = True
-            input_message = 'Inputs check finished successfully. \nOnly anatomical data (T1) available.'
+            input_message = '  * Inputs check finished successfully. \n    Only anatomical data (T1) available.'
 
             if t1_json_available:
                 if self.global_conf.subject_session == '':
@@ -216,24 +216,24 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                     out_T1_json_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.json')
 
                 if not os.path.isfile(out_T1_json_file):
-                    print('INFO: Copying {} to {}'.format(T1_json_file,out_T1_json_file))
+                    print('  * Copying {} to {}'.format(T1_json_file,out_T1_json_file))
                     shutil.copy(src=T1_json_file,dst=out_T1_json_file)
 
         else:
             if self.global_conf.subject_session == '':
-                input_message = 'Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject)+'/anat/!'
+                input_message = bcolors.FAIL + '  * Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject)+'/anat/!' + bcolors.ENDC
             else:
-                input_message = 'Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject,self.global_conf.subject_session)+'/anat/!'
+                input_message = bcolors.FAIL + '  * Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject,self.global_conf.subject_session)+'/anat/!' + bcolors.ENDC
 
         print(input_message)
 
         if(t1_available):
             valid_inputs = True
         else:
-            print("ERROR : Missing required inputs. Please see documentation for more details.")
+            print(bcolors.FAIL + '  * Error : Missing required inputs. Please see documentation for more details.' + bcolors.ENDC)
 
         if not t1_json_available:
-            print("Warning : Missing BIDS json sidecar. Please see documentation for more details.")
+            print(bcolors.WARNING + '  * Warning : Missing BIDS json sidecar. Please see documentation for more details.' + bcolors.ENDC)
 
         # for stage in self.stages.values():
         #     if stage.enabled:
@@ -245,6 +245,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         return valid_inputs
 
     def check_output(self):
+        print('**** Check Outputs  ****')
         t1_available = False
         brain_available = False
         brainmask_available = False
@@ -274,25 +275,25 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         if os.path.isfile(T1_file):
             t1_available = True
         else:
-            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % T1_file
+            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(T1_file) + bcolors.ENDC
             print error_message
             
         if os.path.isfile(brain_file):
             brain_available = True
         else:
-            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % brain_file
+            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(brain_file) + bcolors.ENDC
             print error_message
             
         if os.path.isfile(brainmask_file):
             brainmask_available = True
         else:
-            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % brainmask_file
+            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(brainmask_file) + bcolors.ENDC
             print error_message
             
         if os.path.isfile(wm_mask_file):
             wm_available = True
         else:
-            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % wm_mask_file
+            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(wm_mask_file) + bcolors.ENDC
             print error_message
             
         cnt1=0
@@ -303,16 +304,17 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         if cnt1 == cnt2:
             roivs_available = True
         else:
-            error_message = "Missing %g/%g anatomical parcellation output files. Please re-run the anatomical pipeline" % (cnt1-cnt2,cnt1)
+            error_message = bcolors.FAIL+"  * Missing %g/%g anatomical parcellation output files. Please re-run the anatomical pipeline".format(cnt1-cnt2,cnt1) + bcolors.ENDC
             print error_message
             
         if t1_available == True and brain_available == True and brainmask_available == True and wm_available == True and roivs_available == True:
-            print "valid deriv/anat output"
+            print(" * Valid outputs")
             valid_output = True
 
         return valid_output,error_message
 
     def create_pipeline_flow(self,deriv_subject_directory,nipype_deriv_subject_directory):
+        print('**** Create pipeline flow  ****')
         subject_directory = self.subject_directory
 
         # Data import
@@ -496,16 +498,17 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         logging.update_logging(config)
         iflogger = logging.getLogger('nipype.interface')
 
-        iflogger.info("**** Processing ****")
         anat_flow = self.create_pipeline_flow(deriv_subject_directory=deriv_subject_directory, nipype_deriv_subject_directory=nipype_deriv_subject_directory)
         anat_flow.write_graph(graph2use='colored', format='svg', simple_form=True)
 
+        iflogger.info("**** Processing ****")
+        
         if(self.number_of_cores != 1):
-            print("Number of cores used: {}".format(self.number_of_cores))
+            print("  * Number of cores used: {}".format(self.number_of_cores))
             #print(os.environ)
             anat_flow.run(plugin='MultiProc', plugin_args={'n_procs' : self.number_of_cores})
         else:
-            print("Number of cores used: {}".format(self.number_of_cores))
+            print("  * Number of cores used: {}".format(self.number_of_cores))
             #print(os.environ)
             anat_flow.run()
 
