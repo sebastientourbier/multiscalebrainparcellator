@@ -310,14 +310,14 @@ def update_anat_last_processed(project_info, pipeline):
     project_info.parcellation_scheme = pipeline.parcellation_scheme
     project_info.atlas_info = pipeline.atlas_info
 
-def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,resolution,thalamic_nuclei,hippocampal_subfields,brainstem_structures,number_of_cores=1):
+def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,resolution,thalamic_nuclei,hippocampal_subfields,brainstem_structures,multiproc_number_of_cores=1,fs_number_of_cores=1):
 
     project_info = CMP_Project_Info()
     project_info.base_directory = bids_dir
     project_info.output_directory = output_dir
     project_info.subjects = subjects
     project_info.subject = subject
-    project_info.number_of_cores = number_of_cores
+    project_info.number_of_cores = multiproc_number_of_cores
 
     if subject_session != '':
         project_info.subject_sessions = ['{}'.format(subject_session)]
@@ -331,11 +331,12 @@ def create_configuration_file_participant_level(bids_dir,output_dir,subjects,sub
     anat_pipeline.stages['Segmentation'].config.make_isotropic = True
     anat_pipeline.stages['Segmentation'].config.isotropic_vox_size = resolution
     anat_pipeline.stages['Segmentation'].config.isotropic_interpolation = 'interpolate'
-    anat_pipeline.stages['Segmentation'].config.number_of_cores = number_of_cores
+    anat_pipeline.stages['Segmentation'].config.fs_number_of_cores = fs_number_of_cores
 
     anat_pipeline.stages['Parcellation'].config.include_thalamic_nuclei_parcellation = thalamic_nuclei
     anat_pipeline.stages['Parcellation'].config.segment_hippocampal_subfields = hippocampal_subfields
     anat_pipeline.stages['Parcellation'].config.segment_brainstem = brainstem_structures
+    anat_pipeline.stages['Parcellation'].config.fs_number_of_cores = fs_number_of_cores
 
     anat_save_config(pipeline=anat_pipeline,config_path=anat_pipeline.config_file)
     return project_info, anat_pipeline.config_file

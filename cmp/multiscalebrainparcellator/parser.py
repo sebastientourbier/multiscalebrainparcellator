@@ -31,8 +31,12 @@ def get():
                        'participants can be specified with a space separated list.',
                        nargs="+")
 
-    p.add_argument('--number_of_cores', help='The number of cores to be used for '
-                   'processing (Maximum number of available processing cores used by default).')
+    p.add_argument('--multiproc_number_of_cores', help='The number of cores to be used by '
+                   'the MultiProc plugin of Nipype (One core used by default).')
+    p.add_argument('--number_of_participants_processed_in_parallel', help='The number of subjects '
+                   'to be processed in parallel (One core used by default).')
+    p.add_argument('--fs_number_of_cores', help='The number of cores to be used by '
+                   'Freesurfer (One core used by default).')
 
     p.add_argument('--fs_license', help='Path to Freesurfer license. ')
 

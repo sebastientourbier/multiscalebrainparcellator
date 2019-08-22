@@ -134,25 +134,72 @@ if __name__ == '__main__':
         else:
             print('MAIN INFO: {} Freesurfer license found will be used'.format(dest))
 
-    #Setup number of cores to use
-    maxprocs = int(args.number_of_cores)
+    # Keep one core for light processes
     max_number_of_cores = multiprocessing.cpu_count()-1
 
-    if maxprocs != None:
-        if maxprocs > max_number_of_cores:
-            print('MAIN WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.number_of_cores,max_number_of_cores))
+    #Setup number of cores to be used by nipype multiproc plugin
+    multiproc_maxprocs = int(args.multiproc_number_of_cores)
+    
+    if multiproc_maxprocs != None:
+        if multiproc_maxprocs > max_number_of_cores:
+            print('MAIN WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.multiproc_number_of_cores,max_number_of_cores))
             print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
-            maxprocs = max_number_of_cores
-        elif maxprocs <= 0:
-            print('MAIN WARNING: the specified number of cores ({}) should be greater to 0'.format(args.number_of_cores))
-            print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
-            maxprocs = max_number_of_cores
+            multiproc_maxprocs = max_number_of_cores
+        elif multiproc_maxprocs <= 0:
+            print('MAIN WARNING: the specified number of cores ({}) should be greater to 0'.format(args.multiproc_number_of_cores))
+            print('MAIN INFO: Use 1/{} core'.format(max_number_of_cores))
+            multiproc_maxprocs = 1
         else:
-            print('MAIN INFO: Maximal number of processing cores set to {}'.format(maxprocs))
+            print('MAIN INFO: Use {}/{} cores'.format(multiproc_maxprocs,max_number_of_cores))
     else:
-        print('MAIN INFO: Maximal number of cores set to the single core ({})'.format(max_number_of_cores))
-        maxprocs = 1  
+        print('MAIN INFO: Use 1/{} core '.format(max_number_of_cores))
+        multiproc_maxprocs = 1  
 
+    #Setup number of subjects to be processed in parallel
+    parallel_number_of_subjects = int(args.number_of_participants_processed_in_parallel)
+    
+    if parallel_number_of_subjects != None:
+        if parallel_number_of_subjects > max_number_of_cores:
+            print('MAIN WARNING: the specified number of subjects to be processed in parallel ({}) exceeds the number of available cores ({})'.format(args.number_of_participants_processed_in_parallel,max_number_of_cores))
+            print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+            parallel_number_of_subjects = max_number_of_cores
+        elif parallel_number_of_subjects <= 0:
+            print('MAIN WARNING: the specified number of subjects to be processed in parallel ({}) should be greater to 0'.format(args.number_of_participants_processed_in_parallel))
+            print('MAIN INFO: sequential processing (use one core)')
+            parallel_number_of_subjects = 1
+        else:
+            print('MAIN INFO: Process {} subjects in parallel (Total of cores available: {})'.format(parallel_number_of_subjects,max_number_of_cores))
+    else:
+        print('MAIN INFO: sequential processing (use one core)')
+        parallel_number_of_subjects = 1  
+
+    #Setup number of cores to be used by nipype multiproc plugin
+    fs_maxprocs = int(args.fs_number_of_cores)
+    
+    if fs_maxprocs != None:
+        if fs_maxprocs > max_number_of_cores:
+            print('MAIN WARNING: the specified number of cores ({}) used by FreeSurfer exceeds the number of available cores ({})'.format(args.fs_number_of_cores,max_number_of_cores))
+            print('MAIN INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+            fs_maxprocs = max_number_of_cores
+        elif fs_maxprocs <= 0:
+            print('MAIN WARNING: the specified number of cores ({}) used by FreeSurfer should be greater to 0'.format(args.fs_number_of_cores))
+            print('MAIN INFO: FreeSurfer sequential execution (use one core)')
+            fs_maxprocs = 1
+        else:
+            print('MAIN INFO: Freesurfer uses {}/{} cores'.format(fs_maxprocs,max_number_of_cores))
+    else:
+        print('MAIN INFO: FreeSurfer sequential execution (use one core)')
+        fs_maxprocs = 1  
+
+    #Make sure that the total number of cores used does not exceed the total number of available cores
+    total_number_of_cores_used = multiproc_maxprocs + parallel_number_of_subjects + fs_maxprocs
+    if total_number_of_cores_used > max_number_of_cores:
+        print('MAIN WARNING: Total number of cores used (Subjects in parallel: {}, Pipeline processes in parallel: {}, Freesurfer: {} , Total: {}) is greater than the number of available cores ({})'.format(parallel_number_of_subjects,multiproc_maxprocs,fs_maxprocs,total_number_of_cores_used, max_number_of_cores)) 
+        multiproc_maxprocs = 1
+        fs_number_of_cores = 1
+        parallel_number_of_subjects = max_number_of_cores
+        print('MAIN INFO: Processing will be ONLY parallelized at the subject level using {} cores.'.format(parallel_number_of_subjects))
+    
     #Setup the isotropic resolution
 
     resolution = args.isotropic_resolution
@@ -224,10 +271,10 @@ if __name__ == '__main__':
 
         if not use_session_structure:
             for subject in subjects:
-                while len(processes) == maxprocs:
+                while len(processes) == parallel_number_of_subjects:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,number_of_cores=maxprocs)
+                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,multiproc_number_of_cores=multiproc_maxprocs,fs_number_of_cores=fs_maxprocs)
                 proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
                 processes.append(proc)
 
@@ -239,10 +286,10 @@ if __name__ == '__main__':
 
         else:
             for subject,subject_session in subjects_sessions:
-                while len(processes) == maxprocs:
+                while len(processes) == parallel_number_of_subjects:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,number_of_cores=maxprocs)
+                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,multiproc_number_of_cores=multiproc_maxprocs,fs_number_of_cores=fs_maxprocs)
                 proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
                 processes.append(proc)
 

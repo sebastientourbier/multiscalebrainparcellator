@@ -91,7 +91,7 @@ class SegmentationStage(Stage):
             rename.inputs.format_string = os.path.join(orig_dir,"001.mgz")
 
             # ReconAll => named outputnode as we don't want to select a specific output....
-            fs_reconall = pe.Node(interface=fs.ReconAll(flags='-no-isrunning -parallel -openmp {}'.format(self.config.number_of_cores)),name="reconall")
+            fs_reconall = pe.Node(interface=fs.ReconAll(flags='-no-isrunning -parallel -openmp {}'.format(self.config.fs_number_of_cores)),name="reconall")
             fs_reconall.inputs.directive = 'all'
             #fs_reconall.inputs.args = self.config.freesurfer_args
 
