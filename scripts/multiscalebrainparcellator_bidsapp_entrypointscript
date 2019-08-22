@@ -40,6 +40,8 @@ from cmp.multiscalebrainparcellator.info import __version__
 import cmp.multiscalebrainparcellator.project
 import cmp.multiscalebrainparcellator.parser as parser
 
+from cmtklib.util import bcolors
+
 # Remove warnings visible whenever you import scipy (or another package) that was compiled against an older numpy than is installed.
 import warnings
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
