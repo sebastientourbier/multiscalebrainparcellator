@@ -192,11 +192,11 @@ if __name__ == '__main__':
         fs_maxprocs = 1  
 
     #Make sure that the total number of cores used does not exceed the total number of available cores
-    total_number_of_cores_used = multiproc_maxprocs + parallel_number_of_subjects + fs_maxprocs
+    total_number_of_cores_used = multiproc_maxprocs * (parallel_number_of_subjects + fs_maxprocs)
     if total_number_of_cores_used > max_number_of_cores:
         print('MAIN WARNING: Total number of cores used (Subjects in parallel: {}, Pipeline processes in parallel: {}, Freesurfer: {} , Total: {}) is greater than the number of available cores ({})'.format(parallel_number_of_subjects,multiproc_maxprocs,fs_maxprocs,total_number_of_cores_used, max_number_of_cores)) 
         multiproc_maxprocs = 1
-        fs_number_of_cores = 1
+        fs_maxprocs = 1
         parallel_number_of_subjects = max_number_of_cores
         print('MAIN INFO: Processing will be ONLY parallelized at the subject level using {} cores.'.format(parallel_number_of_subjects))
     
