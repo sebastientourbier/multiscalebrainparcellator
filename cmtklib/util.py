@@ -20,6 +20,24 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+def print_warning(message):
+    print(bcolors.WARNING + message + bcolors.ENDC)
+
+def print_error(message):
+    print(bcolors.FAIL + message + bcolors.ENDC)
+
+def print_blue(message):
+    print(bcolors.OKBLUE + message + bcolors.ENDC)
+
+def print_green(message):
+    print(bcolors.OKGREEN + message + bcolors.ENDC)
+
+def print_bold(message):
+    print(bcolors.BOLD + message + bcolors.ENDC)
+
+def print_underline(message):
+    print(bcolors.UNDERLINE + message + bcolors.ENDC)
+
 def length(xyz, along=False):
     """
     Euclidean length of track line
