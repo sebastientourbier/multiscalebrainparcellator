@@ -33,6 +33,7 @@ class ParcellationConfig(HasTraits):
     segment_hippocampal_subfields = Bool(True)
     segment_brainstem = Bool(True)
     pre_custom = Str('Lausanne2018')
+    fs_number_of_cores = Int(1)
     #atlas_name = Str()
     #number_of_regions = Int()
     #atlas_nifti_file = File(exists=True)
@@ -116,7 +117,7 @@ class ParcellationStage(Stage):
                             ])
 
                 if self.config.segment_brainstem:
-                    parcBrainStem = pe.Node(interface=ParcellateBrainstemStructures(),name="parcBrainStem")
+                    parcBrainStem = pe.Node(interface=ParcellateBrainstemStructures(number_of_cores=self.config.fs_number_of_cores),name="parcBrainStem")
 
                     flow.connect([
                                 (inputnode,parcBrainStem,[("subjects_dir","subjects_dir"),(("subject_id",os.path.basename),"subject_id")]),
@@ -124,7 +125,7 @@ class ParcellationStage(Stage):
                                 ])
 
                 if self.config.segment_hippocampal_subfields:
-                    parcHippo = pe.Node(interface=ParcellateHippocampalSubfields(),name="parcHippo")
+                    parcHippo = pe.Node(interface=ParcellateHippocampalSubfields(number_of_cores=self.config.fs_number_of_cores),name="parcHippo")
 
                     flow.connect([
                                 (inputnode,parcHippo,[("subjects_dir","subjects_dir"),(("subject_id",os.path.basename),"subject_id")]),

@@ -195,6 +195,7 @@ class Erode(BaseInterface):
 class ParcellateHippocampalSubfieldsInputSpec(BaseInterfaceInputSpec):
     subjects_dir = Directory(mandatory=True, desc='Freesurfer main directory')
     subject_id = traits.String(mandatory=True, desc='Subject ID')
+    number_of_cores = traits.Int(1,desc='Number of cores used by recon-all')
 
 class ParcellateHippocampalSubfieldsOutputSpec(TraitedSpec):
     lh_hipposubfields = File(desc='Left hemisphere hippocampal subfields file')
@@ -213,7 +214,7 @@ class ParcellateHippocampalSubfields(BaseInterface):
         fs_string = 'export SUBJECTS_DIR=' + self.inputs.subjects_dir
         iflogger.info('  > New FreeSurfer SUBJECTS_DIR:\n  {}\n'.format(self.inputs.subjects_dir))
 
-        reconall_cmd = fs_string + '; recon-all -no-isrunning -s "%s" -hippocampal-subfields-T1 ' % (self.inputs.subject_id)
+        reconall_cmd = fs_string + '; recon-all -no-isrunning -parallel -openmp {} -s "{}" -hippocampal-subfields-T1 '.format(self.inputs.number_of_cores,self.inputs.subject_id)
         #reconall_cmd = [fs_string , ";" , "recon-all" , "-no-isrunning" , "-s" , "%s"% (self.inputs.subject_id) , "-hippocampal-subfields-T1" ]
 
         iflogger.info('  > Command: %s' % reconall_cmd)
@@ -258,6 +259,7 @@ class ParcellateHippocampalSubfields(BaseInterface):
 class ParcellateBrainstemStructuresInputSpec(BaseInterfaceInputSpec):
     subjects_dir = Directory(mandatory=True, desc='Freesurfer main directory')
     subject_id = traits.String(mandatory=True, desc='Subject ID')
+    number_of_cores = traits.Int(1,desc='Number of cores used by recon-all')
 
 class ParcellateBrainstemStructuresOutputSpec(TraitedSpec):
     brainstem_structures = File(desc='Parcellated brainstem structures file')
@@ -274,7 +276,7 @@ class ParcellateBrainstemStructures(BaseInterface):
         fs_string = 'export SUBJECTS_DIR=' + self.inputs.subjects_dir
         iflogger.info('  > New FreeSurfer SUBJECTS_DIR:\n  {}\n'.format(self.inputs.subjects_dir))
 
-        reconall_cmd = fs_string + '; recon-all -no-isrunning -s "%s" -brainstem-structures ' % (self.inputs.subject_id)
+        reconall_cmd = fs_string + '; recon-all -no-isrunning -parallel -openmp {} -s "{}" -brainstem-structures '.format(self.inputs.number_of_cores,self.inputs.subject_id)
         #reconall_cmd = [fs_string , ";" , "recon-all" , "-no-isrunning" , "-s" , "%s"% (self.inputs.subject_id) , "-hippocampal-subfields-T1" ]
 
         iflogger.info('  > Command: %s' % reconall_cmd)
@@ -2472,11 +2474,13 @@ def create_roi_v2(subject_id, subjects_dir,v=1):
     src = os.path.join(os.environ['FREESURFER_HOME'], 'subjects', 'fsaverage')
     dst = os.path.join(os.path.join(subject_dir, os.pardir),'fsaverage')
 
-    if os.path.isdir(dst):
+    if os.path.exists(dst):
+        print('  WARNING: destination folder ({}) exists and will deleted and recopied.'.format(dst))
         shutil.rmtree(dst,ignore_errors=True)
-
-    shutil.copytree(src, dst)
-
+    try:
+        shutil.copytree(src, dst)
+    except:
+        print('  WARNING: Copy aborded')
     # Loop over parcellation scales
     import multiprocessing as mp
     jobs = []
