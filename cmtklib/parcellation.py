@@ -317,6 +317,7 @@ class CombineParcellationsInputSpec(BaseInterfaceInputSpec):
 
 class CombineParcellationsOutputSpec(TraitedSpec):
     aparc_aseg = File(exists=True)
+    gray_matter_mask_file = File(exists=True)
     output_rois = OutputMultiPath(File(exists=True))
     colorLUT_files = OutputMultiPath(File(exists=True))
     graphML_files = OutputMultiPath(File(exists=True))
@@ -435,7 +436,7 @@ class CombineParcellations(BaseInterface):
             Isublh = Vsublh.get_data()
             lh_subfield_defined = True
         except TypeError:
-            iflogger.info('  ERROR: Subfields image (Left hemisphere) not provided')
+            iflogger.info(bcolors.WARNING + '  Subfields image (Left hemisphere) not provided' + bcolors.ENDC)
 
         rh_subfield_defined = False
         try:
@@ -443,7 +444,7 @@ class CombineParcellations(BaseInterface):
             Isubrh = Vsubrh.get_data()
             rh_subfield_defined = True
         except TypeError:
-            iflogger.info('  ERROR: Subfields image (Right hemisphere) not provided')
+            iflogger.info(bcolors.WARNING + '  Subfields image (Right hemisphere) not provided' + bcolors.ENDC)
 
 
         thalamus_nuclei_defined = False
@@ -454,7 +455,7 @@ class CombineParcellations(BaseInterface):
 
             thalamus_nuclei_defined = True
         except TypeError:
-            iflogger.info('  ERROR: Thalamic nuclei image not provided')
+            iflogger.info(bcolors.WARNING + '  Thalamic nuclei image not provided' + bcolors.ENDC)
 
         brainstem_defined = False
         # Reading Stem Image
@@ -464,7 +465,7 @@ class CombineParcellations(BaseInterface):
             indstem = np.where(Istem > 0)
             brainstem_defined = True
         except TypeError:
-            iflogger.info('  ERROR: Brain stem image not provided')
+            iflogger.info(bcolors.WARNING + '  Brain stem image not provided' + bcolors.ENDC)
 
         if not (thalamus_nuclei_defined and brainstem_defined and (lh_subfield_defined and rh_subfield_defined)):
             left_subc_labels = left_subcIds_2008
@@ -1003,6 +1004,9 @@ class CombineParcellations(BaseInterface):
                                  '{} \n'.format('    </node>')]
                     f_graphML.writelines(node_lines)
 
+            if scale == 'scale1':
+                gmMask = It.copy()
+
             # Relabelling Brain Stem
             if brainstem_defined:
                 if self.inputs.create_colorLUT:
@@ -1033,6 +1037,8 @@ class CombineParcellations(BaseInterface):
 
                     ind = np.where(Istem == lab)
                     It[ind] = newLabels[i]
+                    if scale == 'scale1':
+                        gmMask[ind] = 0
                     i += 1
                 nlabel = It.max()
 
@@ -1044,6 +1050,9 @@ class CombineParcellations(BaseInterface):
 
                 newLabels = np.arange(nlabel+1,nlabel+2)
                 It[indrep] = newLabels[0]
+
+                if scale == 'scale1':
+                    gmMask[indrep] = 0
 
                 if self.inputs.verbose_level == 2:
                     iflogger.info("  > Update brainstem parcellation label ({} -> {})".format(lab,newLabels[0]))
@@ -1070,6 +1079,19 @@ class CombineParcellations(BaseInterface):
                 if self.inputs.create_colorLUT:
                     f_colorLUT.write("\n")
 
+
+            hdr = V.get_header()
+            hdr2 = hdr.copy()
+            hdr2.set_data_dtype(np.int16)
+
+            # Threshold roi scale 1 with unlabeled BrainStem
+            if scale == 'scale1':
+                gmMask[gmMask>0] = 1
+                gmMask_fn = op.abspath('T1w_class-GM.nii.gz'.format(outprefixName))
+                print("Save graymatter mask to %s" % gmMask_fn)
+                img = ni.Nifti1Image(gmMask, V.get_affine(), hdr2)
+                ni.save(img, gmMask_fn)
+
             # Fix negative values
             It[It<0] = 0
 
@@ -1077,9 +1099,6 @@ class CombineParcellations(BaseInterface):
             outprefixName = roi.split(".")[0]
             outprefixName = outprefixName.split("/")[-1:][0]
             output_roi = op.abspath('{}_final.nii.gz'.format(outprefixName))
-            hdr = V.get_header()
-            hdr2 = hdr.copy()
-            hdr2.set_data_dtype(np.int16)
             iflogger.info("  > Save output image to {}".format(output_roi))
             img = ni.Nifti1Image(It, V.get_affine(), hdr2)
             ni.save(img, output_roi)
@@ -1092,6 +1111,9 @@ class CombineParcellations(BaseInterface):
                              '{} \n'.format('</graphml>'),]
                 f_graphML.writelines(bottom_lines)
                 f_graphML.close()
+
+        # Transform aparc+aseg.mgz to native space
+        print("Correct Freesurfer generated aparc+aseg.mgz...")
 
         orig = op.join(fs_dir, 'mri', 'orig', '001.mgz')
         aparcaseg_fs = op.join(fs_dir, 'mri', 'aparc+aseg.mgz')
@@ -1231,6 +1253,7 @@ class CombineParcellations(BaseInterface):
     def _list_outputs(self):
         outputs = self._outputs().get()
         outputs['aparc_aseg'] = op.abspath('aparc+aseg.Lausanne2018.native.nii.gz')
+        outputs['gray_matter_mask_file'] = op.abspath('T1w_class-GM.nii.gz')
         outputs['output_rois'] = self._gen_outfilenames('ROIv_HR_th','_final.nii.gz')
         outputs['colorLUT_files'] = self._gen_outfilenames('ROIv_HR_th','_FreeSurferColorLUT.txt')
         outputs['graphML_files'] = self._gen_outfilenames('ROIv_HR_th','.graphml')

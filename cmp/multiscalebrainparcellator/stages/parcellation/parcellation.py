@@ -96,7 +96,7 @@ class ParcellationStage(Stage):
                          (parc_node,outputnode,[#("aseg_file","aseg_file"),("cc_unknown_file","cc_unknown_file"),
                                                 #("ribbon_file","ribbon_file"),("roi_files","roi_files"),
     					     ("white_matter_mask_file","wm_mask_file"),
-                             ("gray_matter_mask_file","gm_mask_file"),
+                             #("gray_matter_mask_file","gm_mask_file"),
                              #("roi_files_in_structural_space","roi_volumes"),
                              ("wm_eroded","wm_eroded"),("csf_eroded","csf_eroded"),("brain_eroded","brain_eroded"),
                              ("T1","T1"),("brain","brain"),("brain_mask","brain_mask")])
@@ -147,6 +147,7 @@ class ParcellationStage(Stage):
                 flow.connect([
                             (parcCombiner,outputnode,[("aparc_aseg","aparc_aseg")]),
                             (parcCombiner,outputnode,[("output_rois","roi_volumes")]),
+                            (parcCombiner,outputnode,[("gray_matter_mask_file","gm_mask_file")]),
                             (parcCombiner,outputnode,[("colorLUT_files","roi_colorLUTs")]),
                             (parcCombiner,outputnode,[("graphML_files","roi_graphMLs")]),
                         ])
@@ -182,16 +183,16 @@ class ParcellationStage(Stage):
                         (temp_node,outputnode,[("atlas_info","atlas_info")]),
                         (inputnode,outputnode,[("custom_wm_mask","wm_mask_file")])
                         ])
-            import cmp.interfaces.fsl as fsl
-            threshold_roi = pe.Node(interface=fsl.BinaryThreshold(thresh=0.0,binarize=True,out_file='T1w_class-GM.nii.gz'),name='threshold_roi_bin')
+            # import cmp.interfaces.fsl as fsl
+            # threshold_roi = pe.Node(interface=fsl.BinaryThreshold(thresh=0.0,binarize=True,out_file='T1w_class-GM.nii.gz'),name='threshold_roi_bin')
 
-            def get_first(roi_volumes):
-                return roi_volumes
+            # def get_first(roi_volumes):
+            #     return roi_volumes
 
-            flow.connect([
-                        (temp_node,threshold_roi,[(("roi_volumes",get_first),"in_file")]),
-                        (threshold_roi,outputnode,[("out_file","gm_mask_file")]),
-                        ])
+            # flow.connect([
+            #             (temp_node,threshold_roi,[(("roi_volumes",get_first),"in_file")]),
+            #             (threshold_roi,outputnode,[("out_file","gm_mask_file")]),
+            #             ])
 
     def has_run(self):
         if self.config.parcellation_scheme != "Custom":
