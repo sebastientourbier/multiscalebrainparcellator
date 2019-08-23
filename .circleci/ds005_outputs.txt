@@ -869,6 +869,7 @@ nipype/sub-01/anatomical_pipeline/parcellation_stage/parcCombiner/ROIv_HR_th_sca
 nipype/sub-01/anatomical_pipeline/parcellation_stage/parcCombiner/ROIv_HR_th_scale5_final.nii.gz
 nipype/sub-01/anatomical_pipeline/parcellation_stage/parcCombiner/ROIv_HR_th_scale5_FreeSurferColorLUT.txt
 nipype/sub-01/anatomical_pipeline/parcellation_stage/parcCombiner/ROIv_HR_th_scale5.graphml
+nipype/sub-01/anatomical_pipeline/parcellation_stage/parcCombiner/T1w_class-GM.nii.gz
 nipype/sub-01/anatomical_pipeline/parcellation_stage/parcCombiner/ventricle3_dil.nii.gz
 nipype/sub-01/anatomical_pipeline/parcellation_stage/parcCombiner/ventricle3.nii.gz
 nipype/sub-01/anatomical_pipeline/parcellation_stage/parcHippo/_inputs.pklz
