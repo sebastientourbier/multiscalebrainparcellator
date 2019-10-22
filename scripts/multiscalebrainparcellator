@@ -13,13 +13,11 @@ import subprocess
 
 
 #BIDS import
-from bids import BIDSLayout
+from bids.grabbids import BIDSLayout
 
 #CMP imports
 import cmp.multiscalebrainparcellator.project
 from cmp.multiscalebrainparcellator.info import __version__
-
-from cmtklib.util import bcolors
 
 def info():
     print('###################################################################')
@@ -81,14 +79,16 @@ if __name__ == "__main__":
         try:
             bids_layout = BIDSLayout(project.base_directory)
         except:
-            print(bcolors.FAIL + "  * Error: the dataset is not BIDS compliant. You should run the bids validator and fix the errors until you have a valid BIDS structured dataset" + bcolors.ENDC)
+            print("ERROR: the dataset is not BIDS compliant. You should run the bids validator and fix the errors until you have a valid BIDS structured dataset")
             sys.exit(1)
 
         if "ses-" in sys.argv[4]:
             offset = 1
             project.subject_sessions = ['%s' % sys.argv[4]]
             project.subject_session = '%s' % sys.argv[4]
+            print("session")
         else:
+            print("No session")
             offset = 0
             project.subject_sessions = ['']
             project.subject_session = ''

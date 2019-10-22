@@ -29,7 +29,6 @@ Version $0.1
 """
 import sys
 import os
-import shutil
 from os import path as op
 import subprocess
 from glob import glob
@@ -39,8 +38,6 @@ import multiprocessing
 from cmp.multiscalebrainparcellator.info import __version__
 import cmp.multiscalebrainparcellator.project
 import cmp.multiscalebrainparcellator.parser as parser
-
-from cmtklib.util import bcolors
 
 # Remove warnings visible whenever you import scipy (or another package) that was compiled against an older numpy than is installed.
 import warnings
@@ -99,124 +96,31 @@ if __name__ == '__main__':
     pars = parser.get()
     args = pars.parse_args()
 
+    print('BIDS dataset: {}'.format(args.bids_dir))
 
-    print('###################################################################')
-    print('Start BIDS App entrypoint script')
-    print('###################################################################')
-    print('Input summary:')
-
-    print('  * BIDS dataset: {}'.format(args.bids_dir))
-
-    info_message = ''
-    warn_message = ''
-
-    #Make Freesurfer happy with the ficense
-    #Multiscale brain parcellator uses the FS_LICENSE environment to point to the license
-    # It supposes that the license is stored as /bids_dir/code/license.txt
-    
-    dest = '{}/code/license.txt'.format(args.bids_dir)
-    if args.fs_license:
-        if not shutil._samefile(args.fs_license,dest):    
-            if os.access(dest,os.F_OK):
-                os.remove(dest)
-                print(bcolors.WARNING + '    WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder' + bcolors.ENDC)
-            if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
-                os.mkdir('{}/code'.format(args.bids_dir))
-            shutil.copyfile(args.fs_license,dest)
-            print('  * Freesurfer license provided as input ({}) will be used'.format(dest))       
-        else:
-            print(bcolors.WARNING + 'WARNING: Freesurfer license specified by --fs_license ({}) is the same as the destination license and will not be copied'.format(dest) + bcolors.ENDC)             
-    else:      
-        if not os.access(dest,os.F_OK):
-            if os.environ['FREESURFER_HOME']:
-                src = '{}/license.txt'.format(os.environ['FREESURFER_HOME'])
-                if os.access(src,os.F_OK):
-                    if os.access(dest,os.F_OK):
-                        os.remove(dest)
-                        print(bcolors.WARNING + '    WARNING: Freesurfer license.txt has been replaced in bids_dir/code folder' + bcolors.ENDC)
-                    if not os.access('{}/code'.format(args.bids_dir),os.F_OK):
-                        os.mkdir('{}/code'.format(args.bids_dir))
-                    shutil.copyfile(src,dest)
-                    print('  * Freesurfer license located in $FREESURFER_HOME will be used'.format(dest))
-
-            else:
-                print(bcolors.FAIL + '    ERROR: Freesurfer license not found in directory pointed by $FREESURFER_HOME. Freesurfer license has to be defined using the --fs_license input flag.' + bcolors.ENDC)
-                sys.exit(2)
-        else:
-            print('  * Freesurfer license found ({}) will be used'.format(dest))
-
-    # Keep one core for light processes
-    max_number_of_cores = multiprocessing.cpu_count()-1
-
-    #Setup number of subjects to be processed in parallel
-    if args.number_of_participants_processed_in_parallel != None:
-        parallel_number_of_subjects = int(args.number_of_participants_processed_in_parallel)
-        if parallel_number_of_subjects > max_number_of_cores:
-            print('  * Number of subjects to be processed in parallel set to the maximal number of available cores ({})'.format(max_number_of_cores))
-            print(bcolors.WARNING + '    WARNING: the specified number of subjects to be processed in parallel ({}) exceeds the number of available cores ({})'.format(args.number_of_participants_processed_in_parallel,max_number_of_cores)+bcolors.ENDC)
-            parallel_number_of_subjects = max_number_of_cores
-        elif parallel_number_of_subjects <= 0:
-            print('  * Number of subjects to be processed in parallel set to one (sequential run)')
-            print(bcolors.WARNING + '    WARNING: the specified number of subjects to be processed in parallel ({}) should be greater to 0'.format(args.number_of_participants_processed_in_parallel)+bcolors.ENDC)
-            parallel_number_of_subjects = 1
-        else:
-            print('  * Number of subjects to be processed in parallel set to {} (Total of cores available: {})'.format(parallel_number_of_subjects,max_number_of_cores))
+    #Setup number of cores to use
+    maxprocs = args.number_of_cores
+    max_number_of_cores = multiprocessing.cpu_count()
+    if maxprocs > max_number_of_cores:
+        print('WARNING: the specified number of cores ({}) exceeds the number of available cores ({})'.format(args.number_of_cores,max_number_of_cores))
+        print('INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+        maxprocs = max_number_of_cores
+    elif maxprocs <= 0:
+        print('WARNING: the specified number of cores ({}) should be greater to 0'.format(args.number_of_cores))
+        print('INFO: Maximal number of cores set to the maximal number of available cores ({})'.format(max_number_of_cores))
+        maxprocs = max_number_of_cores
     else:
-        print('  * Number of subjects to be processed in parallel set to one (sequential run)')
-        parallel_number_of_subjects = 1  
+        print('INFO: Maximal number of processing cores set to {}'.format(maxprocs))
 
-    #Setup number of cores to be used by nipype multiproc plugin
-    if args.multiproc_number_of_cores != None:
-        multiproc_maxprocs = int(args.multiproc_number_of_cores)  
-        if multiproc_maxprocs > max_number_of_cores:
-            print('  * Number of pipeline processes executed in parallel set to the maximal number of available cores ({})'.format(max_number_of_cores))
-            print(bcolors.WARNING + '   WARNING: the specified number of pipeline processes executed in parallel ({}) exceeds the number of available cores ({})'.format(args.multiproc_number_of_cores,max_number_of_cores) + bcolors.ENDC)
-            multiproc_maxprocs = max_number_of_cores
-        elif multiproc_maxprocs <= 0:
-            print('  * Number of pipeline processes executed in parallel set to one (total: {})'.format(max_number_of_cores))
-            print(bcolors.WARNING + '    WARNING: the specified of pipeline processes executed in parallel ({}) should be greater to 0'.format(args.multiproc_number_of_cores) + bcolors.ENDC)
-            multiproc_maxprocs = 1
-        else:
-            print('  * Number of pipeline processes executed in parallel set to {} (total of cores: {})'.format(multiproc_maxprocs,max_number_of_cores))
-    else:
-        print('  * Number of pipeline processes executed in parallel set to one (total: {})'.format(max_number_of_cores))
-        multiproc_maxprocs = 1  
-
-    #Setup number of cores to be used by nipype multiproc plugin
-    if args.fs_number_of_cores != None:
-        fs_maxprocs = int(args.fs_number_of_cores)
-        if fs_maxprocs > max_number_of_cores:
-            print('  * Number of cores used by FreeSurfer set to the maximal number of available cores ({})'.format(max_number_of_cores))
-            print(bcolors.WARNING + '    WARNING: the specified number of cores ({}) used by FreeSurfer exceeds the number of available cores ({})'.format(args.fs_number_of_cores,max_number_of_cores)+bcolors.ENDC)
-            fs_maxprocs = max_number_of_cores
-        elif fs_maxprocs <= 0:
-            print('  * Number of cores used by FreeSurfer set to one (sequential run)')
-            print(bcolors.WARNING + '    WARNING: the specified number of cores ({}) used by FreeSurfer should be greater to 0'.format(args.fs_number_of_cores)+bcolors.ENDC)
-            fs_maxprocs = 1
-        else:
-            print('  * Number of cores used by FreeSurfer set to {} (total of cores: {})'.format(fs_maxprocs,max_number_of_cores))
-    else:
-        print('  * Number of cores used by FreeSurfer set to one (sequential run)')
-        fs_maxprocs = 1  
-
-    #Make sure that the total number of cores used does not exceed the total number of available cores
-    total_number_of_cores_used = parallel_number_of_subjects * (multiproc_maxprocs + fs_maxprocs)
-    if total_number_of_cores_used > max_number_of_cores:
-        print(bcolors.WARNING + '  * Total number of cores used (Subjects in parallel: {}, Pipeline processes in parallel: {}, Freesurfer: {} , Total: {}) is greater than the number of available cores ({})'.format(parallel_number_of_subjects,multiproc_maxprocs,fs_maxprocs,total_number_of_cores_used, max_number_of_cores)+bcolors.ENDC) 
-        multiproc_maxprocs = 1
-        fs_maxprocs = 1
-        parallel_number_of_subjects = max_number_of_cores
-        print(bcolors.WARNING + '    Processing will be ONLY parallelized at the subject level using {} cores.'.format(parallel_number_of_subjects)+bcolors.ENDC)
-    
     #Setup the isotropic resolution
 
     resolution = args.isotropic_resolution
     if (resolution <= 0) or (resolution is None):
         resolution=1.0
-        print('  * Default isotropic resolution for resampling: {}'.format(resolution))
+        print('Default isotropic resolution for resampling: {}'.format(resolution))
     else:
         resolution = float(resolution)
-        print('  * Custom isotropic resolution for resampling: {}'.format(resolution))
+        print('Custom isotropic resolution for resampling: {}'.format(resolution))
 
     # Run or not the bids validator
     if not args.skip_bids_validator:
@@ -238,19 +142,6 @@ if __name__ == '__main__':
     if not os.access(toolbox_derivatives_dir,os.F_OK):
         os.mkdir(toolbox_derivatives_dir)
 
-    #Check if freesurfer derivatives is already present
-    freesurfer_derivatives_dir = os.path.join(args.output_dir , "freesurfer")
-    if os.access(freesurfer_derivatives_dir,os.F_OK):
-        # Compute freesurfer derivatives directory size
-        total_size = 0
-        for path, dirs, files in os.walk(freesurfer_derivatives_dir):
-            for f in files:
-                fp = os.path.join(path, f)
-                total_size += os.path.getsize(fp)
-        print("  * Existing freesurfer derivatives found (size: {})".format(total_size))
-    else:
-        print("  * No existing freesurfer derivatives")
-
     # Check subject/session structure og the BIDS dataset
     # Create a new list of (subject,session) pairs if sessions are used
 
@@ -265,12 +156,12 @@ if __name__ == '__main__':
             use_session_structure = True
             for subject_session in subject_sessions:
                 subjects_sessions.append([subject,subject_session])
-    print('  * Session structured dataset: {}'.format(use_session_structure))
+    print('Session structured dataset: {}'.format(use_session_structure))
 
     if not use_session_structure:
-        print("  * Subjects to be analyzed: {}".format(subjects))
+        print("Subjects to be analyzed: {}".format(subjects))
     else:
-        print("  * Subjects/Sessions to be analyzed: {}".format(subjects_sessions))
+        print("Subjects/Sessions to be analyzed: {}".format(subjects_sessions))
 
     # running participant level
     if args.analysis_level == "participant":
@@ -279,34 +170,35 @@ if __name__ == '__main__':
 
         if not use_session_structure:
             for subject in subjects:
-                while len(processes) == parallel_number_of_subjects:
+                while len(processes) == maxprocs:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,multiproc_number_of_cores=multiproc_maxprocs,fs_number_of_cores=fs_maxprocs)
+                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,'',resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
                 proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
                 processes.append(proc)
 
                 while len(processes) > 0:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
+
+                print("Processing with the Multi-scale Brain Parcellator BIDS App finished!")
+
 
         else:
             for subject,subject_session in subjects_sessions:
-                while len(processes) == parallel_number_of_subjects:
+                while len(processes) == maxprocs:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures,multiproc_number_of_cores=multiproc_maxprocs,fs_number_of_cores=fs_maxprocs)
+                project_info, config_file = cmp.multiscalebrainparcellator.project.create_configuration_file_participant_level(args.bids_dir,args.output_dir,subjects,subject,subject_session,resolution,args.thalamic_nuclei,args.hippocampal_subfields,args.brainstem_structures)
                 proc = cmp.multiscalebrainparcellator.project.participant_level_process(project_info,config_file)
                 processes.append(proc)
 
                 while len(processes) > 0:
                     cmp.multiscalebrainparcellator.project.manage_procs(processes)
 
-        print('###################################################################')
-        print("Processing with the Multi-scale Brain Parcellator BIDS App finished!")
-        print('###################################################################')
+                print("Processing with the Multi-scale Brain Parcellator BIDS App finished!")
 
 
     # running group level; ultimately it will compute average connectivity matrices
     elif args.analysis_level == "group":
-        print(bcolors.FAIL + 'Sorry but this BIDS App has only the subject level processing pipeline implemented that can be run with --participant.\n Processing aborded.' + bcolors.ENDC)
+        print('Error: Sorry but this BIDS App has only the subject level processing pipeline implemented that can be run with --participant' )
         sys.exit(1)

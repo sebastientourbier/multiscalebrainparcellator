@@ -8,36 +8,6 @@
 
 import numpy as np
 
-class bcolors:
-    """ Utility class for color unicode
-    """
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-def print_warning(message):
-    print(bcolors.WARNING + message + bcolors.ENDC)
-
-def print_error(message):
-    print(bcolors.FAIL + message + bcolors.ENDC)
-
-def print_blue(message):
-    print(bcolors.OKBLUE + message + bcolors.ENDC)
-
-def print_green(message):
-    print(bcolors.OKGREEN + message + bcolors.ENDC)
-
-def print_bold(message):
-    print(bcolors.BOLD + message + bcolors.ENDC)
-
-def print_underline(message):
-    print(bcolors.UNDERLINE + message + bcolors.ENDC)
-
 def length(xyz, along=False):
     """
     Euclidean length of track line

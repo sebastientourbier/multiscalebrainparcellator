@@ -17,7 +17,7 @@ import multiprocessing
 import time
 
 # PyBIDS import
-from bids import BIDSLayout
+from bids.grabbids import BIDSLayout
 
 # Nipype util imports
 import nipype.interfaces.io as nio
@@ -45,8 +45,6 @@ import cmp.interfaces.fsl as cmp_fsl
 import cmp.multiscalebrainparcellator.pipelines.common as cmp_common
 from cmp.multiscalebrainparcellator.stages.segmentation.segmentation import SegmentationStage
 from cmp.multiscalebrainparcellator.stages.parcellation.parcellation import ParcellationStage
-
-from cmtklib.util import bcolors
 
 class Global_Configuration(HasTraits):
     process_type = Str('anatomical')
@@ -140,114 +138,71 @@ class AnatomicalPipeline(cmp_common.Pipeline):
             self.stages['Segmentation'].config.seg_tool = 'Freesurfer'
 
     def check_input(self, layout):
-        print('**** Check Inputs  ****')
+        print '**** Check Inputs  ****'
         t1_available = False
-        t1_json_available = False
         valid_inputs = False
 
-        print("  > Looking in %s for...." % self.base_directory)  
-
-        types = layout.get_modalities()
+        types = layout.get_types()
 
         subjid = self.subject.split("-")[1]
 
         if self.global_conf.subject_session == '':
             T1_file = os.path.join(self.subject_directory,'anat',self.subject+'_T1w.nii.gz')
-            files = layout.get(subject=subjid,suffix='T1w',extensions='.nii.gz')
+            files = layout.get(subject=subjid,type='T1w',extensions='.nii.gz')
             if len(files) > 0:
-                T1_file = os.path.join(files[0].dirname,files[0].filename)
+                T1_file = files[0].filename
                 print T1_file
             else:
-                pass
+                error(message="T1w image not found for subject %s, session %s."%(subjid,self.global_conf.subject_session), title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
+                return
         else:
             sessid = self.global_conf.subject_session.split("-")[1]
-            files = layout.get(subject=subjid,suffix='T1w',extensions='.nii.gz',session=sessid)
+            files = layout.get(subject=subjid,type='T1w',extensions='.nii.gz',session=sessid)
             if len(files) > 0:
-                T1_file = os.path.join(files[0].dirname,files[0].filename)
+                T1_file = files[0].filename
                 print T1_file
             else:
-                pass
+                error(message="T1w image not found for subject %s, session %s."%(subjid,self.global_conf.subject_session), title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
+                return
 
-        print("  ... t1_file : %s" % T1_file)
+        print "Looking in %s for...." % self.base_directory
+        print "T1_file : %s" % T1_file
 
-        if self.global_conf.subject_session == '':
-            T1_json_file = os.path.join(self.subject_directory,'anat',self.subject+'_T1w.json')
-            files = layout.get(subject=subjid,suffix='T1w',extensions='.json')
-            if len(files) > 0:
-                T1_json_file = os.path.join(files[0].dirname,files[0].filename)
-                print T1_json_file
-            else:
-                pass
-        else:
-            sessid = self.global_conf.subject_session.split("-")[1]
-            files = layout.get(subject=subjid,suffix='T1w',extensions='.json',session=sessid)
-            if len(files) > 0:
-                T1_json_file = os.path.join(files[0].dirname,files[0].filename)
-                print T1_json_file
-            else:
-                pass
-
-        print("  ... t1_json_file : %s" % T1_json_file)
-
-        if os.access(T1_file,os.F_OK):
-            # print("%s available" % typ)
-            t1_available = True
-
-        if os.access(T1_json_file,os.F_OK):
-            # print("%s available" % typ)
-            t1_json_available = True
+        for typ in types:
+            if typ == 'T1w' and os.path.isfile(T1_file):
+                print "%s available" % typ
+                t1_available = True
 
         if t1_available:
-            #Copy T1w data to derivatives / cmp  / subject / anat
+            #Copy diffusion data to derivatives / cmp  / subject / dwi
             if self.global_conf.subject_session == '':
-                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,'anat',self.subject+'_desc-cmp_T1w.nii.gz')
+                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,'anat',self.subject+'_T1w.nii.gz')
             else:
-                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.nii.gz')
+                out_T1_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_T1w.nii.gz')
 
             if not os.path.isfile(out_T1_file):
-                print('  * Copying {} to {}'.format(T1_file,out_T1_file))
                 shutil.copy(src=T1_file,dst=out_T1_file)
 
             valid_inputs = True
-            input_message = '  * Inputs check finished successfully. \n    Only anatomical data (T1) available.'
-
-            if t1_json_available:
-                if self.global_conf.subject_session == '':
-                    out_T1_json_file = os.path.join(self.output_directory,'cmp',self.subject,'anat',self.subject+'_desc-cmp_T1w.json')
-                else:
-                    out_T1_json_file = os.path.join(self.output_directory,'cmp',self.subject,self.global_conf.subject_session,'anat',self.subject+'_'+self.global_conf.subject_session+'_desc-cmp_T1w.json')
-
-                if not os.path.isfile(out_T1_json_file):
-                    print('  * Copying {} to {}'.format(T1_json_file,out_T1_json_file))
-                    shutil.copy(src=T1_json_file,dst=out_T1_json_file)
-
+            input_message = 'Inputs check finished successfully. \nOnly anatomical data (T1) available.'
         else:
-            if self.global_conf.subject_session == '':
-                input_message = bcolors.FAIL + '  * Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject)+'/anat/!' + bcolors.ENDC
-            else:
-                input_message = bcolors.FAIL + '  * Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject,self.global_conf.subject_session)+'/anat/!' + bcolors.ENDC
+            input_message = 'Error during inputs check. No anatomical data available in folder '+os.path.join(self.base_directory,self.subject)+'/anat/!'
 
         print(input_message)
 
         if(t1_available):
             valid_inputs = True
         else:
-            print(bcolors.FAIL + '  * Error : Missing required inputs. Please see documentation for more details.' + bcolors.ENDC)
+            print("Missing required inputs. Please see documentation for more details.")
 
-        if not t1_json_available:
-            print(bcolors.WARNING + '  * Warning : Missing BIDS json sidecar. Please see documentation for more details.' + bcolors.ENDC)
-
-        # for stage in self.stages.values():
-        #     if stage.enabled:
-        #         print stage.name
-        #         print stage.stage_dir
-
-        #self.fill_stages_outputs()
+        for stage in self.stages.values():
+            if stage.enabled:
+                print stage.name
+                print stage.stage_dir
 
         return valid_inputs
 
     def check_output(self):
-        print('**** Check Outputs  ****')
         t1_available = False
         brain_available = False
         brainmask_available = False
@@ -277,27 +232,31 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         if os.path.isfile(T1_file):
             t1_available = True
         else:
-            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(T1_file) + bcolors.ENDC
+            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % T1_file
             print error_message
-            
+            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
+
         if os.path.isfile(brain_file):
             brain_available = True
         else:
-            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(brain_file) + bcolors.ENDC
+            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % brain_file
             print error_message
-            
+            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
+
         if os.path.isfile(brainmask_file):
             brainmask_available = True
         else:
-            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(brainmask_file) + bcolors.ENDC
+            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % brainmask_file
             print error_message
-            
+            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
+
         if os.path.isfile(wm_mask_file):
             wm_available = True
         else:
-            error_message = bcolors.FAIL+"  * Missing anatomical output file %s . Please re-run the anatomical pipeline".format(wm_mask_file) + bcolors.ENDC
+            error_message = "Missing anatomical output file %s . Please re-run the anatomical pipeline" % wm_mask_file
             print error_message
-            
+            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
+
         cnt1=0
         cnt2=0
         for roiv_file in roiv_files:
@@ -306,17 +265,17 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         if cnt1 == cnt2:
             roivs_available = True
         else:
-            error_message = bcolors.FAIL+"  * Missing %g/%g anatomical parcellation output files. Please re-run the anatomical pipeline".format(cnt1-cnt2,cnt1) + bcolors.ENDC
+            error_message = "Missing %g/%g anatomical parcellation output files. Please re-run the anatomical pipeline" % (cnt1-cnt2,cnt1)
             print error_message
-            
+            error(message=error_message, title="Error",buttons = [ 'OK', 'Cancel' ], parent = None)
+
         if t1_available == True and brain_available == True and brainmask_available == True and wm_available == True and roivs_available == True:
-            print(" * Valid outputs")
+            print "valid deriv/anat output"
             valid_output = True
 
         return valid_output,error_message
 
-    def create_pipeline_flow(self,deriv_subject_directory,nipype_deriv_subject_directory):
-        print('**** Create pipeline flow  ****')
+    def create_pipeline_flow(self,deriv_subject_directory):
         subject_directory = self.subject_directory
 
         # Data import
@@ -324,7 +283,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         datasource.inputs.base_directory = deriv_subject_directory
         datasource.inputs.template = '*'
         datasource.inputs.raise_on_empty = False
-        datasource.inputs.field_template = dict(T1='anat/'+self.subject+'_desc-cmp_T1w.nii.gz')
+        datasource.inputs.field_template = dict(T1='anat/'+self.subject+'_T1w.nii.gz')
         datasource.inputs.sort_filelist=False
 
         # Data sinker for output
@@ -338,15 +297,9 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                                             ('brain_mask.nii.gz', self.subject+'_desc-brain_mask.nii.gz'),
                                             ('aseg.nii.gz', self.subject+'_desc-aseg_dseg.nii.gz'),
                                             ('fsmask_1mm.nii.gz',self.subject+'_label-WM_dseg.nii.gz'),
-                                            #('gmmask.nii.gz',self.subject+'_label-GM_dseg.nii.gz'),
-                                            ('T1w_class-GM.nii.gz',self.subject+'_label-GM_dseg.nii.gz'),
+                                            ('gmmask.nii.gz',self.subject+'_label-GM_dseg.nii.gz'),
                                             ('aparc+aseg.native.nii.gz',self.subject+'_desc-aparcaseg_dseg.nii.gz'),
                                             ('aparc+aseg.Lausanne2018.native.nii.gz',self.subject+'_desc-aparcaseg_dseg.nii.gz'),
-                                            ('roi_stats_scale1.tsv',self.subject+'_label-L2018_desc-scale1_stats.tsv'),
-                                            ('roi_stats_scale2.tsv',self.subject+'_label-L2018_desc-scale2_stats.tsv'),
-                                            ('roi_stats_scale3.tsv',self.subject+'_label-L2018_desc-scale3_stats.tsv'),
-                                            ('roi_stats_scale4.tsv',self.subject+'_label-L2018_desc-scale4_stats.tsv'),
-                                            ('roi_stats_scale5.tsv',self.subject+'_label-L2018_desc-scale5_stats.tsv'),
                                             ('ROIv_HR_th_scale1.nii.gz',self.subject+'_label-L2018_desc-scale1_atlas.nii.gz'),
                                             ('ROIv_HR_th_scale2.nii.gz',self.subject+'_label-L2018_desc-scale2_atlas.nii.gz'),
                                             ('ROIv_HR_th_scale3.nii.gz',self.subject+'_label-L2018_desc-scale3_atlas.nii.gz'),
@@ -397,16 +350,16 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                                           ]
 
         # Create common_flow
-        anat_flow = pe.Workflow(name='anatomical_pipeline', base_dir=nipype_deriv_subject_directory)
+        anat_flow = pe.Workflow(name='anatomical_pipeline', base_dir=os.path.join(deriv_subject_directory,'tmp'))
         anat_inputnode = pe.Node(interface=util.IdentityInterface(fields=["T1"]),name="inputnode")
         anat_outputnode = pe.Node(interface=util.IdentityInterface(fields=["subjects_dir","subject_id","T1","aseg","aparc_aseg","brain","brain_mask","wm_mask_file", "gm_mask_file", "wm_eroded","brain_eroded","csf_eroded",
-            "roi_volumes","roi_volumes_stats","parcellation_scheme","atlas_info","roi_colorLUTs", "roi_graphMLs"]),name="outputnode")
-        
+            "roi_volumes","parcellation_scheme","atlas_info","roi_colorLUTs", "roi_graphMLs"]),name="outputnode")
         anat_flow.add_nodes([anat_inputnode,anat_outputnode])
 
         anat_flow.connect([
                         (datasource,anat_inputnode,[("T1","T1")]),
                         ])
+
 
         if self.stages['Segmentation'].enabled:
             if self.stages['Segmentation'].config.seg_tool == "Freesurfer":
@@ -438,7 +391,6 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                                                                ("outputnode.roi_volumes","roi_volumes"),
                                                                ("outputnode.roi_colorLUTs","roi_colorLUTs"),
                                                                ("outputnode.roi_graphMLs","roi_graphMLs"),
-                                                               ("outputnode.roi_volumes_stats","roi_volumes_stats"),
                                                                ("outputnode.wm_eroded","wm_eroded"),
                                                                ("outputnode.gm_mask_file","gm_mask_file"),
                                                                ("outputnode.csf_eroded","csf_eroded"),
@@ -461,8 +413,7 @@ class AnatomicalPipeline(cmp_common.Pipeline):
                         (anat_outputnode,sinker,[("gm_mask_file","anat.@gm_mask")]),
                         (anat_outputnode,sinker,[("roi_volumes","anat.@roivs")]),
                         (anat_outputnode,sinker,[("roi_colorLUTs","anat.@luts")]),
-                        (anat_outputnode,sinker,[("roi_graphMLs","anat.@graphmls")]),
-                        (anat_outputnode,sinker,[("roi_volumes_stats","anat.@stats")]),
+                        (anat_outputnode,sinker,[("roi_graphMLs","anat.@graphmls")])
                         ])
 
         self.flow = anat_flow
@@ -481,16 +432,14 @@ class AnatomicalPipeline(cmp_common.Pipeline):
 
         if self.global_conf.subject_session == '':
             deriv_subject_directory = os.path.join(self.output_directory,"cmp",self.subject)
-            nipype_deriv_subject_directory = os.path.join(self.output_directory,"nipype",self.subject)
         else:
             deriv_subject_directory = os.path.join(self.output_directory,"cmp",self.subject,self.global_conf.subject_session)
-            nipype_deriv_subject_directory = os.path.join(self.output_directory,"nipype",self.subject,self.global_conf.subject_session)
 
             self.subject = "_".join((self.subject,self.global_conf.subject_session))
 
         # Initialization
-        if os.path.isfile(os.path.join(deriv_subject_directory,"anat","{}_desc-multiscalbrainparcellator_log.txt".format(self.subject))):
-            os.unlink(os.path.join(deriv_subject_directory,"anat","{}_desc-multiscalbrainparcellator_log.txt".format(self.subject)))
+        if os.path.isfile(os.path.join(deriv_subject_directory,"anat","{}_log-multiscalbrainparcellator.txt".format(self.subject))):
+            os.unlink(os.path.join(deriv_subject_directory,"anat","{}_log-multiscalbrainparcellator.txt".format(self.subject)))
 
         config.update_config({'logging': {'log_directory': os.path.join(deriv_subject_directory,"anat"),
                                   'log_to_file': True},
@@ -501,17 +450,16 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         logging.update_logging(config)
         iflogger = logging.getLogger('nipype.interface')
 
-        anat_flow = self.create_pipeline_flow(deriv_subject_directory=deriv_subject_directory, nipype_deriv_subject_directory=nipype_deriv_subject_directory)
+        iflogger.info("**** Processing ****")
+        anat_flow = self.create_pipeline_flow(deriv_subject_directory=deriv_subject_directory)
         anat_flow.write_graph(graph2use='colored', format='svg', simple_form=True)
 
-        iflogger.info("**** Processing ****")
-        
         if(self.number_of_cores != 1):
-            print("  * Number of cores used: {}".format(self.number_of_cores))
+            print("Number of cores used: {}".format(self.number_of_cores))
             #print(os.environ)
             anat_flow.run(plugin='MultiProc', plugin_args={'n_procs' : self.number_of_cores})
         else:
-            print("  * Number of cores used: {}".format(self.number_of_cores))
+            print("Number of cores used: {}".format(self.number_of_cores))
             #print(os.environ)
             anat_flow.run()
 
@@ -522,21 +470,21 @@ class AnatomicalPipeline(cmp_common.Pipeline):
         #         os.remove(os.path.join(self.base_directory,file_to_rm))
 
         # copy .ini and log file
-        # outdir = deriv_subject_directory
-        # if not os.path.exists(outdir):
-        #     os.makedirs(outdir)
+        outdir = deriv_subject_directory
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
 
-        # try:
-        #     src = os.path.join(deriv_subject_directory,"anat","pypeline.log")
-        #     dest = os.path.join(deriv_subject_directory,"anat", "{}_desc-multiscalebrainparcellator_log.txt".format(self.subject))
-        #     shutil.move(src,dest)
-        # except:
-        #     print("Skipped renaming of log file")
+        try:
+            src = os.path.join(deriv_subject_directory,"anat","pypeline.log")
+            dest = os.path.join(deriv_subject_directory,"anat", "{}_log-multiscalbrainparcellator.txt".format(self.subject))
+            shutil.move(src,dest)
+        except:
+            print("Skipped renaming of log file")
 
-        # try:
-        #     shutil.copy(self.config_file,outdir)
-        # except shutil.Error:
-        #     print("Skipped copy of config file")
+        try:
+            shutil.copy(self.config_file,outdir)
+        except shutil.Error:
+            print("Skipped copy of config file")
 
         #shutil.copy(os.path.join(self.output_directory,"cmp",self.subject,'pypeline.log'),outdir)
 
