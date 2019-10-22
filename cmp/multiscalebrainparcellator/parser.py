@@ -31,25 +31,31 @@ def get():
                        'participants can be specified with a space separated list.',
                        nargs="+")
 
-    p.add_argument('--number_of_cores', help='The number of cores to be used for'
-                   'processing (Maximum number of available processing cores used by default)')
+    p.add_argument('--multiproc_number_of_cores', help='The number of cores to be used by '
+                   'the MultiProc plugin of Nipype (One core used by default).')
+    p.add_argument('--number_of_participants_processed_in_parallel', help='The number of subjects '
+                   'to be processed in parallel (One core used by default).')
+    p.add_argument('--fs_number_of_cores', help='The number of cores to be used by '
+                   'Freesurfer (One core used by default).')
 
-    p.add_argument('--isotropic_resolution', help='The isotropic resolution in mm'
-                   'used to resample the original anatomical images'
-                   'and applied a tthe beginning of the processing pipeline.')
+    p.add_argument('--fs_license', help='Path to Freesurfer license. ')
 
-    p.add_argument('--thalamic_nuclei', help='Whether or not to parcellate the thalamic nuclei',
+    p.add_argument('--isotropic_resolution', help='The isotropic resolution in mm '
+                   'used to resample the original anatomical images '
+                   'and applied a tthe beginning of the processing pipeline. ')
+
+    p.add_argument('--thalamic_nuclei', help='Whether or not to parcellate the thalamic nuclei. ',
                         action='store_true')
 
-    p.add_argument('--hippocampal_subfields', help='Whether or not to parcellate the hippocampal subfields',
+    p.add_argument('--hippocampal_subfields', help='Whether or not to parcellate the hippocampal subfields. ',
                         action='store_true')
 
-    p.add_argument('--brainstem_structures', help='Whether or not to parcellate the brainstem structures',
+    p.add_argument('--brainstem_structures', help='Whether or not to parcellate the brainstem structures. ',
                         action='store_true')
 
-    p.add_argument('--skip_bids_validator', help='Whether or not to perform BIDS dataset validation',
+    p.add_argument('--skip_bids_validator', help='Whether or not to perform BIDS dataset validation. ',
                         action='store_true')
 
-    p.add_argument('-v', '--version', help='Display the version of Multi-scale Brain Parcellator BIDS-App', action='version',
+    p.add_argument('-v', '--version', help='Display the version of Multi-scale Brain Parcellator BIDS-App. ', action='version',
                         version='Multi-scale Brain Parcellator BIDS-App {}'.format(__version__))
     return p

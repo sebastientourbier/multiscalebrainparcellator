@@ -24,10 +24,12 @@ from subprocess import Popen
 import ConfigParser
 
 #PyBIDS import
-from bids.grabbids import BIDSLayout
+from bids import BIDSLayout
 
 # Own imports
 from pipelines.anatomical import anatomical as Anatomical_pipeline
+from cmtklib.bids.utils import write_derivative_description
+from cmtklib.util import bcolors
 
 class CMP_Project_Info(HasTraits):
     base_directory = Directory
@@ -59,7 +61,7 @@ class CMP_Project_Info(HasTraits):
     anat_stage_names = List
     anat_custom_last_stage = Str
 
-    number_of_cores = Enum(1,range(1,multiprocessing.cpu_count()+1))
+    number_of_cores = Enum(1,range(1,multiprocessing.cpu_count()))
 
 
 def fix_dataset_directory_in_pickles(local_dir, mode='local'):
@@ -153,7 +155,7 @@ def anat_save_config(pipeline, config_path):
     with open(config_path, 'wb') as configfile:
         config.write(configfile)
 
-    print('Config file (anat) saved as {}'.format(config_path))
+    print('  * Config file (anat) saved as {}'.format(config_path))
 
 def anat_load_config(pipeline, config_path):
     config = ConfigParser.ConfigParser()
@@ -195,7 +197,7 @@ def anat_load_config(pipeline, config_path):
 
 ## Creates (if needed) the folder hierarchy
 #
-def refresh_folder(derivatives_directory, subject, input_folders, session=None):
+def refresh_folder(bids_directory,derivatives_directory, subject, input_folders, session=None):
     paths = []
 
     if session == None or session == '':
@@ -205,7 +207,7 @@ def refresh_folder(derivatives_directory, subject, input_folders, session=None):
         for in_f in input_folders:
             paths.append(os.path.join(derivatives_directory,'cmp',subject,in_f))
 
-        paths.append(os.path.join(derivatives_directory,'cmp',subject,'tmp'))
+        paths.append(os.path.join(derivatives_directory,'nipype',subject))
     else:
         paths.append(os.path.join(derivatives_directory,'freesurfer','%s_%s'%(subject,session)))
         paths.append(os.path.join(derivatives_directory,'cmp',subject,session))
@@ -213,7 +215,7 @@ def refresh_folder(derivatives_directory, subject, input_folders, session=None):
         for in_f in input_folders:
             paths.append(os.path.join(derivatives_directory,'cmp',subject,session,in_f))
 
-        paths.append(os.path.join(derivatives_directory,'cmp',subject,session,'tmp'))
+        paths.append(os.path.join(derivatives_directory,'nipype',subject,session))
 
     for full_p in paths:
         if not os.path.exists(full_p):
@@ -224,29 +226,32 @@ def refresh_folder(derivatives_directory, subject, input_folders, session=None):
             finally:
                 print "Created directory %s" % full_p
 
+    write_derivative_description(bids_directory, derivatives_directory, 'cmp')
+    write_derivative_description(bids_directory, derivatives_directory, 'freesurfer')
+    write_derivative_description(bids_directory, derivatives_directory, 'nipype')
+
 def init_anat_project(project_info, is_new_project):
     anat_pipeline = Anatomical_pipeline.AnatomicalPipeline(project_info)
 
-    print anat_pipeline
-
-    derivatives_directory = os.path.join(project_info.base_directory,'derivatives')
+    bids_directory = os.path.abspath(project_info.base_directory)
+    derivatives_directory = os.path.join(project_info.output_directory)
 
     if (project_info.subject_session != '') and (project_info.subject_session != None) :
-        print('Refresh folder WITH session')
-        refresh_folder(derivatives_directory, project_info.subject, anat_pipeline.input_folders, session=project_info.subject_session)
+        print('  * Prepare derivatives folder WITH session')
+        refresh_folder(bids_directory, derivatives_directory, project_info.subject, anat_pipeline.input_folders, session=project_info.subject_session)
     else:
-        print('Refresh folder WITHOUT session')
-        refresh_folder(derivatives_directory, project_info.subject, anat_pipeline.input_folders)
+        print('  * Prepare derivatives folder WITHOUT session')
+        refresh_folder(bids_directory, derivatives_directory, project_info.subject, anat_pipeline.input_folders)
 
     if is_new_project and anat_pipeline!= None: #and dmri_pipeline!= None:
-        print('INFO: New project with newly created (or overwritten) configuration file')
+        print('  * New project with newly created (or overwritten) configuration file')
         if not os.path.exists(derivatives_directory):
             try:
                 os.makedirs(derivatives_directory)
             except os.error:
-                print "%s was already existing" % derivatives_directory
+                print('    - {} was already existing'.format(derivatives_directory))
             finally:
-                print "Created directory %s" % derivatives_directory
+                print('    - Created directory {}'.format(derivatives_directory))
 
         if (project_info.subject_session != '') and (project_info.subject_session != None) :
             project_info.anat_config_file = os.path.join(derivatives_directory,'%s_%s_anatomical_config.ini' % (project_info.subject,project_info.subject_session))
@@ -255,15 +260,15 @@ def init_anat_project(project_info, is_new_project):
         #project_info.dmri_config_file = os.path.join(derivatives_directory,'%s_diffusion_config.ini' % (project_info.subject))
 
         if os.path.exists(project_info.anat_config_file):
-            print('WARNING: Configuration file {} overwritten !'.format(project_info.anat_config_to_load))
+            print(bcolors.WARNING + '  * Configuration file {} overwritten !'.format(project_info.anat_config_to_load)+bcolors.ENDC)
             anat_save_config(anat_pipeline, project_info.anat_config_file)
         else:
             anat_save_config(anat_pipeline, project_info.anat_config_file)
 
     else:
-        print('INFO: Existing project... Loading configuration file {}'.format(project_info.anat_config_file))
-        print anat_pipeline.global_conf.subjects
-
+        print('  * Existing project... ')
+        print('    - Loading configuration file {}'.format(project_info.anat_config_file))
+        #print anat_pipeline.global_conf.subjects
         anat_conf_loaded = anat_load_config(anat_pipeline, project_info.anat_config_file)
 
         if not anat_conf_loaded:
@@ -304,13 +309,14 @@ def update_anat_last_processed(project_info, pipeline):
     project_info.parcellation_scheme = pipeline.parcellation_scheme
     project_info.atlas_info = pipeline.atlas_info
 
-def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,resolution,thalamic_nuclei,hippocampal_subfields,brainstem_structures):
+def create_configuration_file_participant_level(bids_dir,output_dir,subjects,subject,subject_session,resolution,thalamic_nuclei,hippocampal_subfields,brainstem_structures,multiproc_number_of_cores=1,fs_number_of_cores=1):
 
     project_info = CMP_Project_Info()
     project_info.base_directory = bids_dir
     project_info.output_directory = output_dir
     project_info.subjects = subjects
     project_info.subject = subject
+    project_info.number_of_cores = multiproc_number_of_cores
 
     if subject_session != '':
         project_info.subject_sessions = ['{}'.format(subject_session)]
@@ -324,10 +330,12 @@ def create_configuration_file_participant_level(bids_dir,output_dir,subjects,sub
     anat_pipeline.stages['Segmentation'].config.make_isotropic = True
     anat_pipeline.stages['Segmentation'].config.isotropic_vox_size = resolution
     anat_pipeline.stages['Segmentation'].config.isotropic_interpolation = 'interpolate'
+    anat_pipeline.stages['Segmentation'].config.fs_number_of_cores = fs_number_of_cores
 
     anat_pipeline.stages['Parcellation'].config.include_thalamic_nuclei_parcellation = thalamic_nuclei
     anat_pipeline.stages['Parcellation'].config.segment_hippocampal_subfields = hippocampal_subfields
     anat_pipeline.stages['Parcellation'].config.segment_brainstem = brainstem_structures
+    anat_pipeline.stages['Parcellation'].config.fs_number_of_cores = fs_number_of_cores
 
     anat_save_config(pipeline=anat_pipeline,config_path=anat_pipeline.config_file)
     return project_info, anat_pipeline.config_file
@@ -357,8 +365,7 @@ def participant_level_process(project_info, configuration_file):
     cmd.append('{}'.format(configuration_file))
     cmd = ' '.join(cmd)
 
-    print('Processing command:')
-    print(cmd)
+    print(bcolors.OKBLUE + '  * Command: {}'.format(cmd) + bcolors.ENDC)
 
     # if project_info.subject_session != '':
     #     log_filename = os.path.join(project_info.output_directory,'cmp','{}_{}log-cmpbidsapp.txt'.format(participant_label))

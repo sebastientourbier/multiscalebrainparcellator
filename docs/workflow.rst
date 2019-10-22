@@ -1,6 +1,6 @@
-*********************
+****************************
 Processing Pipeline Details
-*********************
+****************************
 
 Workflow
 ==============
@@ -10,6 +10,12 @@ The ``Multi-Scale Brain Parcellator`` pipelines uses a combination of tools from
 .. image:: images/multiscalebrainparcellator.png
 	:width: 888
 	:align: center
+
+.. _FSL: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki
+
+.. _FreeSurfer: https://surfer.nmr.mgh.harvard.edu/fswiki/FreeSurferWiki
+
+.. _ANTs: http://stnava.github.io/ANTs/
 
 Segmentation
 ==============

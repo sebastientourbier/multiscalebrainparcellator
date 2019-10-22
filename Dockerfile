@@ -3,7 +3,8 @@
 #
 #  This software is distributed under the open-source license Modified BSD.
 
-FROM sebastientourbier/multiscalebrainparcellator-ubuntu16.04:latest
+ARG MAIN_DOCKER
+FROM $MAIN_DOCKER
 
 MAINTAINER Sebastien Tourbier <sebastien.tourbier@alumni.epfl.ch>
 
@@ -11,13 +12,14 @@ MAINTAINER Sebastien Tourbier <sebastien.tourbier@alumni.epfl.ch>
 WORKDIR /app
 ADD . /app
 
-#Clone the master branch of multiscalebrainparcellator from BitBucket
-#RUN apt-get -qq -y install git-core
-#RUN git clone --progress --verbose -b master --single-branch https://github.com/sebastientourbier/multiscalebrainparcellator.git multiscalebrainparcellator
+# Install multiscalebrainparcellator inside installed conda environment (see environment.yml)
+ENV CONDA_ENV py27msbparc
+RUN /bin/bash -c ". activate $CONDA_ENV && python setup.py install"
 
-# Set the working directory to /app/multiscalebrainparcellator and install multiscalebrainparcellator
-WORKDIR /app
-RUN python setup.py install
+ENV FS_LICENSE /bids_dir/code/license.txt
+
+# Make it work under singularity (source: https://brainlife.io/docs/apps/container/)
+RUN ldconfig
 
 #COPY version /version
 ENTRYPOINT ["multiscalebrainparcellator_bidsapp_entrypointscript"]
