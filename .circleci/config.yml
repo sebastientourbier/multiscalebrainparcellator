@@ -272,6 +272,8 @@ jobs:
       image: circleci/classic:201711-01
     working_directory: /tmp/src/multiscalebrainparcellator
     steps:
+      - checkout:
+          path: /home/circleci/src/multiscalebrainparcellator
       - attach_workspace:
           at: /tmp
       - run:
