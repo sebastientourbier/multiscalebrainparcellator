@@ -24,6 +24,7 @@ import sys
 from time import time, localtime, strftime
 from nipype.interfaces.base import traits, BaseInterfaceInputSpec, TraitedSpec, BaseInterface, Directory, File, InputMultiPath, OutputMultiPath
 
+from util import bcolors
 
 from nipype.utils.logger import logging
 iflogger = logging.getLogger('nipype.interface')
