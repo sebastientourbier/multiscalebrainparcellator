@@ -92,5 +92,6 @@ Contents
    :caption: About Connectome Mapper
 
    LICENSE
+   changes
    citing
    contributing
