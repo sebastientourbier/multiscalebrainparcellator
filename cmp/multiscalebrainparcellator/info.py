@@ -2,7 +2,7 @@
 
 _version_major = 1
 _version_minor = 1
-_version_micro = 0
+_version_micro = 1
 _version_extra = '' 
 
 __release_date__ = '2019.10.22'
