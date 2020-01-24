@@ -6,6 +6,8 @@ Changes
 Version 1.1.1
 ***************
 
+Date: January 24, 2020
+
 * Updated multi-scale parcellation with a new symmetric version:
 
 	1. The right hemisphere labels were projected in the left hemisphere to create a symmetric version of the multiscale cortical parcellation proposed by Cammoun2012_.
