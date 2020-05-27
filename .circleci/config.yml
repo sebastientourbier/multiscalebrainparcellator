@@ -266,7 +266,7 @@ jobs:
       - store_artifacts:
           path: /tmp/ds005/derivatives/nipype
 
-  deploy_docker:
+  deploy_docker_release:
     machine:
       # Ubuntu 14.04 with Docker 17.10.0-ce
       image: circleci/classic:201711-01
@@ -300,10 +300,47 @@ jobs:
               docker login -u $DOCKER_USER -p $DOCKER_PASS
 
               if [[ -n "$CIRCLE_TAG" ]]; then
-                docker tag sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$THISVERSION sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$CIRCLE_TAG
-                docker push sebastientourbier/multiscalebrainparcellator-ubuntu16.04:$CIRCLE_TAG
                 docker tag sebastientourbier/multiscalebrainparcellator:$THISVERSION sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
                 docker push sebastientourbier/multiscalebrainparcellator:$CIRCLE_TAG
+              fi
+            fi
+
+  deploy_docker_latest:
+    machine:
+      # Ubuntu 14.04 with Docker 17.10.0-ce
+      image: circleci/classic:201711-01
+    working_directory: /tmp/src/multiscalebrainparcellator
+    steps:
+      - checkout:
+          path: /home/circleci/src/multiscalebrainparcellator
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: Load Docker image layer cache
+          no_output_timeout: 30m
+          command: |
+            docker info
+            set +o pipefail
+            if [ -f /tmp/cache/docker.tar.gz ]; then
+              sudo apt update && sudo apt -y install pigz
+              pigz -d --stdout /tmp/cache/docker.tar.gz | docker load
+              docker images
+            fi
+      - run:
+          name: Deploy to Docker Hub
+          no_output_timeout: 40m
+          command: |
+            # Get version, update files.
+            THISVERSION=$( python /home/circleci/src/multiscalebrainparcellator/get_version.py )
+            echo "THISVERSION : ${THISVERSION}"
+            echo "CIRCLE_TAG : ${CIRCLE_TAG}"
+
+            if [[ -n "$DOCKER_PASS" ]]; then
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+              if [[ -n "$CIRCLE_TAG" ]]; then
+                docker tag sebastientourbier/multiscalebrainparcellator:$THISVERSION sebastientourbier/multiscalebrainparcellator:latest
+                docker push sebastientourbier/multiscalebrainparcellator:latest
               fi
             fi
 
@@ -356,7 +393,7 @@ workflows:
             tags:
               only: /.*/
 
-      - deploy_docker:
+      - deploy_docker_release:
           requires:
             - build
             # - build_docs
@@ -369,3 +406,14 @@ workflows:
             # only act on version tags
             tags:
               only: /^v.*/
+      
+      - deploy_docker_latest:
+          requires:
+            - build
+            # - build_docs
+            - test
+          filters:
+            # ignore any commit on any branch by default
+            branches:
+              only: master
+
